@@ -1,2 +1,2 @@
 # Nowa
-Simple project developing with frameworks like spring4d/dsharp
+Simple query builder for Delphi, working with enumerators.
