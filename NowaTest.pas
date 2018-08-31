@@ -41,6 +41,8 @@ end;
 
 
 procedure TNowaTest.TestBasicSelect;
+const
+  sQueryExpected = 'select PERSON.NR_SEQUENTIAL as PERSON_SEQUENTIAL, PERSON.FL_NAME as PERSON_NAME, PERSON.DT_BIRTHDATE as PERSON_BIRTHDATE, PERSON.TX_EMAIL as PERSON_EMAIL, PERSON.TX_PASSWORD as PERSON_PASSWORD from TB_PERSON as PERSON';
 var
   fIModel: IModel<TEPerson>;
   sQuery: String;
@@ -53,7 +55,7 @@ begin
     .From(fIModel.Table, fIModel.TableAlias)
     .Build;
 
-
+  CheckEquals(sQueryExpected, sQuery);
 end;
 
 initialization
