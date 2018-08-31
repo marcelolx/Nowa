@@ -117,11 +117,17 @@ end;
 
 function TEnumPerson.ColumnsAlias(const AEnumeratedFields: TArray<TEPerson>): TArray<String>;
 var
+  oInternalArray: TArray<TEPerson>;
   oEField: TEPerson;
 begin
   SetLength(Result, 0);
 
-  for oEField in AEnumeratedFields do
+  if (Length(AEnumeratedFields) = 0) then
+    oInternalArray := AllColumns
+  else
+    oInternalArray := AEnumeratedFields;
+
+  for oEField in oInternalArray do
   begin
     SetLength(Result, Succ(Length(Result)));
     Result[Pred(Length(Result))] := ColumnAlias(oEField);

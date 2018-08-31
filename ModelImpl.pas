@@ -4,7 +4,8 @@ interface
 
 uses
   Model,
-  Enumerator;
+  Enumerator,
+  Nowa.Records;
 
 type
   TModel<T> = class(TInterfacedObject, IModel<T>)
@@ -24,6 +25,7 @@ type
     function GetValue(const AField: T): Variant; virtual; abstract;
     function FieldName(const AField: T): String;
     function FieldAliasName(const AField: T): string;
+    function PreparedFields: RFieldsPrepared;
     function GetFields: TArray<String>;
     function GetFieldsAlias: TArray<String>;
     function GetTable: String;
@@ -38,6 +40,15 @@ constructor TModel<T>.Create(const AIModelEnumerator: IEnum<T>);
 begin
   fIModelEnumerator := AIModelEnumerator;
 end;
+
+
+function TModel<T>.PreparedFields: RFieldsPrepared;
+begin
+  Result.Fields      := GetFields;
+  Result.FieldsAlias := GetFieldsAlias;
+  Result.TableAlias  := GetTableAlias;
+end;
+
 
 
 procedure TModel<T>.PrepareModel(const ATableAlias: String; const AFields: TArray<T>);

@@ -17,6 +17,8 @@ type
     procedure TestPrepareModel;
     procedure TestPrepareModelSetTableAlias;
     procedure TestPrepareModelWithoutDefineFields;
+    procedure TestSetGetValue;
+    procedure TestPrepareModelAndGetPreparedFields;
   end;
 
 implementation
@@ -24,7 +26,8 @@ implementation
 uses
   Model,
   PersonImpl,
-  Enumerator.Person;
+  Enumerator.Person,
+  System.SysUtils;
 
 
 { TModelTest }
@@ -91,6 +94,18 @@ end;
 
 
 
+procedure TModelTest.TestPrepareModelAndGetPreparedFields;
+var
+  fIModel: IModel<TEPerson>;
+begin
+  fIModel := TPerson.Create;
+  fIModel.PrepareModel('', []);
+
+  CheckEquals(fIModel.Fields[0], fIModel.PreparedFields.Fields[0]); //TODO: Increment test
+end;
+
+
+
 procedure TModelTest.TestPrepareModelSetTableAlias;
 var
   fIModel: IModel<TEPerson>;
@@ -130,6 +145,26 @@ begin
   CheckEquals(fIModel.FieldName(tepBirthDate) + &As + fIModel.FieldAliasName(tepBirthDate)   , fIModel.Fields[2] + &As + fIModel.FieldsAlias[2]);
   CheckEquals(fIModel.FieldName(tepEmail) + &As + fIModel.FieldAliasName(tepEmail)           , fIModel.Fields[3] + &As + fIModel.FieldsAlias[3]);
   CheckEquals(fIModel.FieldName(tepPassword) + &As + fIModel.FieldAliasName(tepPassword)     , fIModel.Fields[4] + &As + fIModel.FieldsAlias[4]);
+end;
+
+
+
+procedure TModelTest.TestSetGetValue;
+var
+  fIModel: IModel<TEPerson>;
+begin
+  fIModel := TPerson.Create;
+  fIModel.SetValue(tepSequential, 1);
+  fIModel.SetValue(tepName, 'Marcelo Lauxen');
+  fIModel.SetValue(tepBirthDate, StrToDateTime('12/01/1998'));
+  fIModel.SetValue(tepEMail, 'marcelolauxen16@gmail.com');
+  fIModel.SetValue(tepPassword, 'SafePassword');
+
+  CheckEquals(1, fIModel.GetValue(tepSequential));
+  CheckEquals('Marcelo Lauxen', fIModel.GetValue(tepName));
+  CheckEquals('12/01/1998', fIModel.GetValue(tepBirthDate));
+  CheckEquals('marcelolauxen16@gmail.com', fIModel.GetValue(tepEMail));
+  CheckEquals('SafePassword', fIModel.GetValue(tepPassword));
 end;
 
 initialization

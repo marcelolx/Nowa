@@ -2,6 +2,9 @@ unit Model;
 
 interface
 
+uses
+  Nowa.Records;
+
 type
   IModel<T> = interface
   ['{C466292A-8F89-4B1F-B3BF-EE5588621D00}']
@@ -15,6 +18,7 @@ type
     function GetFieldsAlias: TArray<String>;
     function GetTable: String;
     function GetTableAlias: String;
+    function PreparedFields: RFieldsPrepared;
 
     property Fields: TArray<String> read GetFields;
     property FieldsAlias: TArray<String> read GetFieldsAlias;
