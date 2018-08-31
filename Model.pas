@@ -9,6 +9,8 @@ type
     procedure SetValue(const AField: T; const AValue: Variant);
 
     function GetValue(const AField: T): Variant;
+    function FieldName(const AField: T): String;
+    function FieldAliasName(const AField: T): string;
     function GetFields: TArray<String>;
     function GetFieldsAlias: TArray<String>;
     function GetTable: String;

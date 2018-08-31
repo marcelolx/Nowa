@@ -6,7 +6,7 @@ uses
   Enumerator;
 
 type
-  TEPerson = (tepSequential, tepName, tepBirthDate, tepMail, tepPassword);
+  TEPerson = (tepSequential, tepName, tepBirthDate, tepEMail, tepPassword);
 
   TEnumPerson = class(TEnumAbstract<TEPerson>, IEnum<TEPerson>)
   public
@@ -16,6 +16,7 @@ type
     function ColumnsAlias(const AEnumeratedFields: TArray<TEPerson>): TArray<String>; override;
     function Table: String; override;
     function TableAlias(const AAlias: String = ''): String; override;
+    function AllColumns: TArray<TEPerson>; override;
     function Ref: IEnum<TEPerson>; override;
   end;
 
@@ -24,26 +25,26 @@ implementation
 uses
   System.SysUtils;
 
-{ TEnumPeople }
+{ TEnumPerson }
 
 function TEnumPerson.Column(const AEnumeratedField: TEPerson): String;
 begin
   Result := EmptyStr;
-  
+
   case AEnumeratedField of
-    tepSequential: 
+    tepSequential:
       Result := 'NR_SEQUENTIAL';
-      
-    tepName: 
+
+    tepName:
       Result := 'FL_NAME';
-      
-    tepBirthDate: 
+
+    tepBirthDate:
       Result := 'DT_BIRTHDATE';
-      
-    tepMail: 
-      Result := 'TX_MAIL';
-      
-    tepPassword: 
+
+    tepEMail:
+      Result := 'TX_EMAIL';
+
+    tepPassword:
       Result := 'TX_PASSWORD';
   else
     raise Exception.Create('Enumerated field doesn''t have a column.');
@@ -55,19 +56,19 @@ end;
 function TEnumPerson.ColumnAlias(const AEnumeratedField: TEPerson): String;
 begin
   Result := EmptyStr;
-  
+
   case AEnumeratedField of
-    tepSequential: 
+    tepSequential:
       Result := 'PERSON_SEQUENTIAL';
-      
-    tepName: 
+
+    tepName:
       Result := 'PERSON_NAME';
-      
-    tepBirthDate: 
+
+    tepBirthDate:
       Result := 'PERSON_BIRTHDATE';
-      
-    tepMail: 
-      Result := 'PERSON_MAIL';
+
+    tepEMail:
+      Result := 'PERSON_EMAIL';
       
     tepPassword: 
       Result := 'PERSON_PASSWORD';
@@ -78,13 +79,34 @@ end;
 
 
 
-function TEnumPerson.Columns(const AEnumeratedFields: TArray<TEPerson>): TArray<String>;
+function TEnumPerson.AllColumns: TArray<TEPerson>;
 var
   oEField: TEPerson;
 begin
   SetLength(Result, 0);
 
-  for oEField in AEnumeratedFields do
+  for oEField := Low(TEPerson) to High(TEPerson) do
+  begin
+    SetLength(Result, Succ(Length(Result)));
+    Result[Pred(Length(Result))] := oEField;
+  end;
+end;
+
+
+
+function TEnumPerson.Columns(const AEnumeratedFields: TArray<TEPerson>): TArray<String>;
+var
+  oInternalArray: TArray<TEPerson>;
+  oEField: TEPerson;
+begin
+  SetLength(Result, 0);
+
+  if (Length(AEnumeratedFields) = 0) then
+    oInternalArray := AllColumns
+  else
+    oInternalArray := AEnumeratedFields;
+
+  for oEField in oInternalArray do
   begin
     SetLength(Result, Succ(Length(Result)));
     Result[Pred(Length(Result))] := Column(oEField);

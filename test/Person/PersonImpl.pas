@@ -52,7 +52,7 @@ begin
     tepBirthDate:
       Result := BirthDate;
 
-    tepMail:
+    tepEMail:
       Result := Email;
 
     tepPassword:
@@ -76,7 +76,7 @@ begin
     tepBirthDate:
       BirthDate := AValue;
 
-    tepMail:
+    tepEMail:
       Email := AValue;
 
     tepPassword:

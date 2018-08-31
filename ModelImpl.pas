@@ -8,9 +8,9 @@ uses
 
 type
   TModel<T> = class(TInterfacedObject, IModel<T>)
-  strict protected
-    fIModelEnumerator: IEnum<T>;
   strict private
+    fIModelEnumerator: IEnum<T>;
+
     Fields: TArray<String>;
     FieldsAlias: TArray<String>;
     Table: String;
@@ -22,6 +22,8 @@ type
     procedure SetValue(const AField: T; const AValue: Variant); virtual; abstract;
 
     function GetValue(const AField: T): Variant; virtual; abstract;
+    function FieldName(const AField: T): String;
+    function FieldAliasName(const AField: T): string;
     function GetFields: TArray<String>;
     function GetFieldsAlias: TArray<String>;
     function GetTable: String;
@@ -44,6 +46,20 @@ begin
   FieldsAlias := fIModelEnumerator.ColumnsAlias(AFields);
   Table       := fIModelEnumerator.Table;
   TableAlias  := fIModelEnumerator.TableAlias(ATableAlias);
+end;
+
+
+
+function TModel<T>.FieldAliasName(const AField: T): string;
+begin
+  Result := fIModelEnumerator.ColumnAlias(AField);
+end;
+
+
+
+function TModel<T>.FieldName(const AField: T): String;
+begin
+  Result := fIModelEnumerator.Column(AField);
 end;
 
 
