@@ -15,6 +15,11 @@ type
     Point = '.';
     sFrom = ' from ';
     sEqual = ' = ';
+    sDifferent = ' <> ';
+    sGreater = ' > ';
+    sGreaterOrEqual = ' >= ';
+    sLess = ' < ';
+    sLessOrEqual = ' <= ';
   public
     function Build: String; virtual; abstract;
   end;
@@ -61,7 +66,8 @@ type
 implementation
 
 uses
-  System.SysUtils;
+  System.SysUtils,
+  System.Variants;
 
 { TSQLWhere }
 
@@ -81,91 +87,104 @@ end;
 
 function TSQLWhere.Different(const AValue: Variant): ISQLWhere;
 begin
-
+  Result := Self;
+  sWhere := sWhere + sDifferent + VarToStr(AValue);
 end;
 
 
 
 function TSQLWhere.Different: ISQLWhere;
 begin
-
+  Result := Self;
+  sWhere := sWhere + sDifferent;
 end;
 
 
 
 function TSQLWhere.Equal(const AValue: Variant): ISQLWhere;
 begin
-
+  Result := Self;
+  sWhere := sWhere + sEqual + VarToStr(AValue);
 end;
 
 
 
 function TSQLWhere.Equal: ISQLWhere;
 begin
-
+  Result := Self;
+  sWhere := sWhere + sEqual;
 end;
 
 
 
 function TSQLWhere.Field(const AFieldPrefix, AField: string): ISQLWhere;
 begin
-
+  Result := Self;
+  sWhere := sWhere + AFieldPrefix + Point + AField;
 end;
 
 
 
 function TSQLWhere.Greater(const AValue: Variant): ISQLWhere;
 begin
-
+  Result := Self;
+  sWhere := sWhere + sGreater + VarToStr(AValue);
 end;
 
 
 
 function TSQLWhere.Greater: ISQLWhere;
 begin
-
+  Result := Self;
+  sWhere := sWhere + sGreater;
 end;
 
 
 
 function TSQLWhere.GreaterOrEqual(const AValue: Variant): ISQLWhere;
 begin
-
+  Result := Self;
+  sWhere := sWhere + sGreaterOrEqual + VarToStr(AValue);
 end;
 
 
 
 function TSQLWhere.GreaterOrEqual: ISQLWhere;
 begin
-
+  Result := Self;
+  sWhere := sWhere + sGreaterOrEqual;
 end;
 
 
 
 function TSQLWhere.Less(const AValue: Variant): ISQLWhere;
 begin
-
+  Result := Self;
+  sWhere := sWhere + sLess + VarToStr(AValue);
 end;
 
 
 
 function TSQLWhere.Less: ISQLWhere;
 begin
-
+  Result := Self;
+  sWhere := sWhere + sLess;
 end;
 
 
 
 function TSQLWhere.LessOrEqual(const AValue: Variant): ISQLWhere;
 begin
-
+  Result := Self;
+  sWhere := sWhere + sLessOrEqual + VarToStr(AValue);
 end;
 
 
 
 function TSQLWhere.LessOrEqual: ISQLWhere;
 begin
-
+  Result := Self;
+  sWhere := sWhere + sLessOrEqual;
 end;
 
 
@@ -174,6 +193,7 @@ function TSQLWhere.Ref: ISQLWhere;
 begin
   Result := Self;
 end;
+
 
 { TSQLSelect }
 

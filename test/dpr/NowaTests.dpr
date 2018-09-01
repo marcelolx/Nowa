@@ -15,7 +15,7 @@ uses
   Nowa in '..\..\Nowa.pas',
   NowaImpl in '..\..\NowaImpl.pas',
   Nowa.Records in '..\..\Nowa.Records.pas',
-  NowaTest in '..\..\NowaTest.pas';
+  NowaTest in '..\NowaTest.pas';
 
 {$R *.RES}
 
