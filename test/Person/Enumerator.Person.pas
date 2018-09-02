@@ -14,6 +14,7 @@ type
     function ColumnAlias(const AEnumeratedField: TEPerson): String; override;
     function Table: String; override;
     function TableAlias(const AAlias: String = ''): String; override;
+    function Sequence: String; override;
     function AllColumns: TArray<TEPerson>; override;
     function Ref: IEnum<TEPerson>; override;
   end;
@@ -95,6 +96,13 @@ end;
 function TEnumPerson.Ref: IEnum<TEPerson>;
 begin
   Result := Self;
+end;
+
+
+
+function TEnumPerson.Sequence: String;
+begin
+  Result := 'GEN_PERSON';
 end;
 
 

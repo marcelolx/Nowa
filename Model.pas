@@ -15,15 +15,19 @@ type
     function FieldName(const AField: T): String;
     function FieldAliasName(const AField: T): string;
     function GetFields: TArray<String>;
+    function GetEnumeratedFields: TArray<T>;
     function GetFieldsAlias: TArray<String>;
     function GetTable: String;
     function GetTableAlias: String;
+    function GetSequence: String;
     function PreparedFields: RFieldsPrepared;
 
     property Fields: TArray<String> read GetFields;
+    property EnumFields: TArray<T> read GetEnumeratedFields;
     property FieldsAlias: TArray<String> read GetFieldsAlias;
     property Table: String read GetTable;
     property TableAlias: String read GetTableAlias;
+    property Sequence: String read GetSequence;
   end;
 
 implementation

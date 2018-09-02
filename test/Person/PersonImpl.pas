@@ -11,7 +11,7 @@ uses
 type
   TPerson = class(TModel<TEPerson>, IModel<TEPerson>)
   private
-    Sequential: Integer;
+    Sequential: Int64;
     Name: String;
     BirthDate: TDateTime;
     Email: String;
