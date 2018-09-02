@@ -12,8 +12,6 @@ type
   public
     function Column(const AEnumeratedField: TEPerson): String; override;
     function ColumnAlias(const AEnumeratedField: TEPerson): String; override;
-    function Columns(const AEnumeratedFields: TArray<TEPerson>): TArray<String>; override;
-    function ColumnsAlias(const AEnumeratedFields: TArray<TEPerson>): TArray<String>; override;
     function Table: String; override;
     function TableAlias(const AAlias: String = ''): String; override;
     function AllColumns: TArray<TEPerson>; override;
@@ -89,48 +87,6 @@ begin
   begin
     SetLength(Result, Succ(Length(Result)));
     Result[Pred(Length(Result))] := oEField;
-  end;
-end;
-
-
-
-function TEnumPerson.Columns(const AEnumeratedFields: TArray<TEPerson>): TArray<String>;
-var
-  oInternalArray: TArray<TEPerson>;
-  oEField: TEPerson;
-begin
-  SetLength(Result, 0);
-
-  if (Length(AEnumeratedFields) = 0) then
-    oInternalArray := AllColumns
-  else
-    oInternalArray := AEnumeratedFields;
-
-  for oEField in oInternalArray do
-  begin
-    SetLength(Result, Succ(Length(Result)));
-    Result[Pred(Length(Result))] := Column(oEField);
-  end;
-end;
-
-
-
-function TEnumPerson.ColumnsAlias(const AEnumeratedFields: TArray<TEPerson>): TArray<String>;
-var
-  oInternalArray: TArray<TEPerson>;
-  oEField: TEPerson;
-begin
-  SetLength(Result, 0);
-
-  if (Length(AEnumeratedFields) = 0) then
-    oInternalArray := AllColumns
-  else
-    oInternalArray := AEnumeratedFields;
-
-  for oEField in oInternalArray do
-  begin
-    SetLength(Result, Succ(Length(Result)));
-    Result[Pred(Length(Result))] := ColumnAlias(oEField);
   end;
 end;
 

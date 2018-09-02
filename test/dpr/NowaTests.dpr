@@ -15,7 +15,11 @@ uses
   Nowa in '..\..\Nowa.pas',
   NowaImpl in '..\..\NowaImpl.pas',
   Nowa.Records in '..\..\Nowa.Records.pas',
-  NowaTest in '..\NowaTest.pas';
+  NowaTest in '..\NowaTest.pas',
+  Enumerator.Matriculation in '..\Matriculation\Enumerator.Matriculation.pas',
+  MatriculationImpl in '..\Matriculation\MatriculationImpl.pas',
+  NowaDAO in '..\..\NowaDAO.pas',
+  NowaDAOImpl in '..\..\NowaDAOImpl.pas';
 
 {$R *.RES}
 
