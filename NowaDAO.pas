@@ -3,7 +3,7 @@ unit NowaDAO;
 interface
 
 uses
-  Model;
+  Nowa.Model;
 
 type
   INowaDAO<T> = interface

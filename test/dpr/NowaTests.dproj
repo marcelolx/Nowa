@@ -90,8 +90,8 @@
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
         <DCCReference Include="..\ModelTest.pas"/>
-        <DCCReference Include="..\..\Model.pas"/>
-        <DCCReference Include="..\..\ModelImpl.pas"/>
+        <DCCReference Include="..\..\Nowa.Model.pas"/>
+        <DCCReference Include="..\..\Nowa.ModelImpl.pas"/>
         <DCCReference Include="..\..\Enumerator.pas"/>
         <DCCReference Include="..\Person\Enumerator.Person.pas"/>
         <DCCReference Include="..\Person\PersonImpl.pas"/>

@@ -4,7 +4,8 @@ interface
 
 uses
   Nowa,
-  Nowa.Records;
+  Nowa.Records,
+  Nowa.Model;
 
 type
   TSQL = class(TInterfacedObject, ISQL)
@@ -59,6 +60,24 @@ type
     function Build: string; override;
 
     function Ref: ISQLSelect;
+    constructor Create; reintroduce;
+  end;
+
+  TCommand<T> = class(TSQL, ICommand<T>)
+  strict private
+    sCommand: String;
+  public
+    function Select(const AModel: IModel<T>): ICommand<T>;
+    function Insert(const AModel: IModel<T>): ICommand<T>;
+    function Update(const AModel: IModel<T>): ICommand<T>;
+    function Delete(const AModelKey: T): ICommand<T>;
+    function WhereKey(const AModel: IModel<T>; const AModelKey: T): ICommand<T>;
+    function DoInsert(const AModel: IModel<T>; const AModelKey: T): Boolean;
+    function NewKeyValue(const ASequenceName: String): Int64;
+
+    function Build: string; override;
+
+    function Ref: TCommand<T>;
     constructor Create; reintroduce;
   end;
 
@@ -257,6 +276,108 @@ function TSQLSelect.Where(const AWhereCondition: ISQLWhere): ISQLSelect;
 begin
   Result  := Self;
   sSelect := sSelect + AWhereCondition.Build;
+end;
+
+
+{ TCommand<T> }
+
+function TCommand<T>.Build: string;
+begin
+  Result := sCommand;
+end;
+
+
+
+constructor TCommand<T>.Create;
+begin
+  sCommand := EmptyStr;
+end;
+
+
+
+function TCommand<T>.Delete(const AModelKey: T): ICommand<T>;
+begin
+  Result := Self;
+  //TODO: Do implement
+end;
+
+
+
+function TCommand<T>.DoInsert(const AModel: IModel<T>; const AModelKey: T): Boolean;
+begin
+  Result := False;
+  //TODO: Do implement
+end;
+
+
+
+function TCommand<T>.Insert(const AModel: IModel<T>): ICommand<T>;
+var
+  oEField: T;
+  sFields: String;
+begin
+  Result  := Self;
+  sFields := EmptyStr;
+
+  for oEField in AModel.EnumFields do
+  begin
+    if (not(sFields.IsEmpty)) then
+      sFields := sFields + ', ';
+
+    sFields := sFields + LowerCase(AModel.FieldName(oEField));
+  end;
+
+  sCommand := 'insert into ' + LowerCase(AModel.Table) + ' (' + sFields + ') values (';
+
+  sFields := EmptyStr;
+  for oEField in AModel.EnumFields do
+  begin
+    if (not(sFields.IsEmpty)) then
+      sFields := sFields + ', ';
+
+    sFields := sFields + ':' + AModel.FieldAliasName(oEField);
+  end;
+
+  sCommand := sCommand + sFields + ')';
+end;
+
+
+
+function TCommand<T>.NewKeyValue(const ASequenceName: String): Int64;
+begin
+  Result := 0;
+  //TODO: Do implement
+end;
+
+
+
+function TCommand<T>.Ref: TCommand<T>;
+begin
+  Result := Self;
+end;
+
+
+
+function TCommand<T>.Select(const AModel: IModel<T>): ICommand<T>;
+begin
+  Result := Self;
+  //TODO: Do implement
+end;
+
+
+
+function TCommand<T>.Update(const AModel: IModel<T>): ICommand<T>;
+begin
+  Result := Self;
+  //TODO: Do implement
+end;
+
+
+
+function TCommand<T>.WhereKey(const AModel: IModel<T>; const AModelKey: T): ICommand<T>;
+begin
+  Result := Self;
+  //TODO: Do implement
 end;
 
 end.

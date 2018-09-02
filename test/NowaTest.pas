@@ -29,16 +29,17 @@ type
     procedure TestSQLWhereLessValue;
     procedure TestSQLWhereLessOrEqual;
     procedure TestSQLWhereLessOrEqualValue;
+    procedure TestSQLCommandInsert;
   end;
 
 implementation
 
 uses
-  Model,
+  NowaImpl,
+  Nowa.Model,
+  Nowa.Records,
   Enumerator.Person,
   PersonImpl,
-  NowaImpl,
-  Nowa.Records,
   System.SysUtils,
   Enumerator.Matriculation,
   MatriculationImpl;
@@ -91,6 +92,24 @@ end;
 
 
 
+procedure TNowaTest.TestSQLCommandInsert;
+const
+  sInsert = 'insert into tb_person (nr_sequential, fl_name, dt_birthdate, tx_email, tx_password) values (:PERSON_SEQUENTIAL, :PERSON_NAME, :PERSON_BIRTHDATE, :PERSON_EMAIL, :PERSON_PASSWORD)';
+var
+  oIPerson: IModel<TEPerson>;
+begin
+  oIPerson := TPerson.Create;
+  oIPerson.PrepareModel('', []);
+
+  CheckEquals(sInsert,
+    TCommand<TEPerson>.Create.Ref
+      .Insert(oIPerson)
+      .Build
+  );
+end;
+
+
+
 procedure TNowaTest.TestSQLSelectBuild;
 begin
   CheckEquals('select', TSQLSelect.Create.Ref.Build);
@@ -101,7 +120,7 @@ end;
 procedure TNowaTest.TestSQLSelectBuildFields;
 const
   sQuery = 'select PERSON.NR_SEQUENTIAL as PERSON_SEQUENTIAL';
-  sQueryExpected = 'select PERSON.NR_SEQUENTIAL as PERSON_SEQUENTIAL, PERSON.FL_NAME as PERSON_NAME, PERSON.DT_BIRTHDATE as PERSON_BIRTHDATE, PERSON.TX_EMAIL as PERSON_EMAIL, PERSON.TX_PASSWORD as PERSON_PASSWORD'; 
+  sQueryExpected = 'select PERSON.NR_SEQUENTIAL as PERSON_SEQUENTIAL, PERSON.FL_NAME as PERSON_NAME, PERSON.DT_BIRTHDATE as PERSON_BIRTHDATE, PERSON.TX_EMAIL as PERSON_EMAIL, PERSON.TX_PASSWORD as PERSON_PASSWORD';
 var
   oIPerson: IModel<TEPerson>;
   fRPreparedFields: RFieldsPrepared;

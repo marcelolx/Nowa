@@ -14,6 +14,7 @@ type
     function ColumnAlias(const AEnumeratedField: TEMatriculation): String; override;
     function Table: String; override;
     function TableAlias(const AAlias: String = ''): String; override;
+    function Sequence: String; override;
     function AllColumns: TArray<TEMatriculation>; override;
     function Ref: IEnum<TEMatriculation>; override;
   end;
@@ -89,6 +90,13 @@ end;
 function TEnumMatriculation.Ref: IEnum<TEMatriculation>;
 begin
   Result := Self;
+end;
+
+
+
+function TEnumMatriculation.Sequence: String;
+begin
+  Result := '';
 end;
 
 

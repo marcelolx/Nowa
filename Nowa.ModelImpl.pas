@@ -1,9 +1,9 @@
-unit ModelImpl;
+unit Nowa.ModelImpl;
 
 interface
 
 uses
-  Model,
+  Nowa.Model,
   Enumerator,
   Nowa.Records;
 

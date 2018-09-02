@@ -24,7 +24,7 @@ type
 implementation
 
 uses
-  Model,
+  Nowa.Model,
   PersonImpl,
   Enumerator.Person,
   System.SysUtils;

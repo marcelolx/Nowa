@@ -3,8 +3,8 @@ unit MatriculationImpl;
 interface
 
 uses
-  Model,
-  ModelImpl,
+  Nowa.Model,
+  Nowa.ModelImpl,
   Enumerator,
   Enumerator.Matriculation;
 

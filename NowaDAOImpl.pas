@@ -3,9 +3,10 @@ unit NowaDAOImpl;
 interface
 
 uses
+  Nowa.Model,
   NowaDAO,
-  Model,
-  FireDAC.Comp.Client;
+  FireDAC.Comp.Client,
+  FireDAC.Stan.Param;
 
 type
   TNowaDAO<T> = class(TInterfacedObject, INowaDAO<T>)
