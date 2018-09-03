@@ -12,10 +12,6 @@ type
   TNowaDAO<T> = class(TInterfacedObject, INowaDAO<T>)
   strict private
     fCommand: TFDCommand;
-
-    function GetInsertCommand(const AModel: IModel<T>): String;
-    function GetUpdateCommand(const AModel: IModel<T>): String;
-    function GetWhereModelKey(const AModel: IModel<T>; const AModelKey: T): String;
     function DoInsert(const AModel: IModel<T>; const AModelKey: T): Boolean;
     function GenerateModelKey(const ASequenceName: String): Int64;
 
@@ -32,6 +28,7 @@ type
 implementation
 
 uses
+  NowaImpl,
   System.SysUtils,
   System.Variants;
 
@@ -45,15 +42,8 @@ end;
 
 
 function TNowaDAO<T>.DoInsert(const AModel: IModel<T>; const AModelKey: T): Boolean;
-var
-  sValue: String;
 begin
-  sValue := VarToStr(AModel.GetValue(AModelKey));
-
-  if (not((sValue.IsEmpty) or (sValue.Equals('0')))) then
-    Result := False
-  else
-    Result := True;
+  Result := TSQLCommand<T>.Create.Ref.DoInsert(AModel, AModelKey);
 end;
 
 
@@ -68,69 +58,13 @@ begin
 
   try
     fQuery.Connection := fCommand.Connection;
-    fQuery.Open('select nextval(' + QuotedStr(ASequenceName) + ') as sequence');
+    fQuery.Open(TSQLCommand<T>.Create.Ref.NewKeyValue(ASequenceName).Build);
     Result := fQuery.FieldByName('sequence').AsLargeInt;
     fQuery.Close;
   finally
     fQuery.Free;
   end;
 end;
-
-
-
-function TNowaDAO<T>.GetInsertCommand(const AModel: IModel<T>): String;
-var
-  oEField: T;
-  sFields: String;
-begin
-  sFields := EmptyStr;
-
-  for oEField in AModel.EnumFields do
-  begin
-    if (not(sFields.IsEmpty)) then
-      sFields := sFields + ', ';
-
-    sFields := sFields + LowerCase(AModel.FieldName(oEField));
-  end;
-
-  Result := 'insert into ' + LowerCase(AModel.Table) + '(' + sFields + ') values (';
-
-  sFields := EmptyStr;
-  for oEField in AModel.EnumFields do
-  begin
-    if (not(sFields.IsEmpty)) then
-      sFields := sFields + ', ';
-
-    sFields := sFields + ':' + AModel.FieldAliasName(oEField);
-  end;
-
-  Result := Result + sFields + ')';
-end;
-
-
-
-function TNowaDAO<T>.GetUpdateCommand(const AModel: IModel<T>): String;
-var
-  oEField: T;
-begin
-  for oEField in AModel.EnumFields do
-  begin
-    if (not(Result.IsEmpty)) then
-      Result := Result + ', ';
-
-    Result := Result + LowerCase(AModel.FieldName(oEField)) + ' = :' + AModel.FieldAliasName(oEField);
-  end;
-
-  Result := 'update ' + LowerCase(AModel.Table) + ' set ' + Result;
-end;
-
-
-
-function TNowaDAO<T>.GetWhereModelKey(const AModel: IModel<T>; const AModelKey: T): String;
-begin
-  Result := ' where ' + LowerCase(AModel.FieldName(AModelKey)) + ' = :' + AModel.FieldAliasName(AModelKey);
-end;
-
 
 
 function TNowaDAO<T>.Ref: INowaDAO<T>;
@@ -144,11 +78,15 @@ procedure TNowaDAO<T>.Save(const AModel: IModel<T>; const AModelKey: T);
 begin
   if DoInsert(AModel, AModelKey) then
   begin
-    fCommand.CommandText.Text := GetInsertCommand(AModel);
+    fCommand.CommandText.Text := TSQLCommand<T>.Create.Ref.Insert(AModel).Build;
     AModel.SetValue(AModelKey, GenerateModelKey(AModel.Sequence));
   end
   else
-    fCommand.CommandText.Text := GetUpdateCommand(AModel) + GetWhereModelKey(AModel, AModelKey);
+    fCommand.CommandText.Text :=
+      TSQLCommand<T>.Create.Ref
+        .Update(AModel)
+        .WhereKey(AModel, AModelKey)
+        .Build;
 
   SaveModel(AModel);
 end;
@@ -170,7 +108,7 @@ end;
 
 procedure TNowaDAO<T>.Update(const AModel: IModel<T>);
 begin
-  fCommand.CommandText.Text := GetUpdateCommand(AModel);
+  fCommand.CommandText.Text := TSQLCommand<T>.Create.Ref.Update(AModel).Build;
   SaveModel(AModel);
 end;
 
@@ -178,7 +116,7 @@ end;
 
 procedure TNowaDAO<T>.Insert(const AModel: IModel<T>);
 begin
-  fCommand.CommandText.Text := GetInsertCommand(AModel);
+  fCommand.CommandText.Text := TSQLCommand<T>.Create.Ref.Insert(AModel).Build;
   SaveModel(AModel);
 end;
 

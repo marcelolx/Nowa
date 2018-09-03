@@ -30,6 +30,12 @@ type
     procedure TestSQLWhereLessOrEqual;
     procedure TestSQLWhereLessOrEqualValue;
     procedure TestSQLCommandInsert;
+    procedure TestSQLCommandUpdate;
+    procedure TestSQLCommandUpdateWhereKey;
+    procedure TestSQLCommandDelete;
+    procedure TestSQLCommandDeleteWhere;
+    procedure TestSQLCommandDoInsert;
+    procedure TestSQLCommandNewKeyValue;
   end;
 
 implementation
@@ -92,6 +98,58 @@ end;
 
 
 
+procedure TNowaTest.TestSQLCommandDelete;
+const
+  sDelete = 'delete from tb_person';
+var
+  oIPerson: IModel<TEPerson>;
+begin
+  oIPerson := TPerson.Create;
+  oIPerson.PrepareModel('', []);
+
+  CheckEquals(sDelete,
+    TSQLCommand<TEPerson>.Create.Ref
+      .Delete(oIPerson)
+      .Build
+  );
+end;
+
+
+
+procedure TNowaTest.TestSQLCommandDeleteWhere;
+const
+  sDelete = 'delete from tb_person where nr_sequential = :PERSON_SEQUENTIAL';
+var
+  oIPerson: IModel<TEPerson>;
+begin
+  oIPerson := TPerson.Create;
+  oIPerson.PrepareModel('', []);
+
+  CheckEquals(sDelete,
+    TSQLCommand<TEPerson>.Create.Ref
+      .Delete(oIPerson)
+      .WhereKey(oIPerson, tepSequential)
+      .Build
+  );
+end;
+
+
+
+procedure TNowaTest.TestSQLCommandDoInsert;
+var
+  oIPerson: IModel<TEPerson>;
+begin
+  oIPerson := TPerson.Create;
+  oIPerson.PrepareModel('', []);
+
+  CheckTrue(TSQLCommand<TEPerson>.Create.Ref.DoInsert(oIPerson, tepSequential));
+
+  oIPerson.SetValue(tepSequential, 1);
+  CheckFalse(TSQLCommand<TEPerson>.Create.Ref.DoInsert(oIPerson, tepSequential));
+end;
+
+
+
 procedure TNowaTest.TestSQLCommandInsert;
 const
   sInsert = 'insert into tb_person (nr_sequential, fl_name, dt_birthdate, tx_email, tx_password) values (:PERSON_SEQUENTIAL, :PERSON_NAME, :PERSON_BIRTHDATE, :PERSON_EMAIL, :PERSON_PASSWORD)';
@@ -102,8 +160,64 @@ begin
   oIPerson.PrepareModel('', []);
 
   CheckEquals(sInsert,
-    TCommand<TEPerson>.Create.Ref
+    TSQLCommand<TEPerson>.Create.Ref
       .Insert(oIPerson)
+      .Build
+  );
+end;
+
+
+
+procedure TNowaTest.TestSQLCommandNewKeyValue;
+const
+  sSequence = 'select nextval(''gen_person'') as sequence';
+var
+  oIPerson: IModel<TEPerson>;
+begin
+  oIPerson := TPerson.Create;
+  oIPerson.PrepareModel('', []);
+
+  CheckEquals(sSequence,
+    TSQLCommand<TEPerson>.Create.Ref
+      .NewKeyValue(oIPerson.Sequence)
+      .Build
+  );
+end;
+
+
+
+procedure TNowaTest.TestSQLCommandUpdate;
+const
+  sUpdate = 'update tb_person set nr_sequential = :PERSON_SEQUENTIAL, fl_name = :PERSON_NAME, dt_birthdate = :PERSON_BIRTHDATE, tx_email = :PERSON_EMAIL, tx_password = :PERSON_PASSWORD';
+var
+  oIPerson: IModel<TEPerson>;
+begin
+  oIPerson := TPerson.Create;
+  oIPerson.PrepareModel('', []);
+
+  CheckEquals(sUpdate,
+    TSQLCommand<TEPerson>.Create.Ref
+      .Update(oIPerson)
+      .Build
+  );
+end;
+
+
+
+procedure TNowaTest.TestSQLCommandUpdateWhereKey;
+const
+  sUpdate = 'update tb_person set nr_sequential = :PERSON_SEQUENTIAL, fl_name = :PERSON_NAME, dt_birthdate = :PERSON_BIRTHDATE,' +
+    ' tx_email = :PERSON_EMAIL, tx_password = :PERSON_PASSWORD where nr_sequential = :PERSON_SEQUENTIAL';
+var
+  oIPerson: IModel<TEPerson>;
+begin
+  oIPerson := TPerson.Create;
+  oIPerson.PrepareModel('', []);
+
+  CheckEquals(sUpdate,
+    TSQLCommand<TEPerson>.Create.Ref
+      .Update(oIPerson)
+      .WhereKey(oIPerson, tepSequential)
       .Build
   );
 end;

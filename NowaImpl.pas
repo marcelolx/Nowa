@@ -63,21 +63,21 @@ type
     constructor Create; reintroduce;
   end;
 
-  TCommand<T> = class(TSQL, ICommand<T>)
+  TSQLCommand<T> = class(TSQL, ISQLCommand<T>)
   strict private
     sCommand: String;
   public
-    function Select(const AModel: IModel<T>): ICommand<T>;
-    function Insert(const AModel: IModel<T>): ICommand<T>;
-    function Update(const AModel: IModel<T>): ICommand<T>;
-    function Delete(const AModelKey: T): ICommand<T>;
-    function WhereKey(const AModel: IModel<T>; const AModelKey: T): ICommand<T>;
+    function Select(const AModel: IModel<T>): ISQLCommand<T>;
+    function Insert(const AModel: IModel<T>): ISQLCommand<T>;
+    function Update(const AModel: IModel<T>): ISQLCommand<T>;
+    function Delete(const AModel: IModel<T>): ISQLCommand<T>;
+    function WhereKey(const AModel: IModel<T>; const AModelKey: T): ISQLCommand<T>;
+    function NewKeyValue(const ASequenceName: String): ISQLCommand<T>;
     function DoInsert(const AModel: IModel<T>; const AModelKey: T): Boolean;
-    function NewKeyValue(const ASequenceName: String): Int64;
 
     function Build: string; override;
 
-    function Ref: TCommand<T>;
+    function Ref: TSQLCommand<T>;
     constructor Create; reintroduce;
   end;
 
@@ -281,48 +281,56 @@ end;
 
 { TCommand<T> }
 
-function TCommand<T>.Build: string;
+function TSQLCommand<T>.Build: string;
 begin
   Result := sCommand;
 end;
 
 
 
-constructor TCommand<T>.Create;
+constructor TSQLCommand<T>.Create;
 begin
   sCommand := EmptyStr;
 end;
 
 
 
-function TCommand<T>.Delete(const AModelKey: T): ICommand<T>;
+function TSQLCommand<T>.Delete(const AModel: IModel<T>): ISQLCommand<T>;
 begin
-  Result := Self;
-  //TODO: Do implement
+  Result   := Self;
+  sCommand := 'delete' + sFrom + LowerCase(AModel.Table);
 end;
 
 
 
-function TCommand<T>.DoInsert(const AModel: IModel<T>; const AModelKey: T): Boolean;
+function TSQLCommand<T>.DoInsert(const AModel: IModel<T>; const AModelKey: T): Boolean;
+var
+  sValue: String;
 begin
   Result := False;
-  //TODO: Do implement
+  sValue := VarToStr(AModel.GetValue(AModelKey));
+
+  if (not((sValue.IsEmpty) or (sValue.Equals('0')))) then
+    Result := False
+  else
+    Result := True;
 end;
 
 
 
-function TCommand<T>.Insert(const AModel: IModel<T>): ICommand<T>;
+function TSQLCommand<T>.Insert(const AModel: IModel<T>): ISQLCommand<T>;
 var
   oEField: T;
   sFields: String;
 begin
-  Result  := Self;
-  sFields := EmptyStr;
+  Result   := Self;
+  sFields  := EmptyStr;
+  sCommand := EmptyStr;
 
   for oEField in AModel.EnumFields do
   begin
     if (not(sFields.IsEmpty)) then
-      sFields := sFields + ', ';
+      sFields := sFields + CommaSpace;
 
     sFields := sFields + LowerCase(AModel.FieldName(oEField));
   end;
@@ -333,7 +341,7 @@ begin
   for oEField in AModel.EnumFields do
   begin
     if (not(sFields.IsEmpty)) then
-      sFields := sFields + ', ';
+      sFields := sFields + CommaSpace;
 
     sFields := sFields + ':' + AModel.FieldAliasName(oEField);
   end;
@@ -343,30 +351,22 @@ end;
 
 
 
-function TCommand<T>.NewKeyValue(const ASequenceName: String): Int64;
+function TSQLCommand<T>.NewKeyValue(const ASequenceName: String): ISQLCommand<T>;
 begin
-  Result := 0;
-  //TODO: Do implement
+  Result   := Self;
+  sCommand := 'select nextval(' + QuotedStr(LowerCase(ASequenceName)) + ') as sequence';
 end;
 
 
 
-function TCommand<T>.Ref: TCommand<T>;
-begin
-  Result := Self;
-end;
-
-
-
-function TCommand<T>.Select(const AModel: IModel<T>): ICommand<T>;
+function TSQLCommand<T>.Ref: TSQLCommand<T>;
 begin
   Result := Self;
-  //TODO: Do implement
 end;
 
 
 
-function TCommand<T>.Update(const AModel: IModel<T>): ICommand<T>;
+function TSQLCommand<T>.Select(const AModel: IModel<T>): ISQLCommand<T>;
 begin
   Result := Self;
   //TODO: Do implement
@@ -374,10 +374,30 @@ end;
 
 
 
-function TCommand<T>.WhereKey(const AModel: IModel<T>; const AModelKey: T): ICommand<T>;
+function TSQLCommand<T>.Update(const AModel: IModel<T>): ISQLCommand<T>;
+var
+  oEField: T;
+begin
+  Result   := Self;
+  sCommand := EmptyStr;
+
+  for oEField in AModel.EnumFields do
+  begin
+    if (not(sCommand.IsEmpty)) then
+      sCommand := sCommand + CommaSpace;
+
+    sCommand := sCommand + LowerCase(AModel.FieldName(oEField)) + ' = :' + AModel.FieldAliasName(oEField);
+  end;
+
+  sCommand := 'update ' + LowerCase(AModel.Table) + ' set ' + sCommand;
+end;
+
+
+
+function TSQLCommand<T>.WhereKey(const AModel: IModel<T>; const AModelKey: T): ISQLCommand<T>;
 begin
   Result := Self;
-  //TODO: Do implement
+  sCommand := sCommand + ' where ' + LowerCase(AModel.FieldName(AModelKey)) + ' = :' + AModel.FieldAliasName(AModelKey);
 end;
 
 end.

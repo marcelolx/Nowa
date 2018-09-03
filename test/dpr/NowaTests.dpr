@@ -18,8 +18,8 @@ uses
   NowaTest in '..\NowaTest.pas',
   Enumerator.Matriculation in '..\Matriculation\Enumerator.Matriculation.pas',
   MatriculationImpl in '..\Matriculation\MatriculationImpl.pas',
-  NowaDAO in '..\..\NowaDAO.pas',
-  NowaDAOImpl in '..\..\NowaDAOImpl.pas';
+  NowaDAO in '..\DAOExample\NowaDAO.pas',
+  NowaDAOImpl in '..\DAOExample\NowaDAOImpl.pas';
 
 {$R *.RES}
 

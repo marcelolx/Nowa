@@ -36,15 +36,15 @@ type
     function Where(const AWhereCondition: ISQLWhere): ISQLSelect;
   end;
 
-  ICommand<T> = interface(ISQL)
+  ISQLCommand<T> = interface(ISQL)
   ['{56F3B298-6CBA-4DB6-824A-5C3F329C63CF}']
-    function Select(const AModel: IModel<T>): ICommand<T>;
-    function Insert(const AModel: IModel<T>): ICommand<T>;
-    function Update(const AModel: IModel<T>): ICommand<T>;
-    function Delete(const AModelKey: T): ICommand<T>;
-    function WhereKey(const AModel: IModel<T>; const AModelKey: T): ICommand<T>;
+    function Select(const AModel: IModel<T>): ISQLCommand<T>;
+    function Insert(const AModel: IModel<T>): ISQLCommand<T>;
+    function Update(const AModel: IModel<T>): ISQLCommand<T>;
+    function Delete(const AModel: IModel<T>): ISQLCommand<T>;
+    function WhereKey(const AModel: IModel<T>; const AModelKey: T): ISQLCommand<T>;
+    function NewKeyValue(const ASequenceName: String): ISQLCommand<T>;
     function DoInsert(const AModel: IModel<T>; const AModelKey: T): Boolean;
-    function NewKeyValue(const ASequenceName: String): Int64;
   end;
 
 implementation
