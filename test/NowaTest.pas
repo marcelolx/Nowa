@@ -36,6 +36,7 @@ type
     procedure TestSQLCommandDeleteWhere;
     procedure TestSQLCommandDoInsert;
     procedure TestSQLCommandNewKeyValue;
+    procedure TestSQLCommandFind;
   end;
 
 implementation
@@ -146,6 +147,25 @@ begin
 
   oIPerson.SetValue(tepSequential, 1);
   CheckFalse(TSQLCommand<TEPerson>.Create.Ref.DoInsert(oIPerson, tepSequential));
+end;
+
+
+
+procedure TNowaTest.TestSQLCommandFind;
+const
+  sFind = 'select PERSON.NR_SEQUENTIAL as PERSON_SEQUENTIAL, PERSON.FL_NAME as PERSON_NAME, PERSON.DT_BIRTHDATE as PERSON_BIRTHDATE,' +
+    ' PERSON.TX_EMAIL as PERSON_EMAIL, PERSON.TX_PASSWORD as PERSON_PASSWORD from TB_PERSON as PERSON where PERSON.NR_SEQUENTIAL = 1';
+var
+  oIPerson: IModel<TEPerson>;
+begin
+  oIPerson := TPerson.Create;
+  oIPerson.PrepareModel('', []);
+
+  CheckEquals(sFind,
+    TSQLCommand<TEPerson>.Create.Ref
+      .Find(oIPerson, tepSequential , 1)
+      .Build
+  );
 end;
 
 

@@ -73,6 +73,7 @@ type
     function Delete(const AModel: IModel<T>): ISQLCommand<T>;
     function WhereKey(const AModel: IModel<T>; const AModelKey: T): ISQLCommand<T>;
     function NewKeyValue(const ASequenceName: String): ISQLCommand<T>;
+    function Find(const AModel: IModel<T>; const AModelKey: T; const AKeyValue: Int64): ISQLCommand<T>;
     function DoInsert(const AModel: IModel<T>; const AModelKey: T): Boolean;
 
     function Build: string; override;
@@ -316,6 +317,24 @@ begin
     Result := True;
 end;
 
+
+
+function TSQLCommand<T>.Find(const AModel: IModel<T>; const AModelKey: T; const AKeyValue: Int64): ISQLCommand<T>;
+var
+  oEField: T;
+  sFind: string;
+begin
+  Result := Self;
+
+  sCommand := TSQLSelect.Create.Ref
+    .Fields([AModel.PreparedFields])
+    .From(AModel.Table, AModel.TableAlias)
+    .Where(
+      TSQLWhere.Create.Ref
+        .Field(AModel.TableAlias, AModel.FieldName(AModelKey))
+        .Equal(AKeyValue)
+    ).Build;
+end;
 
 
 function TSQLCommand<T>.Insert(const AModel: IModel<T>): ISQLCommand<T>;
