@@ -3,37 +3,48 @@ unit PersonImpl;
 interface
 
 uses
-  Nowa.Model,
+  Person,
   Nowa.ModelImpl,
   Enumerator,
-  Enumerator.Person;
+  Enumerator.Person,
+  Enumerator.Matriculation,
+  Nowa.Model;
 
 type
-  TPerson = class(TModel<TEPerson>, IModel<TEPerson>)
+  TPerson = class(TModel<TEPerson>, IPerson<TEPerson>)
   private
     Sequential: Int64;
     Name: String;
     BirthDate: TDateTime;
     Email: String;
     Password: String;
+
+    Matriculation: IModel<TEMatriculation>;
   public
     constructor Create; reintroduce;
 
-    procedure SetValue(const AField: TEPerson; const AValue: Variant); reintroduce;
+    procedure SetValue(const AField: TEPerson; const AValue: Variant); reintroduce; overload;
 
-    function GetValue(const AField: TEPerson): Variant; reintroduce;
+    function GetValue(const AField: TEPerson): Variant; reintroduce; overload;
+
+    procedure SetValue(const AField: TEMatriculation; const AValue: Variant); reintroduce; overload;
+    function GetValue(const AField: TEMatriculation): Variant; reintroduce; overload;
+
   end;
 
 implementation
 
 uses
-  SysUtils;
+  SysUtils,
+  MatriculationImpl;
 
 { TPerson }
 
 constructor TPerson.Create;
 begin
   inherited Create(TEnumPerson.Create.Ref);
+
+  Matriculation := TMatriculation.Create;
 end;
 
 
@@ -84,6 +95,18 @@ begin
   else
     raise Exception.Create('TEPerson field doesn''t have relationship with model atributte.');
   end;
+end;
+
+function TPerson.GetValue(const AField: TEMatriculation): Variant;
+begin
+  Result := Matriculation.GetValue(AField);
+end;
+
+
+
+procedure TPerson.SetValue(const AField: TEMatriculation; const AValue: Variant);
+begin
+  Matriculation.SetValue(AField, AValue);
 end;
 
 end.

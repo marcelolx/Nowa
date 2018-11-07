@@ -19,7 +19,8 @@ uses
   Enumerator.Matriculation in '..\Matriculation\Enumerator.Matriculation.pas',
   MatriculationImpl in '..\Matriculation\MatriculationImpl.pas',
   NowaDAO in '..\DAOExample\NowaDAO.pas',
-  NowaDAOImpl in '..\DAOExample\NowaDAOImpl.pas';
+  NowaDAOImpl in '..\DAOExample\NowaDAOImpl.pas',
+  Nowa.Enumerators in '..\..\Nowa.Enumerators.pas';
 
 {$R *.RES}
 

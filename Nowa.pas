@@ -4,7 +4,8 @@ interface
 
 uses
   Nowa.Records,
-  Nowa.Model;
+  Nowa.Model,
+  Nowa.Enumerators;
 
 type
   ISQL = interface
@@ -27,6 +28,34 @@ type
     function Less(const AValue: Variant): ISQLWhere; overload;
     function LessOrEqual: ISQLWhere; overload;
     function LessOrEqual(const AValue: Variant): ISQLWhere; overload;
+    function Like(const AOperator: TSQLLikeOperator; const AValue: Variant): ISQLWhere;
+    function NotLike(const AOperator: TSQLLikeOperator; const AValue: Variant): ISQLWhere;
+    function IsNull: ISQLWhere;
+    function IsNotNull: ISQLWhere;
+    function InList(const AArray: TArray<Variant>): ISQLWhere;
+    function &Not: ISQLWhere;
+    function Between(const AStartValue, AEndValue: Variant): ISQLWhere;
+  end;
+
+  ISQLBy<T> = interface(ISQL)
+  ['{08FBAA7E-DEFB-45A7-BF5D-B3A5681BF561}']
+    function Column(const AColumn: T): ISQLBy<T>;
+    function Columns(const AColumn: TArray<T>): ISQLBy<T>;
+  end;
+
+  ISQLCondition = interface(ISQL)
+  ['{04DF0E7C-783C-47C1-A033-6E19F8AE870D}']
+    function LeftTerm(const ATerm: String): ISQLCondition;
+    function RightTerm(const ATerm: string): ISQLCondition;
+    function Op(const AOperator: TSQLOperator): ISQLCondition;
+  end;
+
+  ISQLJoin = interface(ISQL)
+  ['{56C4AB65-E682-4273-91C1-CF3B10BF74F1}']
+    function Table(const ATableAlias, ATableName: String): ISQLJoin;
+    function &On(const ACondition: ISQLCondition): ISQLJoin;
+    function &And(const ACondition: ISQLCondition): ISQLJoin;
+    function &Or(const ACondition: ISQLCondition): ISQLJoin;
   end;
 
   ISQLSelect = interface(ISQL)
@@ -34,6 +63,16 @@ type
     function Fields(const AModelsFieldsPrepared: TArray<RFieldsPrepared>): ISQLSelect;
     function From(const ATable, ATableAlias: String): ISQLSelect;
     function Where(const AWhereCondition: ISQLWhere): ISQLSelect;
+    function Having(const AHavingQuery: ISQLSelect): ISQLSelect;
+    function GroupBy(const AGroupBy: ISQLBy<TObject>): ISQLSelect;
+    function OrderBy(const AOrderBy: ISQLBy<TObject>): ISQLSelect;
+    function Union: ISQLSelect;
+    function UnionAll: ISQLSelect;
+    function InnerJoin(const AJoin: ISQLJoin): ISQLSelect;
+    function LeftJoin(const AJoin: ISQLJoin): ISQLSelect;
+    function LeftOuterJoin(const AJoin: ISQLJoin): ISQLSelect;
+    function RightJoin(const AJoin: ISQLJoin): ISQLSelect;
+    function RightOuterJoin(const AJoin: ISQLJoin): ISQLSelect;
   end;
 
   ISQLCommand<T> = interface(ISQL)
@@ -44,6 +83,7 @@ type
     function Find(const AModel: IModel<T>; const AModelKey: T; const AKeyValue: Int64): ISQLCommand<T>;
     function WhereKey(const AModel: IModel<T>; const AModelKey: T): ISQLCommand<T>;
     function NewKeyValue(const ASequenceName: String): ISQLCommand<T>;
+    function Exists(const AModel: IModel<T>; const AModelKey: T): ISQLCommand<T>;
     function DoInsert(const AModel: IModel<T>; const AModelKey: T): Boolean;
   end;
 

@@ -103,6 +103,7 @@
         <DCCReference Include="..\Matriculation\MatriculationImpl.pas"/>
         <DCCReference Include="..\DAOExample\NowaDAO.pas"/>
         <DCCReference Include="..\DAOExample\NowaDAOImpl.pas"/>
+        <DCCReference Include="..\..\Nowa.Enumerators.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

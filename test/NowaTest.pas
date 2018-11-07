@@ -11,10 +11,20 @@ type
     procedure SetUp; override;
     procedure TearDown; override;
   published
-    procedure TestSQLSelectBuild;
-    procedure TestSQLSelectBuildFields;
-    procedure TestSQLSelectBuildFromWithFields;
-    procedure TestSQLSelectBuildWhere;
+    procedure TestSQLSelect;
+    procedure TestSQLSelectFields;
+    procedure TestSQLSelectFromWithFields;
+    procedure TestSQLSelectWhere;
+    procedure TestSQLSelectHaving;
+    procedure TestSQLSelectGroupBy;
+    procedure TestSQLSelectUnion;
+    procedure TestSQLSelectUnionAll;
+    procedure TestSQLSelectInnerJoin;
+    procedure TestSQLSelectLeftJoin;
+    procedure TestSQLSelectLeftOuterJoin;
+    procedure TestSQLSelectRightJoin;
+    procedure TestSQLSelectRightOuterJoin;
+
     procedure TestBasicSelect;
     procedure TestSQLWhereField;
     procedure TestSQLWhereEqual;
@@ -29,6 +39,22 @@ type
     procedure TestSQLWhereLessValue;
     procedure TestSQLWhereLessOrEqual;
     procedure TestSQLWhereLessOrEqualValue;
+    procedure TestSQLWhereLike;
+    procedure TestSQLWhereNotLike;
+    procedure TestSQLWhereIsNull;
+    procedure TestSQLWhereIsNotNull;
+    procedure TestSQLWhereInList;
+    procedure TestSQLWhereNot;
+    procedure TestSQLWhereNotInList;
+    procedure TestSQLGroupByColumn;
+    procedure TestSQLGroupByColumns;
+    procedure TestSQLConditionLeftTerm;
+    procedure TestSQLConditionRightTerm;
+    procedure TestSQLConditionOp;
+    procedure TestSQLJoinTable;
+    procedure TestSQLJoinOn;
+    procedure TestSQLJoinAnd;
+    procedure TestSQLJoinOr;
     procedure TestSQLCommandInsert;
     procedure TestSQLCommandUpdate;
     procedure TestSQLCommandUpdateWhereKey;
@@ -37,6 +63,7 @@ type
     procedure TestSQLCommandDoInsert;
     procedure TestSQLCommandNewKeyValue;
     procedure TestSQLCommandFind;
+    procedure TestSQLCommandExists;
   end;
 
 implementation
@@ -45,6 +72,7 @@ uses
   NowaImpl,
   Nowa.Model,
   Nowa.Records,
+  Nowa.Enumerators,
   Enumerator.Person,
   PersonImpl,
   System.SysUtils,
@@ -151,6 +179,22 @@ end;
 
 
 
+procedure TNowaTest.TestSQLCommandExists;
+var
+  oIPerson: IModel<TEPerson>;
+begin
+  oIPerson := TPerson.Create;
+  oIPerson.PrepareModel('', []);
+
+  CheckEquals('failed',
+    TSQLCommand<TEPerson>.Create.Ref
+      .Exists(oIPerson, tepSequential)
+      .Build
+  );
+end;
+
+
+
 procedure TNowaTest.TestSQLCommandFind;
 const
   sFind = 'select PERSON.NR_SEQUENTIAL as PERSON_SEQUENTIAL, PERSON.FL_NAME as PERSON_NAME, PERSON.DT_BIRTHDATE as PERSON_BIRTHDATE,' +
@@ -244,14 +288,77 @@ end;
 
 
 
-procedure TNowaTest.TestSQLSelectBuild;
+procedure TNowaTest.TestSQLConditionLeftTerm;
+begin
+  CheckTrue(False);
+end;
+
+
+
+procedure TNowaTest.TestSQLConditionOp;
+begin
+  CheckTrue(False);
+end;
+
+
+
+procedure TNowaTest.TestSQLConditionRightTerm;
+begin
+  CheckTrue(False);
+end;
+
+
+
+procedure TNowaTest.TestSQLGroupByColumn;
+begin
+  CheckTrue(False, 'TestSQLGroupByColumn not implemented');
+end;
+
+
+
+procedure TNowaTest.TestSQLGroupByColumns;
+begin
+  CheckTrue(False, 'TestSQLGroupByColumns not implemented');
+end;
+
+
+
+procedure TNowaTest.TestSQLJoinAnd;
+begin
+  CheckTrue(False);
+end;
+
+
+
+procedure TNowaTest.TestSQLJoinOn;
+begin
+  CheckTrue(False);
+end;
+
+
+
+procedure TNowaTest.TestSQLJoinOr;
+begin
+  CheckTrue(False);
+end;
+
+
+
+procedure TNowaTest.TestSQLJoinTable;
+begin
+  CheckTrue(False);
+end;
+
+
+
+procedure TNowaTest.TestSQLSelect;
 begin
   CheckEquals('select', TSQLSelect.Create.Ref.Build);
 end;
 
 
 
-procedure TNowaTest.TestSQLSelectBuildFields;
+procedure TNowaTest.TestSQLSelectFields;
 const
   sQuery = 'select PERSON.NR_SEQUENTIAL as PERSON_SEQUENTIAL';
   sQueryExpected = 'select PERSON.NR_SEQUENTIAL as PERSON_SEQUENTIAL, PERSON.FL_NAME as PERSON_NAME, PERSON.DT_BIRTHDATE as PERSON_BIRTHDATE, PERSON.TX_EMAIL as PERSON_EMAIL, PERSON.TX_PASSWORD as PERSON_PASSWORD';
@@ -294,7 +401,7 @@ end;
 
 
 
-procedure TNowaTest.TestSQLSelectBuildFromWithFields;
+procedure TNowaTest.TestSQLSelectFromWithFields;
 const
   sQuery = 'select PERSON.NR_SEQUENTIAL as PERSON_SEQUENTIAL from TB_PERSON as PERSON';
   sQueryExpected = 'select PERSON.NR_SEQUENTIAL as PERSON_SEQUENTIAL, PERSON.FL_NAME as PERSON_NAME, PERSON.DT_BIRTHDATE as PERSON_BIRTHDATE, PERSON.TX_EMAIL as PERSON_EMAIL, PERSON.TX_PASSWORD as PERSON_PASSWORD from TB_PERSON as PERSON';
@@ -353,7 +460,99 @@ end;
 
 
 
-procedure TNowaTest.TestSQLSelectBuildWhere;
+procedure TNowaTest.TestSQLSelectGroupBy;
+begin
+  Check(False, 'TestSQLSelectBuildGroupBy NOT IMPMPLEMENTED');
+end;
+
+
+
+procedure TNowaTest.TestSQLSelectHaving;
+begin
+  Check(False, 'TestSQLSelectBuildHaving NOT IMPMPLEMENTED');
+end;
+
+
+
+procedure TNowaTest.TestSQLSelectInnerJoin;
+var
+  oIPerson: IModel<TEPerson>;
+  oIMatriculation: IModel<TEMatriculation>;
+  teste: string;
+begin
+  oIPerson := TPerson.Create;
+  oIMatriculation := TMatriculation.Create;
+
+  oIPerson.PrepareModel('', []);
+  oIMatriculation.PrepareModel('', []);
+  teste := TSQLSelect.Create.Ref
+    .Fields([oIPerson.PreparedFields, oIMatriculation.PreparedFields])
+    .From(oIPerson.Table, oIPerson.TableAlias)
+    .InnerJoin(
+      TSQLJoin.Create.Ref
+        .Table(oIMatriculation.TableAlias, oIMatriculation.Table)
+        .&On(
+          TSQLCondition.Create.Ref
+            .LeftTerm(oIMatriculation.TableAlias + '.' + oIMatriculation.FieldName(temPersonSequential))
+            .Op(opEqual)
+            .RightTerm(oIPerson.Table + '.' + oIPerson.FieldName(tepSequential))
+        )
+    )
+    .Build;
+
+
+  CheckEquals('NOT IMPLEMENTED',
+         ''
+  );
+
+
+end;
+
+
+
+procedure TNowaTest.TestSQLSelectLeftJoin;
+begin
+  Check(False, 'TestSQLSelectBuildLeftJoin NOT IMPMPLEMENTED');
+end;
+
+
+
+procedure TNowaTest.TestSQLSelectLeftOuterJoin;
+begin
+  Check(False, 'TestSQLSelectBuildLeftOuterJoin NOT IMPMPLEMENTED');
+end;
+
+
+
+procedure TNowaTest.TestSQLSelectRightJoin;
+begin
+  Check(False, 'TestSQLSelectBuildRightJoin NOT IMPMPLEMENTED');
+end;
+
+
+
+procedure TNowaTest.TestSQLSelectRightOuterJoin;
+begin
+  Check(False, 'TestSQLSelectBuildRightOuterJoin NOT IMPMPLEMENTED');
+end;
+
+
+
+procedure TNowaTest.TestSQLSelectUnion;
+begin
+  Check(False, 'TestSQLSelectBuildUnion NOT IMPMPLEMENTED');
+end;
+
+
+
+procedure TNowaTest.TestSQLSelectUnionAll;
+begin
+  Check(False, 'TestSQLSelectBuildUnionAll NOT IMPMPLEMENTED');
+end;
+
+
+
+procedure TNowaTest.TestSQLSelectWhere;
 const
   sQuery = 'select PERSON.NR_SEQUENTIAL as PERSON_SEQUENTIAL from TB_PERSON as PERSON where PERSON.NR_SEQUENTIAL = 1';
   sQueryExpected = 'select PERSON.NR_SEQUENTIAL as PERSON_SEQUENTIAL, PERSON.FL_NAME as PERSON_NAME, PERSON.DT_BIRTHDATE as PERSON_BIRTHDATE, PERSON.TX_EMAIL as PERSON_EMAIL, PERSON.TX_PASSWORD as PERSON_PASSWORD from TB_PERSON as PERSON where PERSON.NR_SEQUENTIAL = 1';
@@ -752,6 +951,57 @@ end;
 
 
 
+procedure TNowaTest.TestSQLWhereInList;
+var
+  oIPerson: IModel<TEPerson>;
+begin
+  oIPerson := TPerson.Create;
+  oIPerson.PrepareModel('', []);
+
+  CheckEquals(' where PERSON.NR_SEQUENTIAL in (1,2,3,4)',
+    TSQLWhere.Create.Ref
+      .Field(oIPerson.TableAlias, oIPerson.FieldName(tepSequential))
+      .InList([1,2,3,4])
+      .Build
+  );
+end;
+
+
+
+procedure TNowaTest.TestSQLWhereIsNotNull;
+var
+  oIPerson: IModel<TEPerson>;
+begin
+  oIPerson := TPerson.Create;
+  oIPerson.PrepareModel('', []);
+
+  CheckEquals('not implemented',
+    TSQLWhere.Create.Ref
+      .Field(oIPerson.TableAlias, oIPerson.FieldName(tepSequential))
+      .IsNotNull
+      .Build
+  );
+end;
+
+
+
+procedure TNowaTest.TestSQLWhereIsNull;
+var
+  oIPerson: IModel<TEPerson>;
+begin
+  oIPerson := TPerson.Create;
+  oIPerson.PrepareModel('', []);
+
+  CheckEquals('not implemented',
+    TSQLWhere.Create.Ref
+      .Field(oIPerson.TableAlias, oIPerson.FieldName(tepSequential))
+      .IsNull
+      .Build
+  );
+end;
+
+
+
 procedure TNowaTest.TestSQLWhereLess;
 const
   sQuery1 = ' where T.EXAMPLE < ';
@@ -896,6 +1146,114 @@ begin
 end;
 
 
+
+procedure TNowaTest.TestSQLWhereLike;
+var
+  oIPerson: IModel<TEPerson>;
+begin
+  oIPerson := TPerson.Create;
+  oIPerson.PrepareModel('', []);
+
+  CheckEquals('not implemented',
+    TSQLWhere.Create.Ref
+      .Field(oIPerson.TableAlias, oIPerson.FieldName(tepName))
+      .Like(loEqual, 'Marcelo')
+      .Build
+  );
+
+  CheckEquals('not implemented',
+    TSQLWhere.Create.Ref
+      .Field(oIPerson.TableAlias, oIPerson.FieldName(tepName))
+      .Like(loStarting, 'Marcelo')
+      .Build
+  );
+
+  CheckEquals('not implemented',
+    TSQLWhere.Create.Ref
+      .Field(oIPerson.TableAlias, oIPerson.FieldName(tepName))
+      .Like(loEnding, 'Marcelo')
+      .Build
+  );
+
+  CheckEquals('not implemented',
+    TSQLWhere.Create.Ref
+      .Field(oIPerson.TableAlias, oIPerson.FieldName(tepName))
+      .Like(loContaining, 'Marcelo')
+      .Build
+  );
+end;
+
+
+
+procedure TNowaTest.TestSQLWhereNot;
+var
+  oIPerson: IModel<TEPerson>;
+begin
+  oIPerson := TPerson.Create;
+  oIPerson.PrepareModel('', []);
+
+  CheckEquals(' where PERSON.NR_SEQUENTIAL not ',
+    TSQLWhere.Create.Ref
+      .Field(oIPerson.TableAlias, oIPerson.FieldName(tepSequential))
+      .&Not
+      .Build
+  );
+end;
+
+
+
+procedure TNowaTest.TestSQLWhereNotInList;
+var
+  oIPerson: IModel<TEPerson>;
+begin
+  oIPerson := TPerson.Create;
+  oIPerson.PrepareModel('', []);
+
+  CheckEquals(' where PERSON.NR_SEQUENTIAL not  in (1,2,3,4)',
+    TSQLWhere.Create.Ref
+      .Field(oIPerson.TableAlias, oIPerson.FieldName(tepSequential))
+      .&Not.InList([1,2,3,4])
+      .Build
+  );
+end;
+
+
+
+procedure TNowaTest.TestSQLWhereNotLike;
+var
+  oIPerson: IModel<TEPerson>;
+begin
+  oIPerson := TPerson.Create;
+  oIPerson.PrepareModel('', []);
+
+  CheckEquals('not implemented',
+    TSQLWhere.Create.Ref
+      .Field(oIPerson.TableAlias, oIPerson.FieldName(tepName))
+      .NotLike(loEqual, 'Marcelo')
+      .Build
+  );
+
+  CheckEquals('not implemented',
+    TSQLWhere.Create.Ref
+      .Field(oIPerson.TableAlias, oIPerson.FieldName(tepName))
+      .NotLike(loStarting, 'Marcelo')
+      .Build
+  );
+
+  CheckEquals('not implemented',
+    TSQLWhere.Create.Ref
+      .Field(oIPerson.TableAlias, oIPerson.FieldName(tepName))
+      .NotLike(loEnding, 'Marcelo')
+      .Build
+  );
+
+  CheckEquals('not implemented',
+    TSQLWhere.Create.Ref
+      .Field(oIPerson.TableAlias, oIPerson.FieldName(tepName))
+      .NotLike(loContaining, 'Marcelo')
+      .Build
+  );
+end;
 
 initialization
 

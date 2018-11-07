@@ -5,14 +5,15 @@ interface
 uses
   Nowa,
   Nowa.Records,
-  Nowa.Model;
+  Nowa.Model,
+  Nowa.Enumerators;
 
 type
   TSQL = class(TInterfacedObject, ISQL)
   strict protected const
     Space = ' ';
     CommaSpace = ', ';
-    &As = ' as ';
+    sAs = ' as ';
     Point = '.';
     sFrom = ' from ';
     sEqual = ' = ';
@@ -21,6 +22,7 @@ type
     sGreaterOrEqual = ' >= ';
     sLess = ' < ';
     sLessOrEqual = ' <= ';
+    sOn = ' on ';
   public
     function Build: String; virtual; abstract;
   end;
@@ -42,10 +44,59 @@ type
     function Less(const AValue: Variant): ISQLWhere; overload;
     function LessOrEqual: ISQLWhere; overload;
     function LessOrEqual(const AValue: Variant): ISQLWhere; overload;
+    function Like(const AOperator: TSQLLikeOperator; const AValue: Variant): ISQLWhere;
+    function NotLike(const AOperator: TSQLLikeOperator; const AValue: Variant): ISQLWhere;
+    function IsNull: ISQLWhere;
+    function IsNotNull: ISQLWhere;
+    function InList(const AArray: TArray<Variant>): ISQLWhere;
+    function &Not: ISQLWhere;
+    function Between(const AStartValue, AEndValue: Variant): ISQLWhere;
 
     function Build: string; override;
 
     function Ref: ISQLWhere;
+    constructor Create; reintroduce;
+  end;
+
+  TSQLBy<T> = class(TSQL, ISQLBy<T>)
+  strict private
+    ByCommand: String;
+  public
+    function Column(const AColumn: T): ISQLBy<T>;
+    function Columns(const AColumn: TArray<T>): ISQLBy<T>;
+
+    function Build: string; override;
+
+    function Ref: ISQLBy<T>;
+    constructor Create; reintroduce;
+  end;
+
+  TSQLJoin = class(TSQL, ISQLJoin)
+  strict private
+    JoinCommand: String;
+  public
+    function Table(const ATableAlias, ATableName: String): ISQLJoin;
+    function &On(const ACondition: ISQLCondition): ISQLJoin;
+    function &And(const ACondition: ISQLCondition): ISQLJoin;
+    function &Or(const ACondition: ISQLCondition): ISQLJoin;
+
+    function Build: string; override;
+
+    function Ref: ISQLJoin;
+    constructor Create; reintroduce;
+  end;
+
+  TSQLCondition = class(TSQL, ISQLCondition)
+  strict private
+    ConditionCommand: String;
+  public
+    function LeftTerm(const ATerm: String): ISQLCondition;
+    function RightTerm(const ATerm: string): ISQLCondition;
+    function Op(const AOperator: TSQLOperator): ISQLCondition;
+
+    function Build: string; override;
+
+    function Ref: ISQLCondition;
     constructor Create; reintroduce;
   end;
 
@@ -56,6 +107,16 @@ type
     function Fields(const AModelsFieldsPrepared: TArray<RFieldsPrepared>): ISQLSelect;
     function From(const ATable, ATableAlias: String): ISQLSelect;
     function Where(const AWhereCondition: ISQLWhere): ISQLSelect;
+    function Having(const AHavingQuery: ISQLSelect): ISQLSelect;
+    function GroupBy(const AGroupBy: ISQLBy<TObject>): ISQLSelect;
+    function OrderBy(const AOrderBy: ISQLBy<TObject>): ISQLSelect;
+    function Union: ISQLSelect;
+    function UnionAll: ISQLSelect;
+    function InnerJoin(const AJoin: ISQLJoin): ISQLSelect;
+    function LeftJoin(const AJoin: ISQLJoin): ISQLSelect;
+    function LeftOuterJoin(const AJoin: ISQLJoin): ISQLSelect;
+    function RightJoin(const AJoin: ISQLJoin): ISQLSelect;
+    function RightOuterJoin(const AJoin: ISQLJoin): ISQLSelect;
 
     function Build: string; override;
 
@@ -67,7 +128,6 @@ type
   strict private
     sCommand: String;
   public
-    function Select(const AModel: IModel<T>): ISQLCommand<T>;
     function Insert(const AModel: IModel<T>): ISQLCommand<T>;
     function Update(const AModel: IModel<T>): ISQLCommand<T>;
     function Delete(const AModel: IModel<T>): ISQLCommand<T>;
@@ -75,6 +135,7 @@ type
     function NewKeyValue(const ASequenceName: String): ISQLCommand<T>;
     function Find(const AModel: IModel<T>; const AModelKey: T; const AKeyValue: Int64): ISQLCommand<T>;
     function DoInsert(const AModel: IModel<T>; const AModelKey: T): Boolean;
+    function Exists(const AModel: IModel<T>; const AModelKey: T): ISQLCommand<T>;
 
     function Build: string; override;
 
@@ -90,6 +151,22 @@ uses
   System.Variants;
 
 { TSQLWhere }
+
+function TSQLWhere.&Not: ISQLWhere;
+begin
+  Result := Self;
+  sWhere := sWhere + ' not ';
+end;
+
+
+
+function TSQLWhere.Between(const AStartValue, AEndValue: Variant): ISQLWhere;
+begin
+  Result := Self;
+  {TODO -oMarcelo -cImplement : Implementar}
+end;
+
+
 
 function TSQLWhere.Build: string;
 begin
@@ -169,6 +246,46 @@ end;
 
 
 
+function TSQLWhere.InList(const AArray: TArray<Variant>): ISQLWhere;
+var
+  iIndex: Integer;
+begin
+  Result := Self;
+
+  if (Length(AArray) = 0) then
+    raise Exception.Create('Error: InList need array with length >= 1');
+
+  sWhere := sWhere + ' in (';
+
+  for iIndex := Low(AArray) to High(AArray) do
+  begin
+    sWhere := sWhere + VarToStr(AArray[iIndex]);
+
+    if (iIndex < High(AArray)) then
+      sWhere := sWhere + ',';
+  end;
+
+  sWhere := sWhere + ')';
+end;
+
+
+
+function TSQLWhere.IsNotNull: ISQLWhere;
+begin
+  Result := Self;
+  //TODO: Do Implement
+end;
+
+
+
+function TSQLWhere.IsNull: ISQLWhere;
+begin
+  Result := Self;
+  //TODO: DO Implement
+end;
+
+
+
 function TSQLWhere.GreaterOrEqual: ISQLWhere;
 begin
   Result := Self;
@@ -197,6 +314,22 @@ function TSQLWhere.LessOrEqual(const AValue: Variant): ISQLWhere;
 begin
   Result := Self;
   sWhere := sWhere + sLessOrEqual + VarToStr(AValue);
+end;
+
+
+
+function TSQLWhere.Like(const AOperator: TSQLLikeOperator; const AValue: Variant): ISQLWhere;
+begin
+  Result := Self;
+  //TODO: Do Implement
+end;
+
+
+
+function TSQLWhere.NotLike(const AOperator: TSQLLikeOperator; const AValue: Variant): ISQLWhere;
+begin
+  Result := Self;
+  //TODO: Do Implement
 end;
 
 
@@ -249,7 +382,7 @@ begin
       if (not(sFieldsPrepared.IsEmpty)) then
         sFieldsPrepared := sFieldsPrepared + CommaSpace;
 
-      sFieldsPrepared := sFieldsPrepared + fFieldsPrepared.TableAlias + Point + sField + &As + sFieldAlias;
+      sFieldsPrepared := sFieldsPrepared + fFieldsPrepared.TableAlias + Point + sField + sAs + sFieldAlias;
     end;
   end;
 
@@ -261,7 +394,55 @@ end;
 function TSQLSelect.From(const ATable, ATableAlias: String): ISQLSelect;
 begin
   Result  := Self;
-  sSelect := sSelect + sFrom + ATable + &As + ATableAlias;
+  sSelect := sSelect + sFrom + ATable + sAs + ATableAlias;
+end;
+
+
+
+function TSQLSelect.GroupBy(const AGroupBy: ISQLBy<TObject>): ISQLSelect;
+begin
+  Result := Self;
+  {TODO -oMarcelo -cGeneral : Implementar}
+end;
+
+
+
+function TSQLSelect.Having(const AHavingQuery: ISQLSelect): ISQLSelect;
+begin
+  Result := Self;
+  {TODO -oMarcelo -cGeneral : Implementar}
+end;
+
+
+
+function TSQLSelect.InnerJoin(const AJoin: ISQLJoin): ISQLSelect;
+begin
+  Result := Self;
+  sSelect := sSelect + ' inner join ' + AJoin.Build;
+end;
+
+
+
+function TSQLSelect.LeftJoin(const AJoin: ISQLJoin): ISQLSelect;
+begin
+  Result := Self;
+  {TODO -oMarcelo -cGeneral : Implementar}
+end;
+
+
+
+function TSQLSelect.LeftOuterJoin(const AJoin: ISQLJoin): ISQLSelect;
+begin
+  Result := Self;
+  {TODO -oMarcelo -cGeneral : Implementar}
+end;
+
+
+
+function TSQLSelect.OrderBy(const AOrderBy: ISQLBy<TObject>): ISQLSelect;
+begin
+  Result := Self;
+  {TODO -oMarcelo -cGeneral : Implementar}
 end;
 
 
@@ -269,6 +450,38 @@ end;
 function TSQLSelect.Ref: ISQLSelect;
 begin
   Result := Self;
+end;
+
+
+
+function TSQLSelect.RightJoin(const AJoin: ISQLJoin): ISQLSelect;
+begin
+  Result := Self;
+  {TODO -oMarcelo -cGeneral : Implementar}
+end;
+
+
+
+function TSQLSelect.RightOuterJoin(const AJoin: ISQLJoin): ISQLSelect;
+begin
+  Result := Self;
+  {TODO -oMarcelo -cGeneral : Implementar}
+end;
+
+
+
+function TSQLSelect.Union: ISQLSelect;
+begin
+  Result := Self;
+  {TODO -oMarcelo -cGeneral : Implementar}
+end;
+
+
+
+function TSQLSelect.UnionAll: ISQLSelect;
+begin
+  Result := Self;
+  {TODO -oMarcelo -cGeneral : Implementar}
 end;
 
 
@@ -319,6 +532,14 @@ end;
 
 
 
+function TSQLCommand<T>.Exists(const AModel: IModel<T>; const AModelKey: T): ISQLCommand<T>;
+begin
+  Result := Self;
+  //TODO: Do Implement
+end;
+
+
+
 function TSQLCommand<T>.Find(const AModel: IModel<T>; const AModelKey: T; const AKeyValue: Int64): ISQLCommand<T>;
 var
   oEField: T;
@@ -335,6 +556,7 @@ begin
         .Equal(AKeyValue)
     ).Build;
 end;
+
 
 
 function TSQLCommand<T>.Insert(const AModel: IModel<T>): ISQLCommand<T>;
@@ -381,14 +603,8 @@ end;
 function TSQLCommand<T>.Ref: TSQLCommand<T>;
 begin
   Result := Self;
-end;
 
-
-
-function TSQLCommand<T>.Select(const AModel: IModel<T>): ISQLCommand<T>;
-begin
-  Result := Self;
-  //TODO: Do implement
+  {TODO -oMarcelo -cImplement : Implement}
 end;
 
 
@@ -417,6 +633,150 @@ function TSQLCommand<T>.WhereKey(const AModel: IModel<T>; const AModelKey: T): I
 begin
   Result := Self;
   sCommand := sCommand + ' where ' + LowerCase(AModel.FieldName(AModelKey)) + ' = :' + AModel.FieldAliasName(AModelKey);
+end;
+
+
+{ TSQLGroupBy<T> }
+
+function TSQLBy<T>.Build: string;
+begin
+  Result := ByCommand;
+end;
+
+
+
+function TSQLBy<T>.Column(const AColumn: T): ISQLBy<T>;
+begin
+  Result := Self;
+
+  {TODO -oMarcelo -cImplement : Implement}
+end;
+
+
+
+function TSQLBy<T>.Columns(const AColumn: TArray<T>): ISQLBy<T>;
+begin
+  Result := Self;
+
+  {TODO -oMarcelo -cImplement : Implement}
+end;
+
+
+
+constructor TSQLBy<T>.Create;
+begin
+  ByCommand := EmptyStr;
+end;
+
+
+
+function TSQLBy<T>.Ref: ISQLBy<T>;
+begin
+  Result := Self;
+end;
+
+
+
+{ TSQLJoin }
+
+function TSQLJoin.&And(const ACondition: ISQLCondition): ISQLJoin;
+begin
+  Result := Self;
+
+  {TODO -oMarcelo -cImplement : Implement}
+end;
+
+
+
+function TSQLJoin.Build: string;
+begin
+  Result := JoinCommand;
+end;
+
+
+
+constructor TSQLJoin.Create;
+begin
+  JoinCommand := EmptyStr;
+end;
+
+
+
+function TSQLJoin.&On(const ACondition: ISQLCondition): ISQLJoin;
+begin
+  Result := Self;
+  JoinCommand := JoinCommand + sOn + ACondition.Build;
+end;
+
+
+
+function TSQLJoin.&Or(const ACondition: ISQLCondition): ISQLJoin;
+begin
+  Result := Self;
+
+  {TODO -oMarcelo -cImplement : Implement}
+end;
+
+
+
+function TSQLJoin.Ref: ISQLJoin;
+begin
+  Result := Self;
+end;
+
+
+
+function TSQLJoin.Table(const ATableAlias, ATableName: String): ISQLJoin;
+begin
+  Result := Self;
+  JoinCommand := JoinCommand + Space + ATableName + sAs + ATableAlias;
+end;
+
+
+
+{ TSQLCondition }
+
+function TSQLCondition.Build: string;
+begin
+  Result := '(' + ConditionCommand + ')';
+end;
+
+
+
+constructor TSQLCondition.Create;
+begin
+  ConditionCommand := EmptyStr;
+end;
+
+
+
+function TSQLCondition.LeftTerm(const ATerm: String): ISQLCondition;
+begin
+  Result := Self;
+  ConditionCommand := ConditionCommand + ATerm;
+end;
+
+
+
+function TSQLCondition.Op(const AOperator: TSQLOperator): ISQLCondition;
+begin
+  Result := Self;
+  ConditionCommand := ConditionCommand + TNowaEnumerators.GetOperator(AOperator);
+end;
+
+
+
+function TSQLCondition.Ref: ISQLCondition;
+begin
+  Result := Self;
+end;
+
+
+
+function TSQLCondition.RightTerm(const ATerm: string): ISQLCondition;
+begin
+  Result := Self;
+  ConditionCommand := ConditionCommand + ATerm;
 end;
 
 end.
