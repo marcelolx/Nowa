@@ -20,7 +20,8 @@ uses
   MatriculationImpl in '..\Matriculation\MatriculationImpl.pas',
   NowaDAO in '..\DAOExample\NowaDAO.pas',
   NowaDAOImpl in '..\DAOExample\NowaDAOImpl.pas',
-  Nowa.Enumerators in '..\..\Nowa.Enumerators.pas';
+  Nowa.Enumerators in '..\..\Nowa.Enumerators.pas',
+  Person in '..\Person\Person.pas';
 
 {$R *.RES}
 

@@ -104,6 +104,7 @@
         <DCCReference Include="..\DAOExample\NowaDAO.pas"/>
         <DCCReference Include="..\DAOExample\NowaDAOImpl.pas"/>
         <DCCReference Include="..\..\Nowa.Enumerators.pas"/>
+        <DCCReference Include="..\Person\Person.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

@@ -27,7 +27,8 @@ uses
   Nowa.Model,
   PersonImpl,
   Enumerator.Person,
-  System.SysUtils;
+  System.SysUtils,
+  Person;
 
 
 { TModelTest }
@@ -151,7 +152,7 @@ end;
 
 procedure TModelTest.TestSetGetValue;
 var
-  fIModel: IModel<TEPerson>;
+  fIModel: IPerson<TEPerson>;
 begin
   fIModel := TPerson.Create;
   fIModel.SetValue(tepSequential, 1);

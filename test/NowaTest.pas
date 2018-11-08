@@ -77,7 +77,8 @@ uses
   PersonImpl,
   System.SysUtils,
   Enumerator.Matriculation,
-  MatriculationImpl;
+  MatriculationImpl,
+  Person;
 
 { TNowaTest }
 
@@ -166,7 +167,7 @@ end;
 
 procedure TNowaTest.TestSQLCommandDoInsert;
 var
-  oIPerson: IModel<TEPerson>;
+  oIPerson: IPerson<TEPerson>;
 begin
   oIPerson := TPerson.Create;
   oIPerson.PrepareModel('', []);
