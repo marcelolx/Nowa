@@ -552,7 +552,7 @@ begin
     .From(AModel.Table, AModel.TableAlias)
     .Where(
       TSQLWhere.Create.Ref
-        .Field(AModel.TableAlias, AModel.FieldName(AModelKey))
+        .Field(AModel.TableAlias, AModel.Field(AModelKey).Name)
         .Equal(AKeyValue)
     ).Build;
 end;
@@ -573,7 +573,7 @@ begin
     if (not(sFields.IsEmpty)) then
       sFields := sFields + CommaSpace;
 
-    sFields := sFields + LowerCase(AModel.FieldName(oEField));
+    sFields := sFields + LowerCase(AModel.Field(oEField).Name);
   end;
 
   sCommand := 'insert into ' + LowerCase(AModel.Table) + ' (' + sFields + ') values (';
@@ -584,7 +584,7 @@ begin
     if (not(sFields.IsEmpty)) then
       sFields := sFields + CommaSpace;
 
-    sFields := sFields + ':' + AModel.FieldAliasName(oEField);
+    sFields := sFields + ':' + AModel.Field(oEField).Alias;
   end;
 
   sCommand := sCommand + sFields + ')';
@@ -621,7 +621,7 @@ begin
     if (not(sCommand.IsEmpty)) then
       sCommand := sCommand + CommaSpace;
 
-    sCommand := sCommand + LowerCase(AModel.FieldName(oEField)) + ' = :' + AModel.FieldAliasName(oEField);
+    sCommand := sCommand + LowerCase(AModel.Field(oEField).Name) + ' = :' + AModel.Field(oEField).Alias;
   end;
 
   sCommand := 'update ' + LowerCase(AModel.Table) + ' set ' + sCommand;
@@ -632,7 +632,7 @@ end;
 function TSQLCommand<T>.WhereKey(const AModel: IModel<T>; const AModelKey: T): ISQLCommand<T>;
 begin
   Result := Self;
-  sCommand := sCommand + ' where ' + LowerCase(AModel.FieldName(AModelKey)) + ' = :' + AModel.FieldAliasName(AModelKey);
+  sCommand := sCommand + ' where ' + LowerCase(AModel.Field(AModelKey).Name) + ' = :' + AModel.Field(AModelKey).Alias;
 end;
 
 

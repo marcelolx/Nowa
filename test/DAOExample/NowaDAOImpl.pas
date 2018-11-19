@@ -11,11 +11,12 @@ uses
 type
   TNowaDAO<T> = class(TInterfacedObject, INowaDAO<T>)
   strict private
-    fCommand: TFDCommand;
     function DoInsert(const AModel: IModel<T>; const AModelKey: T): Boolean;
     function GenerateModelKey(const ASequenceName: String): Int64;
 
     procedure SaveModel(const AModel: IModel<T>);
+  strict protected
+    fCommand: TFDCommand;
   public
     constructor Create(const AFDCommand: TFDCommand); reintroduce;
     function Ref: INowaDAO<T>;
@@ -98,7 +99,7 @@ var
   oEField: T;
 begin
   for oEField in AModel.EnumFields do
-    fCommand.ParamByName(AModel.FieldAliasName(oEField)).Value := AModel.GetValue(oEField);
+    fCommand.ParamByName(AModel.Field(oEField).Alias).Value := AModel.GetValue(oEField);
 
   fCommand.Execute;
   fCommand.Close;

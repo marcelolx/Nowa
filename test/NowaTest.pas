@@ -187,7 +187,7 @@ begin
   oIPerson := TPerson.Create;
   oIPerson.PrepareModel('', []);
 
-  CheckEquals('failed',
+  CheckEquals('not implemented',
     TSQLCommand<TEPerson>.Create.Ref
       .Exists(oIPerson, tepSequential)
       .Build
@@ -494,9 +494,9 @@ begin
         .Table(oIMatriculation.TableAlias, oIMatriculation.Table)
         .&On(
           TSQLCondition.Create.Ref
-            .LeftTerm(oIMatriculation.TableAlias + '.' + oIMatriculation.FieldName(temPersonSequential))
+            .LeftTerm(oIMatriculation.TableAlias + '.' + oIMatriculation.Field(temPersonSequential).Name)
             .Op(opEqual)
-            .RightTerm(oIPerson.Table + '.' + oIPerson.FieldName(tepSequential))
+            .RightTerm(oIPerson.Table + '.' + oIPerson.Field(tepSequential).Name)
         )
     )
     .Build;
@@ -587,7 +587,7 @@ begin
       .From(oIPerson.Table, fRPreparedFields.TableAlias)
       .Where(
         TSQLWhere.Create.Ref
-          .Field(oIPerson.TableAlias, oIPerson.FieldName(tepSequential))
+          .Field(oIPerson.TableAlias, oIPerson.Field(tepSequential).Name)
           .Equal(1)
       )
       .Build
@@ -600,7 +600,7 @@ begin
       .From(oIPerson.Table, fRPreparedFields.TableAlias)
       .Where(
         TSQLWhere.Create.Ref
-          .Field(oIPerson.TableAlias, oIPerson.FieldName(tepSequential))
+          .Field(oIPerson.TableAlias, oIPerson.Field(tepSequential).Name)
           .Equal(1)
       )
       .Build
@@ -647,9 +647,9 @@ begin
   oIMatriculation.PrepareModel('', []);
   CheckEquals(sQuery4,
     TSQLWhere.Create.Ref
-      .Field(oIPerson.TableAlias, oIPerson.FieldName(tepSequential))
+      .Field(oIPerson.TableAlias, oIPerson.Field(tepSequential).Name)
       .Different
-      .Field(oIMatriculation.TableAlias, oIMatriculation.FieldName(temPersonSequential))
+      .Field(oIMatriculation.TableAlias, oIMatriculation.Field(temPersonSequential).Name)
       .Build
   );
 
@@ -683,7 +683,7 @@ begin
   oIPerson.PrepareModel('', []);
   CheckEquals(sQuery3,
     TSQLWhere.Create.Ref
-      .Field(oIPerson.TableAlias, oIPerson.FieldName(tepSequential))
+      .Field(oIPerson.TableAlias, oIPerson.Field(tepSequential).Name)
       .Different(1)
       .Build
   );
@@ -763,7 +763,7 @@ begin
   oIPerson.PrepareModel('', []);
   CheckEquals(sQuery6,
     TSQLWhere.Create.Ref
-    .Field(oIPerson.TableAlias, oIPerson.FieldName(tepSequential))
+    .Field(oIPerson.TableAlias, oIPerson.Field(tepSequential).Name)
     .Equal(1)
     .Build
   );
@@ -773,9 +773,9 @@ begin
   oIMatriculation.PrepareModel('', []);
   CheckEquals(sQuery7,
     TSQLWhere.Create.Ref
-      .Field(oIPerson.TableAlias, oIPerson.FieldName(tepSequential))
+      .Field(oIPerson.TableAlias, oIPerson.Field(tepSequential).Name)
       .Equal
-      .Field(oIMatriculation.TableAlias, oIMatriculation.FieldName(temPersonSequential))
+      .Field(oIMatriculation.TableAlias, oIMatriculation.Field(temPersonSequential).Name)
       .Build
   );
 end;
@@ -799,7 +799,7 @@ begin
   oIPerson.PrepareModel('', []);
   CheckEquals(sQueryPerson,
     TSQLWhere.Create.Ref
-    .Field(oIPerson.TableAlias, oIPerson.FieldName(tepName))
+    .Field(oIPerson.TableAlias, oIPerson.Field(tepName).Name)
     .Build
   );
 end;
@@ -836,9 +836,9 @@ begin
   oIMatriculation.PrepareModel('', []);
   CheckEquals(sQuery3,
     TSQLWhere.Create.Ref
-      .Field(oIPerson.TableAlias, oIPerson.FieldName(tepSequential))
+      .Field(oIPerson.TableAlias, oIPerson.Field(tepSequential).Name)
       .Greater
-      .Field(oIMatriculation.TableAlias, oIMatriculation.FieldName(temPersonSequential))
+      .Field(oIMatriculation.TableAlias, oIMatriculation.Field(temPersonSequential).Name)
       .Build
   );
 end;
@@ -875,9 +875,9 @@ begin
   oIMatriculation.PrepareModel('', []);
   CheckEquals(sQuery3,
     TSQLWhere.Create.Ref
-      .Field(oIPerson.TableAlias, oIPerson.FieldName(tepSequential))
+      .Field(oIPerson.TableAlias, oIPerson.Field(tepSequential).Name)
       .GreaterOrEqual
-      .Field(oIMatriculation.TableAlias, oIMatriculation.FieldName(temPersonSequential))
+      .Field(oIMatriculation.TableAlias, oIMatriculation.Field(temPersonSequential).Name)
       .Build
   );
 end;
@@ -910,7 +910,7 @@ begin
   oIPerson.PrepareModel('', []);
   CheckEquals(sQuery3,
     TSQLWhere.Create.Ref
-      .Field(oIPerson.TableAlias, oIPerson.FieldName(tepSequential))
+      .Field(oIPerson.TableAlias, oIPerson.Field(tepSequential).Name)
       .GreaterOrEqual(1)
       .Build
   );
@@ -944,7 +944,7 @@ begin
   oIPerson.PrepareModel('', []);
   CheckEquals(sQuery3,
     TSQLWhere.Create.Ref
-      .Field(oIPerson.TableAlias, oIPerson.FieldName(tepSequential))
+      .Field(oIPerson.TableAlias, oIPerson.Field(tepSequential).Name)
       .Greater(1)
       .Build
   );
@@ -961,7 +961,7 @@ begin
 
   CheckEquals(' where PERSON.NR_SEQUENTIAL in (1,2,3,4)',
     TSQLWhere.Create.Ref
-      .Field(oIPerson.TableAlias, oIPerson.FieldName(tepSequential))
+      .Field(oIPerson.TableAlias, oIPerson.Field(tepSequential).Name)
       .InList([1,2,3,4])
       .Build
   );
@@ -978,7 +978,7 @@ begin
 
   CheckEquals('not implemented',
     TSQLWhere.Create.Ref
-      .Field(oIPerson.TableAlias, oIPerson.FieldName(tepSequential))
+      .Field(oIPerson.TableAlias, oIPerson.Field(tepSequential).Name)
       .IsNotNull
       .Build
   );
@@ -995,7 +995,7 @@ begin
 
   CheckEquals('not implemented',
     TSQLWhere.Create.Ref
-      .Field(oIPerson.TableAlias, oIPerson.FieldName(tepSequential))
+      .Field(oIPerson.TableAlias, oIPerson.Field(tepSequential).Name)
       .IsNull
       .Build
   );
@@ -1033,9 +1033,9 @@ begin
   oIMatriculation.PrepareModel('', []);
   CheckEquals(sQuery3,
     TSQLWhere.Create.Ref
-      .Field(oIPerson.TableAlias, oIPerson.FieldName(tepSequential))
+      .Field(oIPerson.TableAlias, oIPerson.Field(tepSequential).Name)
       .Less
-      .Field(oIMatriculation.TableAlias, oIMatriculation.FieldName(temPersonSequential))
+      .Field(oIMatriculation.TableAlias, oIMatriculation.Field(temPersonSequential).Name)
       .Build
   );
 end;
@@ -1072,9 +1072,9 @@ begin
   oIMatriculation.PrepareModel('', []);
   CheckEquals(sQuery3,
     TSQLWhere.Create.Ref
-      .Field(oIPerson.TableAlias, oIPerson.FieldName(tepSequential))
+      .Field(oIPerson.TableAlias, oIPerson.Field(tepSequential).Name)
       .LessOrEqual
-      .Field(oIMatriculation.TableAlias, oIMatriculation.FieldName(temPersonSequential))
+      .Field(oIMatriculation.TableAlias, oIMatriculation.Field(temPersonSequential).Name)
       .Build
   );
 end;
@@ -1106,7 +1106,7 @@ begin
   oIPerson.PrepareModel('', []);
   CheckEquals(sQuery3,
     TSQLWhere.Create.Ref
-      .Field(oIPerson.TableAlias, oIPerson.FieldName(tepSequential))
+      .Field(oIPerson.TableAlias, oIPerson.Field(tepSequential).Name)
       .LessOrEqual(1)
       .Build
   );
@@ -1140,7 +1140,7 @@ begin
   oIPerson.PrepareModel('', []);
   CheckEquals(sQuery3,
     TSQLWhere.Create.Ref
-      .Field(oIPerson.TableAlias, oIPerson.FieldName(tepSequential))
+      .Field(oIPerson.TableAlias, oIPerson.Field(tepSequential).Name)
       .Less(1)
       .Build
   );
@@ -1157,28 +1157,28 @@ begin
 
   CheckEquals('not implemented',
     TSQLWhere.Create.Ref
-      .Field(oIPerson.TableAlias, oIPerson.FieldName(tepName))
+      .Field(oIPerson.TableAlias, oIPerson.Field(tepName).Name)
       .Like(loEqual, 'Marcelo')
       .Build
   );
 
   CheckEquals('not implemented',
     TSQLWhere.Create.Ref
-      .Field(oIPerson.TableAlias, oIPerson.FieldName(tepName))
+      .Field(oIPerson.TableAlias, oIPerson.Field(tepName).Name)
       .Like(loStarting, 'Marcelo')
       .Build
   );
 
   CheckEquals('not implemented',
     TSQLWhere.Create.Ref
-      .Field(oIPerson.TableAlias, oIPerson.FieldName(tepName))
+      .Field(oIPerson.TableAlias, oIPerson.Field(tepName).Name)
       .Like(loEnding, 'Marcelo')
       .Build
   );
 
   CheckEquals('not implemented',
     TSQLWhere.Create.Ref
-      .Field(oIPerson.TableAlias, oIPerson.FieldName(tepName))
+      .Field(oIPerson.TableAlias, oIPerson.Field(tepName).Name)
       .Like(loContaining, 'Marcelo')
       .Build
   );
@@ -1195,7 +1195,7 @@ begin
 
   CheckEquals(' where PERSON.NR_SEQUENTIAL not ',
     TSQLWhere.Create.Ref
-      .Field(oIPerson.TableAlias, oIPerson.FieldName(tepSequential))
+      .Field(oIPerson.TableAlias, oIPerson.Field(tepSequential).Name)
       .&Not
       .Build
   );
@@ -1212,7 +1212,7 @@ begin
 
   CheckEquals(' where PERSON.NR_SEQUENTIAL not  in (1,2,3,4)',
     TSQLWhere.Create.Ref
-      .Field(oIPerson.TableAlias, oIPerson.FieldName(tepSequential))
+      .Field(oIPerson.TableAlias, oIPerson.Field(tepSequential).Name)
       .&Not.InList([1,2,3,4])
       .Build
   );
@@ -1229,28 +1229,28 @@ begin
 
   CheckEquals('not implemented',
     TSQLWhere.Create.Ref
-      .Field(oIPerson.TableAlias, oIPerson.FieldName(tepName))
+      .Field(oIPerson.TableAlias, oIPerson.Field(tepName).Name)
       .NotLike(loEqual, 'Marcelo')
       .Build
   );
 
   CheckEquals('not implemented',
     TSQLWhere.Create.Ref
-      .Field(oIPerson.TableAlias, oIPerson.FieldName(tepName))
+      .Field(oIPerson.TableAlias, oIPerson.Field(tepName).Name)
       .NotLike(loStarting, 'Marcelo')
       .Build
   );
 
   CheckEquals('not implemented',
     TSQLWhere.Create.Ref
-      .Field(oIPerson.TableAlias, oIPerson.FieldName(tepName))
+      .Field(oIPerson.TableAlias, oIPerson.Field(tepName).Name)
       .NotLike(loEnding, 'Marcelo')
       .Build
   );
 
   CheckEquals('not implemented',
     TSQLWhere.Create.Ref
-      .Field(oIPerson.TableAlias, oIPerson.FieldName(tepName))
+      .Field(oIPerson.TableAlias, oIPerson.Field(tepName).Name)
       .NotLike(loContaining, 'Marcelo')
       .Build
   );

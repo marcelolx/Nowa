@@ -5,13 +5,17 @@ interface
 uses
   Nowa.Model,
   Enumerator,
-  Nowa.Records;
+  Nowa.Records,
+  System.Generics.Collections;
 
 type
+  TGetString = function: string of object;
+
   TModel<T> = class(TInterfacedObject, IModel<T>)
   strict private
     fIModelEnumerator: IEnum<T>;
 
+    Fields2: TDictionary<T, IField>;
     Fields: TArray<String>;
     FieldsAlias: TArray<String>;
     Table: String;
@@ -19,20 +23,40 @@ type
     SequenceName: String;
   public
     constructor Create(const AIModelEnumerator: IEnum<T>); reintroduce;
+    destructor Destroy; override;
 
     procedure PrepareModel(const ATableAlias: String = ''; const AFields: TArray<T> = []);
     procedure SetValue(const AField: T; const AValue: Variant); virtual; abstract;
 
     function GetValue(const AField: T): Variant; virtual; abstract;
-    function FieldName(const AField: T): String;
-    function FieldAliasName(const AField: T): string;
     function PreparedFields: RFieldsPrepared;
+
+    //Need that PrepareModel called
+    function Field(const AField: T): IField;
+
+
     function GetFields: TArray<String>;
     function GetEnumeratedFields: TArray<T>;
     function GetFieldsAlias: TArray<String>;
     function GetTable: String;
     function GetTableAlias: String;
     function GetSequence: String;
+  end;
+
+  TField = class(TInterfacedObject, IField)
+  strict private
+    FieldName: String;
+    FieldAlias: String;
+    TableName: TGetString;
+    TableAliasName: TGetString;
+  public
+    constructor Create(const AFieldName, AFieldAlias: String; const ATableName, ATableAlias: TGetString); reintroduce;
+    function Ref: IField;
+
+    function Name: String;
+    function Alias: String;
+    function Table: String;
+    function TableAlias: String;
   end;
 
 implementation
@@ -42,6 +66,7 @@ implementation
 constructor TModel<T>.Create(const AIModelEnumerator: IEnum<T>);
 begin
   fIModelEnumerator := AIModelEnumerator;
+  Fields2 := TDictionary<T, IField>.Create;
 end;
 
 
@@ -55,26 +80,50 @@ end;
 
 
 procedure TModel<T>.PrepareModel(const ATableAlias: String; const AFields: TArray<T>);
+var
+  oInternalArray: TArray<T>;
+  oEField: T;
+  oIField: IField;
 begin
   Fields       := fIModelEnumerator.Columns(AFields);
   FieldsAlias  := fIModelEnumerator.ColumnsAlias(AFields);
   Table        := fIModelEnumerator.Table;
   TableAlias   := fIModelEnumerator.TableAlias(ATableAlias);
   SequenceName := fIModelEnumerator.Sequence;
+
+  ///////New way
+  Fields2.Clear;
+  if (Length(AFields) = 0) then
+    oInternalArray := fIModelEnumerator.AllColumns
+  else
+    oInternalArray := AFields;
+
+  for oEField in oInternalArray do
+  begin
+    oIField := TField.Create(
+      fIModelEnumerator.Column(oEField),
+      fIModelEnumerator.ColumnAlias(oEField),
+      GetTable,
+      GetTableAlias
+    );
+
+    Fields2.Add(oEField, oIField);
+  end;
 end;
 
 
 
-function TModel<T>.FieldAliasName(const AField: T): string;
+destructor TModel<T>.Destroy;
 begin
-  Result := fIModelEnumerator.ColumnAlias(AField);
+  Fields2.Free;
+  inherited;
 end;
 
 
 
-function TModel<T>.FieldName(const AField: T): String;
+function TModel<T>.Field(const AField: T): IField;
 begin
-  Result := fIModelEnumerator.Column(AField);
+  Fields2.TryGetValue(AField, Result);
 end;
 
 
@@ -117,6 +166,53 @@ end;
 function TModel<T>.GetTableAlias: String;
 begin
   Result := TableAlias;
+end;
+
+
+
+{ TField }
+
+function TField.Alias: String;
+begin
+  Result := FieldAlias;
+end;
+
+
+
+constructor TField.Create(const AFieldName, AFieldAlias: String; const ATableName, ATableAlias: TGetString);
+begin
+  FieldName := AFieldName;
+  FieldAlias := AFieldAlias;
+  TableName := ATableName;
+  TableAliasName := ATableAlias;
+end;
+
+
+
+function TField.Name: String;
+begin
+  Result := FieldName;
+end;
+
+
+
+function TField.Ref: IField;
+begin
+  Result := Self;
+end;
+
+
+
+function TField.Table: String;
+begin
+  Result := TableName;
+end;
+
+
+
+function TField.TableAlias: String;
+begin
+  Result := TableAliasName;
 end;
 
 end.
