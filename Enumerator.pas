@@ -8,7 +8,6 @@ type
     function Column(const AEnumeratedField: T): String;
     function ColumnAlias(const AEnumeratedField: T): String;
     function Columns(const AEnumeratedFields: TArray<T>): TArray<String>;
-    function ColumnsAlias(const AEnumeratedFields: TArray<T>): TArray<String>;
     function Table: String;
     function TableAlias(const AAlias: String = ''): String;
     function Sequence: String;
@@ -21,7 +20,6 @@ type
     function Column(const AEnumeratedField: T): String; virtual; abstract;
     function ColumnAlias(const AEnumeratedField: T): String; virtual; abstract;
     function Columns(const AEnumeratedFields: TArray<T>): TArray<String>; virtual; final;
-    function ColumnsAlias(const AEnumeratedFields: TArray<T>): TArray<String>; virtual; final;
     function Table: String; virtual; abstract;
     function TableAlias(const AAlias: String = ''): String; virtual; abstract;
     function Sequence: String; virtual; abstract;
@@ -49,27 +47,6 @@ begin
   begin
     SetLength(Result, Succ(Length(Result)));
     Result[Pred(Length(Result))] := Column(oEField);
-  end;
-end;
-
-
-
-function TEnumAbstract<T>.ColumnsAlias(const AEnumeratedFields: TArray<T>): TArray<String>;
-var
-  oInternalArray: TArray<T>;
-  oEField: T;
-begin
-  SetLength(Result, 0);
-
-  if (Length(AEnumeratedFields) = 0) then
-    oInternalArray := AllColumns
-  else
-    oInternalArray := AEnumeratedFields;
-
-  for oEField in oInternalArray do
-  begin
-    SetLength(Result, Succ(Length(Result)));
-    Result[Pred(Length(Result))] := ColumnAlias(oEField);
   end;
 end;
 

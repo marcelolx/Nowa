@@ -11,13 +11,8 @@ type
   TModel<T> = class(TInterfacedObject, IModel<T>)
   strict private
     fIModelEnumerator: IEnum<T>;
-
     fTable: ITable;
     fFields: TDictionary<T, IField>;
-
-    OldInternalFields: TArray<String>;
-    FieldsAlias: TArray<String>;
-
   public
     constructor Create(const AIModelEnumerator: IEnum<T>); reintroduce;
     destructor Destroy; override;
@@ -84,10 +79,6 @@ var
   oEField: T;
   oIField: IField;
 begin
-  OldInternalFields := fIModelEnumerator.Columns(AFields);
-  FieldsAlias       := fIModelEnumerator.ColumnsAlias(AFields);
-
-  ///////New way
   fTable := TTable.Create(fIModelEnumerator.Table, fIModelEnumerator.TableAlias(ATableAlias), fIModelEnumerator.Sequence);
 
   fFields.Clear;
