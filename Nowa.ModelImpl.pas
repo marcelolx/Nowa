@@ -5,22 +5,19 @@ interface
 uses
   Nowa.Model,
   Enumerator,
-  Nowa.Records,
   System.Generics.Collections;
 
 type
-  TGetString = function: string of object;
-
   TModel<T> = class(TInterfacedObject, IModel<T>)
   strict private
     fIModelEnumerator: IEnum<T>;
 
-    Fields2: TDictionary<T, IField>;
-    Fields: TArray<String>;
+    fTable: ITable;
+    fFields: TDictionary<T, IField>;
+
+    OldInternalFields: TArray<String>;
     FieldsAlias: TArray<String>;
-    Table: String;
-    TableAlias: String;
-    SequenceName: String;
+
   public
     constructor Create(const AIModelEnumerator: IEnum<T>); reintroduce;
     destructor Destroy; override;
@@ -29,52 +26,54 @@ type
     procedure SetValue(const AField: T; const AValue: Variant); virtual; abstract;
 
     function GetValue(const AField: T): Variant; virtual; abstract;
-    function PreparedFields: RFieldsPrepared;
 
     //Need that PrepareModel called
-    function Field(const AField: T): IField;
-
-
-    function GetFields: TArray<String>;
-    function GetEnumeratedFields: TArray<T>;
-    function GetFieldsAlias: TArray<String>;
-    function GetTable: String;
-    function GetTableAlias: String;
-    function GetSequence: String;
+    function Field(const AField: T): IField; overload;
+    function Field(const AField: IField): T; overload;
+    function Fields: TArray<IField>;
+    function Table: ITable;
   end;
 
   TField = class(TInterfacedObject, IField)
   strict private
     FieldName: String;
     FieldAlias: String;
-    TableName: TGetString;
-    TableAliasName: TGetString;
+    fTable: ITable;
   public
-    constructor Create(const AFieldName, AFieldAlias: String; const ATableName, ATableAlias: TGetString); reintroduce;
+    constructor Create(const AFieldName, AFieldAlias: String; const ATable: ITable); reintroduce;
     function Ref: IField;
 
     function Name: String;
     function Alias: String;
-    function Table: String;
-    function TableAlias: String;
+    function Table: ITable;
+  end;
+
+  TTable = class(TInterfacedObject, ITable)
+  strict private
+    TableName: String;
+    TableAlias: String;
+    SequenceName: String;
+  public
+    constructor Create(const ATableName, ATableAlias, ASequenceName: String); reintroduce;
+    function Ref: ITable;
+
+    function Name: String;
+    function Alias: String;
+    function Sequence: String;
   end;
 
 implementation
+
+uses
+  System.Generics.Defaults;
 
 { TModel<T> }
 
 constructor TModel<T>.Create(const AIModelEnumerator: IEnum<T>);
 begin
   fIModelEnumerator := AIModelEnumerator;
-  Fields2 := TDictionary<T, IField>.Create;
-end;
-
-
-function TModel<T>.PreparedFields: RFieldsPrepared;
-begin
-  Result.Fields      := GetFields;
-  Result.FieldsAlias := GetFieldsAlias;
-  Result.TableAlias  := GetTableAlias;
+  fFields := TDictionary<T, IField>.Create;
+  //fTable  := TTable.Create('','','');
 end;
 
 
@@ -85,14 +84,13 @@ var
   oEField: T;
   oIField: IField;
 begin
-  Fields       := fIModelEnumerator.Columns(AFields);
-  FieldsAlias  := fIModelEnumerator.ColumnsAlias(AFields);
-  Table        := fIModelEnumerator.Table;
-  TableAlias   := fIModelEnumerator.TableAlias(ATableAlias);
-  SequenceName := fIModelEnumerator.Sequence;
+  OldInternalFields := fIModelEnumerator.Columns(AFields);
+  FieldsAlias       := fIModelEnumerator.ColumnsAlias(AFields);
 
   ///////New way
-  Fields2.Clear;
+  fTable := TTable.Create(fIModelEnumerator.Table, fIModelEnumerator.TableAlias(ATableAlias), fIModelEnumerator.Sequence);
+
+  fFields.Clear;
   if (Length(AFields) = 0) then
     oInternalArray := fIModelEnumerator.AllColumns
   else
@@ -103,19 +101,25 @@ begin
     oIField := TField.Create(
       fIModelEnumerator.Column(oEField),
       fIModelEnumerator.ColumnAlias(oEField),
-      GetTable,
-      GetTableAlias
+      fTable
     );
 
-    Fields2.Add(oEField, oIField);
+    fFields.Add(oEField, oIField);
   end;
+end;
+
+
+
+function TModel<T>.Table: ITable;
+begin
+  Result := fTable;
 end;
 
 
 
 destructor TModel<T>.Destroy;
 begin
-  Fields2.Free;
+  fFields.Free;
   inherited;
 end;
 
@@ -123,49 +127,40 @@ end;
 
 function TModel<T>.Field(const AField: T): IField;
 begin
-  Fields2.TryGetValue(AField, Result);
+  fFields.TryGetValue(AField, Result);
 end;
 
 
 
-function TModel<T>.GetEnumeratedFields: TArray<T>;
+function TModel<T>.Field(const AField: IField): T;
+var
+  oEKey: T;
 begin
-  Result := fIModelEnumerator.AllColumns;
+  //TODO: Default Result if condition not accepted?
+
+  for oEKey in fFIelds.Keys.ToArray do
+  begin
+    if (fFields.Items[oEKey] = AField) then
+    begin
+      Result := oEKey;
+      Break;
+    end;
+  end;
 end;
 
 
 
-function TModel<T>.GetFields: TArray<String>;
+function TModel<T>.Fields: TArray<IField>;
+var
+  oEField: T;
 begin
-  Result := Fields;
-end;
+  SetLength(Result, 0);
 
-
-
-function TModel<T>.GetFieldsAlias: TArray<String>;
-begin
-  Result := FieldsAlias;
-end;
-
-
-
-function TModel<T>.GetSequence: String;
-begin
-  Result := SequenceName;
-end;
-
-
-
-function TModel<T>.GetTable: String;
-begin
-  Result := Table;
-end;
-
-
-
-function TModel<T>.GetTableAlias: String;
-begin
-  Result := TableAlias;
+  for oEField in fFields.Keys do
+  begin
+    SetLength(Result, Succ(Length(Result)));
+    Result[Pred(Length(Result))] := fFields[oEField];
+  end;
 end;
 
 
@@ -179,12 +174,11 @@ end;
 
 
 
-constructor TField.Create(const AFieldName, AFieldAlias: String; const ATableName, ATableAlias: TGetString);
+constructor TField.Create(const AFieldName, AFieldAlias: String; const ATable: ITable);
 begin
   FieldName := AFieldName;
   FieldAlias := AFieldAlias;
-  TableName := ATableName;
-  TableAliasName := ATableAlias;
+  fTable := ATable;
 end;
 
 
@@ -203,18 +197,48 @@ end;
 
 
 
-function TField.Table: String;
+function TField.Table: ITable;
+begin
+  Result := fTable;
+end;
+
+
+
+{ TTable }
+
+function TTable.Alias: String;
+begin
+  Result := TableAlias;
+end;
+
+
+
+constructor TTable.Create(const ATableName, ATableAlias, ASequenceName: String);
+begin
+  TableName    := ATableName;
+  TableAlias   := ATableAlias;
+  SequenceName := ASequenceName;
+end;
+
+
+
+function TTable.Name: String;
 begin
   Result := TableName;
 end;
 
 
 
-function TField.TableAlias: String;
+function TTable.Ref: ITable;
 begin
-  Result := TableAliasName;
+  Result := Self;
+end;
+
+
+
+function TTable.Sequence: String;
+begin
+  Result := SequenceName;
 end;
 
 end.
-
-

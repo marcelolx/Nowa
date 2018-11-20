@@ -3,7 +3,6 @@ unit Nowa;
 interface
 
 uses
-  Nowa.Records,
   Nowa.Model,
   Nowa.Enumerators;
 
@@ -60,7 +59,7 @@ type
 
   ISQLSelect = interface(ISQL)
   ['{DF1D25A9-3A66-4C9D-A3DD-12A74B4E49DE}']
-    function Fields(const AModelsFieldsPrepared: TArray<RFieldsPrepared>): ISQLSelect;
+    function Fields(const AModelsFieldsPrepared: TArray<TArray<IField>>): ISQLSelect;
     function From(const ATable, ATableAlias: String): ISQLSelect;
     function Where(const AWhereCondition: ISQLWhere): ISQLSelect;
     function Having(const AHavingQuery: ISQLSelect): ISQLSelect;

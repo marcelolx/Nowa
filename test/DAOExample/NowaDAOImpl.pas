@@ -80,7 +80,7 @@ begin
   if DoInsert(AModel, AModelKey) then
   begin
     fCommand.CommandText.Text := TSQLCommand<T>.Create.Ref.Insert(AModel).Build;
-    AModel.SetValue(AModelKey, GenerateModelKey(AModel.Sequence));
+    AModel.SetValue(AModelKey, GenerateModelKey(AModel.Table.Sequence));
   end
   else
     fCommand.CommandText.Text :=
@@ -97,9 +97,10 @@ end;
 procedure TNowaDAO<T>.SaveModel(const AModel: IModel<T>);
 var
   oEField: T;
+  oIField: IField;
 begin
-  for oEField in AModel.EnumFields do
-    fCommand.ParamByName(AModel.Field(oEField).Alias).Value := AModel.GetValue(oEField);
+  for oIField in AModel.Fields do
+    fCommand.ParamByName(oIField.Alias).Value := AModel.GetValue(AModel.Field(oIField));
 
   fCommand.Execute;
   fCommand.Close;

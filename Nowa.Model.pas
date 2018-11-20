@@ -2,16 +2,19 @@ unit Nowa.Model;
 
 interface
 
-uses
-  Nowa.Records;
-
 type
+  ITable = interface
+  ['{FC81A8C0-DF1D-4DC2-AE14-4EAECDEE0DCD}']
+    function Name: String;
+    function Alias: String;
+    function Sequence: String;
+  end;
+
   IField = interface
   ['{B4D2955E-B979-4EE0-96AD-5B12311635C7}']
     function Name: String;
     function Alias: String;
-    function Table: String;
-    function TableAlias: String;
+    function Table: ITable;
   end;
 
   IModel<T> = interface
@@ -19,23 +22,11 @@ type
     procedure PrepareModel(const ATableAlias: String; const AFields: TArray<T>);
     procedure SetValue(const AField: T; const AValue: Variant);
 
+    function Table: ITable;
     function GetValue(const AField: T): Variant;
-    function Field(const AField: T): IField;
-
-    function GetFields: TArray<String>;
-    function GetEnumeratedFields: TArray<T>;
-    function GetFieldsAlias: TArray<String>;
-    function GetTable: String;
-    function GetTableAlias: String;
-    function GetSequence: String;
-    function PreparedFields: RFieldsPrepared;
-
-    property Fields: TArray<String> read GetFields;
-    property EnumFields: TArray<T> read GetEnumeratedFields;
-    property FieldsAlias: TArray<String> read GetFieldsAlias;
-    property Table: String read GetTable;
-    property TableAlias: String read GetTableAlias;
-    property Sequence: String read GetSequence;
+    function Field(const AField: T): IField; overload;
+    function Field(const AField: IField): T; overload;
+    function Fields: TArray<IField>;
   end;
 
 implementation

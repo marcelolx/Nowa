@@ -4,7 +4,6 @@ interface
 
 uses
   Nowa,
-  Nowa.Records,
   Nowa.Model,
   Nowa.Enumerators;
 
@@ -103,8 +102,10 @@ type
   TSQLSelect = class(TSQL, ISQLSelect)
   strict private
     sSelect: string;
+
+    function GetTableFieldAlias(const AIField: IField): String;
   public
-    function Fields(const AModelsFieldsPrepared: TArray<RFieldsPrepared>): ISQLSelect;
+    function Fields(const AModelsFieldsPrepared: TArray<TArray<IField>>): ISQLSelect;
     function From(const ATable, ATableAlias: String): ISQLSelect;
     function Where(const AWhereCondition: ISQLWhere): ISQLSelect;
     function Having(const AHavingQuery: ISQLSelect): ISQLSelect;
@@ -128,14 +129,14 @@ type
   strict private
     sCommand: String;
   public
-    function Insert(const AModel: IModel<T>): ISQLCommand<T>;
-    function Update(const AModel: IModel<T>): ISQLCommand<T>;
-    function Delete(const AModel: IModel<T>): ISQLCommand<T>;
-    function WhereKey(const AModel: IModel<T>; const AModelKey: T): ISQLCommand<T>;
+    function Insert(const AIModel: IModel<T>): ISQLCommand<T>;
+    function Update(const AIModel: IModel<T>): ISQLCommand<T>;
+    function Delete(const AIModel: IModel<T>): ISQLCommand<T>;
+    function WhereKey(const AIModel: IModel<T>; const AModelKey: T): ISQLCommand<T>;
     function NewKeyValue(const ASequenceName: String): ISQLCommand<T>;
-    function Find(const AModel: IModel<T>; const AModelKey: T; const AKeyValue: Int64): ISQLCommand<T>;
-    function DoInsert(const AModel: IModel<T>; const AModelKey: T): Boolean;
-    function Exists(const AModel: IModel<T>; const AModelKey: T): ISQLCommand<T>;
+    function Find(const AIModel: IModel<T>; const AModelKey: T; const AKeyValue: Int64): ISQLCommand<T>;
+    function DoInsert(const AIModel: IModel<T>; const AModelKey: T): Boolean;
+    function Exists(const AIModel: IModel<T>; const AModelKey: T): ISQLCommand<T>;
 
     function Build: string; override;
 
@@ -364,25 +365,22 @@ end;
 
 
 
-function TSQLSelect.Fields(const AModelsFieldsPrepared: TArray<RFieldsPrepared>): ISQLSelect;
+function TSQLSelect.Fields(const AModelsFieldsPrepared: TArray<TArray<IField>>): ISQLSelect;
 var
-  fFieldsPrepared: RFieldsPrepared;
-  sField, sFieldAlias, sFieldsPrepared: string;
-  iIndex: Integer;
+  fFieldsPrepared: TArray<IField>;
+  oIField: IField;
+  sFieldsPrepared: string;
 begin
   Result := Self;
 
   for fFieldsPrepared in AModelsFieldsPrepared do
   begin
-    for iIndex := Low(fFieldsPrepared.Fields) to High(fFieldsPrepared.Fields) do
+    for oIField in fFieldsPrepared do
     begin
-      sField      := fFieldsPrepared.Fields[iIndex];
-      sFieldAlias := fFieldsPrepared.FieldsAlias[iIndex];
-
       if (not(sFieldsPrepared.IsEmpty)) then
         sFieldsPrepared := sFieldsPrepared + CommaSpace;
 
-      sFieldsPrepared := sFieldsPrepared + fFieldsPrepared.TableAlias + Point + sField + sAs + sFieldAlias;
+      sFieldsPrepared := sFieldsPrepared + GetTableFieldAlias(oIField);
     end;
   end;
 
@@ -395,6 +393,13 @@ function TSQLSelect.From(const ATable, ATableAlias: String): ISQLSelect;
 begin
   Result  := Self;
   sSelect := sSelect + sFrom + ATable + sAs + ATableAlias;
+end;
+
+
+
+function TSQLSelect.GetTableFieldAlias(const AIField: IField): String;
+begin
+  Result := AIField.Table.Alias + Point + AIField.Name + sAs + AIField.Alias;
 end;
 
 
@@ -509,20 +514,20 @@ end;
 
 
 
-function TSQLCommand<T>.Delete(const AModel: IModel<T>): ISQLCommand<T>;
+function TSQLCommand<T>.Delete(const AIModel: IModel<T>): ISQLCommand<T>;
 begin
   Result   := Self;
-  sCommand := 'delete' + sFrom + LowerCase(AModel.Table);
+  sCommand := 'delete' + sFrom + LowerCase(AIModel.Table.Name);
 end;
 
 
 
-function TSQLCommand<T>.DoInsert(const AModel: IModel<T>; const AModelKey: T): Boolean;
+function TSQLCommand<T>.DoInsert(const AIModel: IModel<T>; const AModelKey: T): Boolean;
 var
   sValue: String;
 begin
   Result := False;
-  sValue := VarToStr(AModel.GetValue(AModelKey));
+  sValue := VarToStr(AIModel.GetValue(AModelKey));
 
   if (not((sValue.IsEmpty) or (sValue.Equals('0')))) then
     Result := False
@@ -532,7 +537,7 @@ end;
 
 
 
-function TSQLCommand<T>.Exists(const AModel: IModel<T>; const AModelKey: T): ISQLCommand<T>;
+function TSQLCommand<T>.Exists(const AIModel: IModel<T>; const AModelKey: T): ISQLCommand<T>;
 begin
   Result := Self;
   //TODO: Do Implement
@@ -540,7 +545,7 @@ end;
 
 
 
-function TSQLCommand<T>.Find(const AModel: IModel<T>; const AModelKey: T; const AKeyValue: Int64): ISQLCommand<T>;
+function TSQLCommand<T>.Find(const AIModel: IModel<T>; const AModelKey: T; const AKeyValue: Int64): ISQLCommand<T>;
 var
   oEField: T;
   sFind: string;
@@ -548,46 +553,41 @@ begin
   Result := Self;
 
   sCommand := TSQLSelect.Create.Ref
-    .Fields([AModel.PreparedFields])
-    .From(AModel.Table, AModel.TableAlias)
+    .Fields([AIModel.Fields])
+    .From(AIModel.Table.Name, AIModel.Table.Alias) //TODO: Refactor, pass AIModel.Table ...
     .Where(
       TSQLWhere.Create.Ref
-        .Field(AModel.TableAlias, AModel.Field(AModelKey).Name)
+        .Field(AIModel.Table.Alias, AIModel.Field(AModelKey).Name)
         .Equal(AKeyValue)
     ).Build;
 end;
 
 
 
-function TSQLCommand<T>.Insert(const AModel: IModel<T>): ISQLCommand<T>;
+function TSQLCommand<T>.Insert(const AIModel: IModel<T>): ISQLCommand<T>;
 var
-  oEField: T;
-  sFields: String;
+  oIField: IField;
+  sFields, sParamFields: String;
 begin
-  Result   := Self;
-  sFields  := EmptyStr;
-  sCommand := EmptyStr;
+  Result       := Self;
+  sFields      := EmptyStr;
+  sParamFields := EmptyStr;
+  sCommand     := EmptyStr;
 
-  for oEField in AModel.EnumFields do
+  for oIField in AIModel.Fields do
   begin
     if (not(sFields.IsEmpty)) then
       sFields := sFields + CommaSpace;
 
-    sFields := sFields + LowerCase(AModel.Field(oEField).Name);
+    sFields := sFields + LowerCase(oIField.Name);
+
+    if (not(sParamFields.IsEmpty)) then
+      sParamFields := sParamFields + CommaSpace;
+
+    sParamFields := sParamFields + ':' + oIField.Alias;
   end;
 
-  sCommand := 'insert into ' + LowerCase(AModel.Table) + ' (' + sFields + ') values (';
-
-  sFields := EmptyStr;
-  for oEField in AModel.EnumFields do
-  begin
-    if (not(sFields.IsEmpty)) then
-      sFields := sFields + CommaSpace;
-
-    sFields := sFields + ':' + AModel.Field(oEField).Alias;
-  end;
-
-  sCommand := sCommand + sFields + ')';
+  sCommand := 'insert into ' + LowerCase(AIModel.Table.Name) + ' (' + sFields + ') values (' + sParamFields + ')';
 end;
 
 
@@ -609,30 +609,31 @@ end;
 
 
 
-function TSQLCommand<T>.Update(const AModel: IModel<T>): ISQLCommand<T>;
+function TSQLCommand<T>.Update(const AIModel: IModel<T>): ISQLCommand<T>;
 var
   oEField: T;
+  oIField: IField;
 begin
   Result   := Self;
   sCommand := EmptyStr;
 
-  for oEField in AModel.EnumFields do
+  for oIField in AIModel.Fields do
   begin
     if (not(sCommand.IsEmpty)) then
       sCommand := sCommand + CommaSpace;
 
-    sCommand := sCommand + LowerCase(AModel.Field(oEField).Name) + ' = :' + AModel.Field(oEField).Alias;
+    sCommand := sCommand + LowerCase(oIField.Name) + ' = :' + oIField.Alias;
   end;
 
-  sCommand := 'update ' + LowerCase(AModel.Table) + ' set ' + sCommand;
+  sCommand := 'update ' + LowerCase(AIModel.Table.Name) + ' set ' + sCommand;
 end;
 
 
 
-function TSQLCommand<T>.WhereKey(const AModel: IModel<T>; const AModelKey: T): ISQLCommand<T>;
+function TSQLCommand<T>.WhereKey(const AIModel: IModel<T>; const AModelKey: T): ISQLCommand<T>;
 begin
   Result := Self;
-  sCommand := sCommand + ' where ' + LowerCase(AModel.Field(AModelKey).Name) + ' = :' + AModel.Field(AModelKey).Alias;
+  sCommand := sCommand + ' where ' + LowerCase(AIModel.Field(AModelKey).Name) + ' = :' + AIModel.Field(AModelKey).Alias;
 end;
 
 
