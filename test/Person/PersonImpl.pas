@@ -24,7 +24,6 @@ type
     constructor Create; reintroduce;
 
     procedure SetValue(const AField: TEPerson; const AValue: Variant); reintroduce; overload;
-
     function GetValue(const AField: TEPerson): Variant; reintroduce; overload;
 
     procedure SetValue(const AField: TEMatriculation; const AValue: Variant); reintroduce; overload;

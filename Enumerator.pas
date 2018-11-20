@@ -6,7 +6,6 @@ type
   IEnum<T> = interface
   ['{DA92220F-BE96-405B-8BDB-546139C2D417}']
     function Column(const AEnumeratedField: T): String;
-    function ColumnAlias(const AEnumeratedField: T): String;
     function Columns(const AEnumeratedFields: TArray<T>): TArray<String>;
     function Table: String;
     function TableAlias(const AAlias: String = ''): String;
@@ -18,7 +17,6 @@ type
   TEnumAbstract<T> = class(TInterfacedObject, IEnum<T>)
   public
     function Column(const AEnumeratedField: T): String; virtual; abstract;
-    function ColumnAlias(const AEnumeratedField: T): String; virtual; abstract;
     function Columns(const AEnumeratedFields: TArray<T>): TArray<String>; virtual; final;
     function Table: String; virtual; abstract;
     function TableAlias(const AAlias: String = ''): String; virtual; abstract;

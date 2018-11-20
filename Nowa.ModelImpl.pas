@@ -12,6 +12,7 @@ type
   strict private
     fIModelEnumerator: IEnum<T>;
     fTable: ITable;
+    oInternalFields: TArray<T>;
     fFields: TDictionary<T, IField>;
   public
     constructor Create(const AIModelEnumerator: IEnum<T>); reintroduce;
@@ -21,8 +22,6 @@ type
     procedure SetValue(const AField: T; const AValue: Variant); virtual; abstract;
 
     function GetValue(const AField: T): Variant; virtual; abstract;
-
-    //Need that PrepareModel called
     function Field(const AField: T): IField; overload;
     function Field(const AField: IField): T; overload;
     function Fields: TArray<IField>;
@@ -32,10 +31,9 @@ type
   TField = class(TInterfacedObject, IField)
   strict private
     FieldName: String;
-    FieldAlias: String;
     fTable: ITable;
   public
-    constructor Create(const AFieldName, AFieldAlias: String; const ATable: ITable); reintroduce;
+    constructor Create(const AFieldName: String; const ATable: ITable); reintroduce;
     function Ref: IField;
 
     function Name: String;
@@ -49,12 +47,13 @@ type
     TableAlias: String;
     SequenceName: String;
   public
-    constructor Create(const ATableName, ATableAlias, ASequenceName: String); reintroduce;
+    constructor Create(const ATableName, ASequenceName: String); reintroduce;
     function Ref: ITable;
 
     function Name: String;
     function Alias: String;
     function Sequence: String;
+    procedure Prepare(const AAlias: String);
   end;
 
 implementation
@@ -65,38 +64,28 @@ uses
 { TModel<T> }
 
 constructor TModel<T>.Create(const AIModelEnumerator: IEnum<T>);
+var
+  oEField: T;
 begin
   fIModelEnumerator := AIModelEnumerator;
   fFields := TDictionary<T, IField>.Create;
-  //fTable  := TTable.Create('','','');
+  fTable  := TTable.Create(fIModelEnumerator.Table, fIModelEnumerator.Sequence);
+  oInternalFields := fIModelEnumerator.AllColumns;
+
+  for oEField in oInternalFields do
+    fFields.Add(oEField, TField.Create(fIModelEnumerator.Column(oEField), fTable).Ref);
 end;
 
 
 
 procedure TModel<T>.PrepareModel(const ATableAlias: String; const AFields: TArray<T>);
-var
-  oInternalArray: TArray<T>;
-  oEField: T;
-  oIField: IField;
 begin
-  fTable := TTable.Create(fIModelEnumerator.Table, fIModelEnumerator.TableAlias(ATableAlias), fIModelEnumerator.Sequence);
+  fTable.Prepare(fIModelEnumerator.TableAlias(ATableAlias));
 
-  fFields.Clear;
-  if (Length(AFields) = 0) then
-    oInternalArray := fIModelEnumerator.AllColumns
+  if (Length(AFields) > 0) then
+    oInternalFields := AFields
   else
-    oInternalArray := AFields;
-
-  for oEField in oInternalArray do
-  begin
-    oIField := TField.Create(
-      fIModelEnumerator.Column(oEField),
-      fIModelEnumerator.ColumnAlias(oEField),
-      fTable
-    );
-
-    fFields.Add(oEField, oIField);
-  end;
+    oInternalFields := fIModelEnumerator.AllColumns;
 end;
 
 
@@ -127,7 +116,7 @@ function TModel<T>.Field(const AField: IField): T;
 var
   oEKey: T;
 begin
-  //TODO: Default Result if condition not accepted?
+  //fFields always have all enumerated of enumerated type
 
   for oEKey in fFIelds.Keys.ToArray do
   begin
@@ -147,7 +136,7 @@ var
 begin
   SetLength(Result, 0);
 
-  for oEField in fFields.Keys do
+  for oEField in oInternalFields do
   begin
     SetLength(Result, Succ(Length(Result)));
     Result[Pred(Length(Result))] := fFields[oEField];
@@ -160,15 +149,14 @@ end;
 
 function TField.Alias: String;
 begin
-  Result := FieldAlias;
+  Result := fTable.Alias + '_' + FieldName;
 end;
 
 
 
-constructor TField.Create(const AFieldName, AFieldAlias: String; const ATable: ITable);
+constructor TField.Create(const AFieldName: String; const ATable: ITable);
 begin
   FieldName := AFieldName;
-  FieldAlias := AFieldAlias;
   fTable := ATable;
 end;
 
@@ -204,10 +192,9 @@ end;
 
 
 
-constructor TTable.Create(const ATableName, ATableAlias, ASequenceName: String);
+constructor TTable.Create(const ATableName, ASequenceName: String);
 begin
   TableName    := ATableName;
-  TableAlias   := ATableAlias;
   SequenceName := ASequenceName;
 end;
 
@@ -216,6 +203,13 @@ end;
 function TTable.Name: String;
 begin
   Result := TableName;
+end;
+
+
+
+procedure TTable.Prepare(const AAlias: String);
+begin
+  TableAlias := AAlias;
 end;
 
 

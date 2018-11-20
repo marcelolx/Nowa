@@ -1,4 +1,4 @@
-unit NowaTest;
+    unit NowaTest;
 
 interface
 
@@ -100,8 +100,8 @@ end;
 
 procedure TNowaTest.TestBasicSelect;
 const
-  sQueryExpected = 'select PERSON.TX_PASSWORD as PERSON_PASSWORD, PERSON.NR_SEQUENTIAL as PERSON_SEQUENTIAL, PERSON.FL_NAME as PERSON_NAME, PERSON.DT_BIRTHDATE as PERSON_BIRTHDATE, PERSON.TX_EMAIL as PERSON_EMAIL from TB_PERSON as PERSON';
-  sQueryExpected2 = 'select PERSON.NR_SEQUENTIAL as PERSON_SEQUENTIAL from TB_PERSON as PERSON';
+  sQueryExpected = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL, PERSON.FL_NAME as PERSON_FL_NAME, PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE, PERSON.TX_EMAIL as PERSON_TX_EMAIL, PERSON.TX_PASSWORD as PERSON_TX_PASSWORD from TB_PERSON as PERSON';
+  sQueryExpected2 = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL from TB_PERSON as PERSON';
 var
   fIModel: IModel<TEPerson>;
   sQuery: String;
@@ -148,7 +148,7 @@ end;
 
 procedure TNowaTest.TestSQLCommandDeleteWhere;
 const
-  sDelete = 'delete from tb_person where nr_sequential = :PERSON_SEQUENTIAL';
+  sDelete = 'delete from tb_person where nr_sequential = :PERSON_NR_SEQUENTIAL';
 var
   oIPerson: IModel<TEPerson>;
 begin
@@ -198,8 +198,8 @@ end;
 
 procedure TNowaTest.TestSQLCommandFind;
 const
-  sFind = 'select PERSON.TX_PASSWORD as PERSON_PASSWORD, PERSON.NR_SEQUENTIAL as PERSON_SEQUENTIAL, PERSON.FL_NAME as PERSON_NAME, PERSON.DT_BIRTHDATE as PERSON_BIRTHDATE,' +
-    ' PERSON.TX_EMAIL as PERSON_EMAIL from TB_PERSON as PERSON where PERSON.NR_SEQUENTIAL = 1';
+  sFind = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL, PERSON.FL_NAME as PERSON_FL_NAME, PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE,' +
+    ' PERSON.TX_EMAIL as PERSON_TX_EMAIL, PERSON.TX_PASSWORD as PERSON_TX_PASSWORD from TB_PERSON as PERSON where PERSON.NR_SEQUENTIAL = 1';
 var
   oIPerson: IModel<TEPerson>;
 begin
@@ -217,7 +217,7 @@ end;
 
 procedure TNowaTest.TestSQLCommandInsert;
 const
-  sInsert = 'insert into tb_person (tx_password, nr_sequential, fl_name, dt_birthdate, tx_email) values (:PERSON_PASSWORD, :PERSON_SEQUENTIAL, :PERSON_NAME, :PERSON_BIRTHDATE, :PERSON_EMAIL)';
+  sInsert = 'insert into tb_person (nr_sequential, fl_name, dt_birthdate, tx_email, tx_password) values (:PERSON_NR_SEQUENTIAL, :PERSON_FL_NAME, :PERSON_DT_BIRTHDATE, :PERSON_TX_EMAIL, :PERSON_TX_PASSWORD)';
 var
   oIPerson: IModel<TEPerson>;
 begin
@@ -253,7 +253,7 @@ end;
 
 procedure TNowaTest.TestSQLCommandUpdate;
 const
-  sUpdate = 'update tb_person set tx_password = :PERSON_PASSWORD, nr_sequential = :PERSON_SEQUENTIAL, fl_name = :PERSON_NAME, dt_birthdate = :PERSON_BIRTHDATE, tx_email = :PERSON_EMAIL';
+  sUpdate = 'update tb_person set nr_sequential = :PERSON_NR_SEQUENTIAL, fl_name = :PERSON_FL_NAME, dt_birthdate = :PERSON_DT_BIRTHDATE, tx_email = :PERSON_TX_EMAIL, tx_password = :PERSON_TX_PASSWORD';
 var
   oIPerson: IModel<TEPerson>;
 begin
@@ -271,8 +271,8 @@ end;
 
 procedure TNowaTest.TestSQLCommandUpdateWhereKey;
 const
-  sUpdate = 'update tb_person set tx_password = :PERSON_PASSWORD, nr_sequential = :PERSON_SEQUENTIAL, fl_name = :PERSON_NAME, dt_birthdate = :PERSON_BIRTHDATE,' +
-    ' tx_email = :PERSON_EMAIL where nr_sequential = :PERSON_SEQUENTIAL';
+  sUpdate = 'update tb_person set nr_sequential = :PERSON_NR_SEQUENTIAL, fl_name = :PERSON_FL_NAME, dt_birthdate = :PERSON_DT_BIRTHDATE,' +
+    ' tx_email = :PERSON_TX_EMAIL, tx_password = :PERSON_TX_PASSWORD where nr_sequential = :PERSON_NR_SEQUENTIAL';
 var
   oIPerson: IModel<TEPerson>;
 begin
@@ -361,15 +361,16 @@ end;
 
 procedure TNowaTest.TestSQLSelectFields;
 const
-  sQuery = 'select PERSON.NR_SEQUENTIAL as PERSON_SEQUENTIAL';
-  sQueryExpected = 'select PERSON.TX_PASSWORD as PERSON_PASSWORD, PERSON.NR_SEQUENTIAL as PERSON_SEQUENTIAL, PERSON.FL_NAME as PERSON_NAME, PERSON.DT_BIRTHDATE as PERSON_BIRTHDATE, PERSON.TX_EMAIL as PERSON_EMAIL';
+  sQuery = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL';
+  sQueryExpected = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL, PERSON.FL_NAME as PERSON_FL_NAME, PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE, PERSON.TX_EMAIL as PERSON_TX_EMAIL, PERSON.TX_PASSWORD as PERSON_TX_PASSWORD';
 var
   oIPerson: IModel<TEPerson>;
   oITable: ITable;
   oIField: IField;
 begin
-  oITable := TTable.Create('TB_PERSON', 'PERSON', 'GEN_PERSON');
-  oIField := TField.Create('NR_SEQUENTIAL', 'PERSON_SEQUENTIAL', oITable);
+  oITable := TTable.Create('TB_PERSON', 'GEN_PERSON');
+  oITable.Prepare('PERSON');
+  oIField := TField.Create('NR_SEQUENTIAL', oITable);
 
   CheckEquals(sQuery, TSQLSelect.Create.Ref.Fields([[oIField]]).Build);
 
@@ -385,8 +386,8 @@ end;
 
 procedure TNowaTest.TestSQLSelectFromWithFields;
 const
-  sQuery = 'select PERSON.NR_SEQUENTIAL as PERSON_SEQUENTIAL from TB_PERSON as PERSON';
-  sQueryExpected = 'select PERSON.TX_PASSWORD as PERSON_PASSWORD, PERSON.NR_SEQUENTIAL as PERSON_SEQUENTIAL, PERSON.FL_NAME as PERSON_NAME, PERSON.DT_BIRTHDATE as PERSON_BIRTHDATE, PERSON.TX_EMAIL as PERSON_EMAIL from TB_PERSON as PERSON';
+  sQuery = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL from TB_PERSON as PERSON';
+  sQueryExpected = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL, PERSON.FL_NAME as PERSON_FL_NAME, PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE, PERSON.TX_EMAIL as PERSON_TX_EMAIL, PERSON.TX_PASSWORD as PERSON_TX_PASSWORD from TB_PERSON as PERSON';
 var
   oIPerson: IModel<TEPerson>;
 begin
@@ -503,8 +504,8 @@ end;
 
 procedure TNowaTest.TestSQLSelectWhere;
 const
-  sQuery = 'select PERSON.NR_SEQUENTIAL as PERSON_SEQUENTIAL from TB_PERSON as PERSON where PERSON.NR_SEQUENTIAL = 1';
-  sQueryExpected = 'select PERSON.TX_PASSWORD as PERSON_PASSWORD, PERSON.NR_SEQUENTIAL as PERSON_SEQUENTIAL, PERSON.FL_NAME as PERSON_NAME, PERSON.DT_BIRTHDATE as PERSON_BIRTHDATE, PERSON.TX_EMAIL as PERSON_EMAIL from TB_PERSON as PERSON where PERSON.NR_SEQUENTIAL = 1';
+  sQuery = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL from TB_PERSON as PERSON where PERSON.NR_SEQUENTIAL = 1';
+  sQueryExpected = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL, PERSON.FL_NAME' + ' as PERSON_FL_NAME, PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE, PERSON.TX_EMAIL as PERSON_TX_EMAIL, PERSON.TX_PASSWORD as PERSON_TX_PASSWORD from TB_PERSON as PERSON where PERSON.NR_SEQUENTIAL = 1';
 var
   oIPerson: IModel<TEPerson>;
 begin

@@ -24,7 +24,7 @@ uses
 
 {$R *.RES}
 
-
 begin
   DUnitTestRunner.RunRegisteredTests;
 end.
+

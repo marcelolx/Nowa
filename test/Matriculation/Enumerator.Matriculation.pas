@@ -11,7 +11,6 @@ type
   TEnumMatriculation = class(TEnumAbstract<TEMatriculation>, IEnum<TEMatriculation>)
   public
     function Column(const AEnumeratedField: TEMatriculation): String; override;
-    function ColumnAlias(const AEnumeratedField: TEMatriculation): String; override;
     function Table: String; override;
     function TableAlias(const AAlias: String = ''): String; override;
     function Sequence: String; override;
@@ -57,29 +56,6 @@ begin
 
     temUser:
       Result := 'CD_USER';
-  else
-    raise Exception.Create('Enumerated field doesn''t have a column.');
-  end;
-end;
-
-
-
-function TEnumMatriculation.ColumnAlias(const AEnumeratedField: TEMatriculation): String;
-begin
-  Result := EmptyStr;
-
-  case AEnumeratedField of
-    temSequential:
-      Result := 'MATRICULATION_SEQUENTIAL';
-
-    temPersonSequential:
-      Result := 'MATRICULATION_PERSONSEQUENTIAL';
-
-    temDate:
-      Result := 'MATRICULATION_DATE';
-
-    temUser:
-      Result := 'PERSON_USER';
   else
     raise Exception.Create('Enumerated field doesn''t have a column.');
   end;
