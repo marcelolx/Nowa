@@ -27,8 +27,8 @@ begin
   oIPerson.PrepareModel('', [tepSequential, tepName, tepEmail]);
 
   TSQLSelect.Create.Ref
-    .Fields(oIPerson.PreparedFields)
-    .From(oIPerson.Table, oIPerson.TableAlias)
+    .Fields([oIPerson.Fields])
+    .From(oIPerson.Table)
     .Build;
 end;
 ```
@@ -49,16 +49,16 @@ begin
   oIMatriculation.PrepareModel('', []);
 
   SelectCommand := TSQLSelect.Create.Ref
-    .Fields([oIPerson.PreparedFields, oIMatriculation.PreparedFields])
-    .From(oIPerson.Table, oIPerson.TableAlias)
+    .Fields([oIPerson.Fields, oIMatriculation.Fields])
+    .From(oIPerson.Table)
     .InnerJoin(
       TSQLJoin.Create.Ref
-        .Table(oIMatriculation.TableAlias, oIMatriculation.Table)
+        .Table(oIMatriculation.Table)
         .&On(
           TSQLCondition.Create.Ref
-            .LeftTerm(oIMatriculation.TableAlias + '.' + oIMatriculation.FieldName(temPersonSequential))
+            .LeftTerm(oIMatriculation.Field(temPersonSequential))
             .Op(opEqual)
-            .RightTerm(oIPerson.TableAlias + '.' + oIPerson.FieldName(tepSequential))
+            .RightTerm(oIPerson.Field(tepSequential))
         )
     )
     .Build;
@@ -120,7 +120,6 @@ type
   TEnumPessoa = class(TEnumAbstract<TEPerson>, IEnum<TEPerson>)
   public
     function Column(const AEnumeratedField: TEPerson): String; override;
-    function ColumnAlias(const AEnumeratedField: TEPerson): String; override;
     function Table: String; override;
     function TableAlias(const AAlias: String = ''): String; override;
     function Sequence: String; override;
