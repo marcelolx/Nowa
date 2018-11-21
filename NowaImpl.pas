@@ -30,7 +30,7 @@ type
   strict private
     sWhere: String;     //TODO: Do Implement
   public
-    function Field(const AFieldPrefix, AField: string): ISQLWhere;
+    function Field(const AIField: IField): ISQLWhere;
     function Equal: ISQLWhere; overload;
     function Equal(const AValue: Variant): ISQLWhere; overload;
     function Different: ISQLWhere; overload;
@@ -74,7 +74,7 @@ type
   strict private
     JoinCommand: String;
   public
-    function Table(const ATableAlias, ATableName: String): ISQLJoin;
+    function Table(const ATable: ITable): ISQLJoin;
     function &On(const ACondition: ISQLCondition): ISQLJoin;
     function &And(const ACondition: ISQLCondition): ISQLJoin;
     function &Or(const ACondition: ISQLCondition): ISQLJoin;
@@ -89,8 +89,8 @@ type
   strict private
     ConditionCommand: String;
   public
-    function LeftTerm(const ATerm: String): ISQLCondition;
-    function RightTerm(const ATerm: string): ISQLCondition;
+    function LeftTerm(const AIField: IField): ISQLCondition;
+    function RightTerm(const AIField: IField): ISQLCondition;
     function Op(const AOperator: TSQLOperator): ISQLCondition;
 
     function Build: string; override;
@@ -106,7 +106,7 @@ type
     function GetTableFieldAlias(const AIField: IField): String;
   public
     function Fields(const AModelsFieldsPrepared: TArray<TArray<IField>>): ISQLSelect;
-    function From(const ATable, ATableAlias: String): ISQLSelect;
+    function From(const ATable: ITable): ISQLSelect;
     function Where(const AWhereCondition: ISQLWhere): ISQLSelect;
     function Having(const AHavingQuery: ISQLSelect): ISQLSelect;
     function GroupBy(const AGroupBy: ISQLBy<TObject>): ISQLSelect;
@@ -215,10 +215,10 @@ end;
 
 
 
-function TSQLWhere.Field(const AFieldPrefix, AField: string): ISQLWhere;
+function TSQLWhere.Field(const AIField: IField): ISQLWhere;
 begin
   Result := Self;
-  sWhere := sWhere + AFieldPrefix + Point + AField;
+  sWhere := sWhere + AIField.Table.Alias + Point + AIField.Name;
 end;
 
 
@@ -389,10 +389,10 @@ end;
 
 
 
-function TSQLSelect.From(const ATable, ATableAlias: String): ISQLSelect;
+function TSQLSelect.From(const ATable: ITable): ISQLSelect;
 begin
   Result  := Self;
-  sSelect := sSelect + sFrom + ATable + sAs + ATableAlias;
+  sSelect := sSelect + sFrom + ATable.Name + sAs + ATable.Alias;
 end;
 
 
@@ -554,10 +554,10 @@ begin
 
   sCommand := TSQLSelect.Create.Ref
     .Fields([AIModel.Fields])
-    .From(AIModel.Table.Name, AIModel.Table.Alias) //TODO: Refactor, pass AIModel.Table ...
+    .From(AIModel.Table)
     .Where(
       TSQLWhere.Create.Ref
-        .Field(AIModel.Table.Alias, AIModel.Field(AModelKey).Name)
+        .Field(AIModel.Field(AModelKey))
         .Equal(AKeyValue)
     ).Build;
 end;
@@ -727,10 +727,10 @@ end;
 
 
 
-function TSQLJoin.Table(const ATableAlias, ATableName: String): ISQLJoin;
+function TSQLJoin.Table(const ATable: ITable): ISQLJoin;
 begin
   Result := Self;
-  JoinCommand := JoinCommand + Space + ATableName + sAs + ATableAlias;
+  JoinCommand := JoinCommand + Space + ATable.Name + sAs + ATable.Alias;
 end;
 
 
@@ -751,10 +751,10 @@ end;
 
 
 
-function TSQLCondition.LeftTerm(const ATerm: String): ISQLCondition;
+function TSQLCondition.LeftTerm(const AIField: IField): ISQLCondition;
 begin
   Result := Self;
-  ConditionCommand := ConditionCommand + ATerm;
+  ConditionCommand := ConditionCommand + AIField.Table.Alias + Point + AIField.Name;
 end;
 
 
@@ -774,10 +774,10 @@ end;
 
 
 
-function TSQLCondition.RightTerm(const ATerm: string): ISQLCondition;
+function TSQLCondition.RightTerm(const AIField: IField): ISQLCondition;
 begin
   Result := Self;
-  ConditionCommand := ConditionCommand + ATerm;
+  ConditionCommand := ConditionCommand + AIField.Table.Alias + Point + AIField.Name;
 end;
 
 end.

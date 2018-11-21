@@ -14,7 +14,7 @@ type
 
   ISQLWhere = interface(ISQL)
   ['{DD8BC762-B0BD-4A88-A24B-1CC53E2BD938}']
-    function Field(const AFieldPrefix, AField: string): ISQLWhere;
+    function Field(const AIField: IField): ISQLWhere;
     function Equal: ISQLWhere; overload;
     function Equal(const AValue: Variant): ISQLWhere; overload;
     function Different: ISQLWhere; overload;
@@ -44,14 +44,14 @@ type
 
   ISQLCondition = interface(ISQL)
   ['{04DF0E7C-783C-47C1-A033-6E19F8AE870D}']
-    function LeftTerm(const ATerm: String): ISQLCondition;
-    function RightTerm(const ATerm: string): ISQLCondition;
+    function LeftTerm(const AIField: IField): ISQLCondition;
+    function RightTerm(const AIField: IField): ISQLCondition;
     function Op(const AOperator: TSQLOperator): ISQLCondition;
   end;
 
   ISQLJoin = interface(ISQL)
   ['{56C4AB65-E682-4273-91C1-CF3B10BF74F1}']
-    function Table(const ATableAlias, ATableName: String): ISQLJoin;
+    function Table(const ATable: ITable): ISQLJoin;
     function &On(const ACondition: ISQLCondition): ISQLJoin;
     function &And(const ACondition: ISQLCondition): ISQLJoin;
     function &Or(const ACondition: ISQLCondition): ISQLJoin;
@@ -60,7 +60,7 @@ type
   ISQLSelect = interface(ISQL)
   ['{DF1D25A9-3A66-4C9D-A3DD-12A74B4E49DE}']
     function Fields(const AModelsFieldsPrepared: TArray<TArray<IField>>): ISQLSelect;
-    function From(const ATable, ATableAlias: String): ISQLSelect;
+    function From(const ATable: ITable): ISQLSelect;
     function Where(const AWhereCondition: ISQLWhere): ISQLSelect;
     function Having(const AHavingQuery: ISQLSelect): ISQLSelect;
     function GroupBy(const AGroupBy: ISQLBy<TObject>): ISQLSelect;
