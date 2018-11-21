@@ -3,7 +3,8 @@ unit NowaDAO;
 interface
 
 uses
-  Nowa.Model;
+  Nowa.Model,
+  FireDAC.Comp.Client;
 
 type
   INowaDAO<T> = interface
@@ -11,6 +12,7 @@ type
     procedure Insert(const AModel: IModel<T>);
     procedure Update(const AModel: IModel<T>);
     procedure Save(const AModel: IModel<T>; const AModelKey: T);
+    procedure FillModel(const AModel: IModel<T>; const AQuery: TFDQuery);
   end;
 
 implementation

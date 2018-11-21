@@ -22,6 +22,7 @@ type
     Matriculation: IModel<TEMatriculation>;
   public
     constructor Create; reintroduce;
+    function Ref: IPerson<TEPerson>;
 
     procedure SetValue(const AField: TEPerson; const AValue: Variant); reintroduce; overload;
     function GetValue(const AField: TEPerson): Variant; reintroduce; overload;
@@ -99,6 +100,13 @@ end;
 function TPerson.GetValue(const AField: TEMatriculation): Variant;
 begin
   Result := Matriculation.GetValue(AField);
+end;
+
+
+
+function TPerson.Ref: IPerson<TEPerson>;
+begin
+  Result := Self;
 end;
 
 

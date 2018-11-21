@@ -24,6 +24,7 @@ type
     procedure Insert(const AModel: IModel<T>);
     procedure Update(const AModel: IModel<T>);
     procedure Save(const AModel: IModel<T>; const AModelKey: T);
+    procedure FillModel(const AModel: IModel<T>; const AQuery: TFDQuery);
   end;
 
 implementation
@@ -45,6 +46,17 @@ end;
 function TNowaDAO<T>.DoInsert(const AModel: IModel<T>; const AModelKey: T): Boolean;
 begin
   Result := TSQLCommand<T>.Create.Ref.DoInsert(AModel, AModelKey);
+end;
+
+
+
+procedure TNowaDAO<T>.FillModel(const AModel: IModel<T>; const AQuery: TFDQuery);
+var
+  oIField: IField;
+  oEField: T;
+begin
+  for oIField in AModel.Fields do
+    AModel.SetValue(AModel.Field(oIField), AQuery.FieldByName(oIField.Alias).AsVariant);
 end;
 
 

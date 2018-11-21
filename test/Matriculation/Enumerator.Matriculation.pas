@@ -52,7 +52,7 @@ begin
       Result := 'NR_PERSONSEQUENTIAL';
 
     temDate:
-      Result := 'DT_DATE';
+      Result := 'DT_DATA';
 
     temUser:
       Result := 'CD_USER';
@@ -72,7 +72,7 @@ end;
 
 function TEnumMatriculation.Sequence: String;
 begin
-  Result := '';
+  Result := 'GEN_MATRICULATION';
 end;
 
 
