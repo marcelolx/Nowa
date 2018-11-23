@@ -14,6 +14,7 @@ type
     fTable: ITable;
     oInternalFields: TArray<T>;
     fFields: TDictionary<T, IField>;
+    fPrimaryKey: TArray<T>;
   public
     constructor Create(const AIModelEnumerator: IEnum<T>); reintroduce;
     destructor Destroy; override;
@@ -26,6 +27,8 @@ type
     function Field(const AField: IField): T; overload;
     function Fields: TArray<IField>;
     function Table: ITable;
+    function PrimaryKey: TArray<T>;
+    function IsNew: Boolean; virtual;
   end;
 
   TField = class(TInterfacedObject, IField)
@@ -59,7 +62,8 @@ type
 implementation
 
 uses
-  System.Generics.Defaults;
+  System.Generics.Defaults,
+  System.SysUtils;
 
 { TModel<T> }
 
@@ -71,6 +75,7 @@ begin
   fFields := TDictionary<T, IField>.Create;
   fTable  := TTable.Create(fIModelEnumerator.Table, fIModelEnumerator.Sequence);
   oInternalFields := fIModelEnumerator.AllColumns;
+  fPrimaryKey := fIModelEnumerator.PrimaryKey;
 
   for oEField in oInternalFields do
     fFields.Add(oEField, TField.Create(fIModelEnumerator.Column(oEField), fTable).Ref);
@@ -86,6 +91,13 @@ begin
     oInternalFields := AFields
   else
     oInternalFields := fIModelEnumerator.AllColumns;
+end;
+
+
+
+function TModel<T>.PrimaryKey: TArray<T>;
+begin
+  Result := fPrimaryKey;
 end;
 
 
@@ -144,6 +156,20 @@ begin
 end;
 
 
+
+function TModel<T>.IsNew: Boolean;
+begin
+  Result := False;
+
+  if (Length(fPrimaryKey) = 1) then
+  begin
+    try
+      Result := (GetValue(fPrimaryKey[0]) = 0);
+    except
+      raise Exception.Create('IsNew: Primary Key value is not an integer valid value, provide specific implementation to validate it.');
+    end;
+  end;
+end;
 
 { TField }
 

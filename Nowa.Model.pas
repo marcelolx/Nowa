@@ -28,6 +28,8 @@ type
     function Field(const AField: T): IField; overload;
     function Field(const AField: IField): T; overload;
     function Fields: TArray<IField>;
+    function PrimaryKey: TArray<T>;
+    function IsNew: Boolean;
   end;
 
 implementation

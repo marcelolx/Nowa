@@ -60,7 +60,6 @@ type
     procedure TestSQLCommandUpdateWhereKey;
     procedure TestSQLCommandDelete;
     procedure TestSQLCommandDeleteWhere;
-    procedure TestSQLCommandDoInsert;
     procedure TestSQLCommandNewKeyValue;
     procedure TestSQLCommandFind;
     procedure TestSQLCommandExists;
@@ -161,21 +160,6 @@ begin
       .WhereKey(oIPerson, tepSequential)
       .Build
   );
-end;
-
-
-
-procedure TNowaTest.TestSQLCommandDoInsert;
-var
-  oIPerson: IPerson<TEPerson>;
-begin
-  oIPerson := TPerson.Create;
-  oIPerson.PrepareModel('', []);
-
-  CheckTrue(TSQLCommand<TEPerson>.Create.Ref.DoInsert(oIPerson, tepSequential));
-
-  oIPerson.SetValue(tepSequential, 1);
-  CheckFalse(TSQLCommand<TEPerson>.Create.Ref.DoInsert(oIPerson, tepSequential));
 end;
 
 

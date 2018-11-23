@@ -83,7 +83,6 @@ type
     function WhereKey(const AModel: IModel<T>; const AModelKey: T): ISQLCommand<T>;
     function NewKeyValue(const ASequenceName: String): ISQLCommand<T>;
     function Exists(const AModel: IModel<T>; const AModelKey: T): ISQLCommand<T>;
-    function DoInsert(const AModel: IModel<T>; const AModelKey: T): Boolean;
   end;
 
 implementation
