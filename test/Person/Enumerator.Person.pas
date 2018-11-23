@@ -15,6 +15,7 @@ type
     function TableAlias(const AAlias: String = ''): String; override;
     function Sequence: String; override;
     function AllColumns: TArray<TEPerson>; override;
+    function PrimaryKey: TArray<TEPerson>; override;
     function Ref: IEnum<TEPerson>; override;
   end;
 
@@ -47,6 +48,13 @@ begin
   else
     raise Exception.Create('Enumerated field doesn''t have a column.');
   end;
+end;
+
+
+
+function TEnumPerson.PrimaryKey: TArray<TEPerson>;
+begin
+  Result := [tepSequential];
 end;
 
 

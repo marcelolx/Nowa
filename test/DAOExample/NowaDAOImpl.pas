@@ -11,7 +11,6 @@ uses
 type
   TNowaDAO<T> = class(TInterfacedObject, INowaDAO<T>)
   strict private
-    function DoInsert(const AModel: IModel<T>; const AModelKey: T): Boolean;
     function GenerateModelKey(const ASequenceName: String): Int64;
 
     procedure SaveModel(const AModel: IModel<T>);
@@ -39,13 +38,6 @@ uses
 constructor TNowaDAO<T>.Create(const AFDCommand: TFDCommand);
 begin
   fCommand := AFDCommand;
-end;
-
-
-
-function TNowaDAO<T>.DoInsert(const AModel: IModel<T>; const AModelKey: T): Boolean;
-begin
-  Result := TSQLCommand<T>.Create.Ref.DoInsert(AModel, AModelKey);
 end;
 
 
@@ -89,7 +81,7 @@ end;
 
 procedure TNowaDAO<T>.Save(const AModel: IModel<T>; const AModelKey: T);
 begin
-  if DoInsert(AModel, AModelKey) then
+  if AModel.IsNew then
   begin
     fCommand.CommandText.Text := TSQLCommand<T>.Create.Ref.Insert(AModel).Build;
     AModel.SetValue(AModelKey, GenerateModelKey(AModel.Table.Sequence));
@@ -121,8 +113,8 @@ end;
 
 
 procedure TNowaDAO<T>.Update(const AModel: IModel<T>);
-begin
-  fCommand.CommandText.Text := TSQLCommand<T>.Create.Ref.Update(AModel).Build;
+begin                                                                                    //TODO: Change it that pass TArray<T> of primary keys...
+  fCommand.CommandText.Text := TSQLCommand<T>.Create.Ref.Update(AModel).WhereKey(AModel, AModel.PrimaryKey[0]).Build;
   SaveModel(AModel);
 end;
 

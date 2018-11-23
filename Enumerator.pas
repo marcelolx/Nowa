@@ -11,6 +11,7 @@ type
     function TableAlias(const AAlias: String = ''): String;
     function Sequence: String;
     function AllColumns: TArray<T>;
+    function PrimaryKey: TArray<T>;
     function Ref: IEnum<T>;
   end;
 
@@ -22,6 +23,7 @@ type
     function TableAlias(const AAlias: String = ''): String; virtual; abstract;
     function Sequence: String; virtual; abstract;
     function AllColumns: TArray<T>; virtual; abstract;
+    function PrimaryKey: TArray<T>; virtual; abstract;
     function Ref: IEnum<T>; virtual; abstract;
   end;
 

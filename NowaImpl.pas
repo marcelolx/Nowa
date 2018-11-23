@@ -135,7 +135,6 @@ type
     function WhereKey(const AIModel: IModel<T>; const AModelKey: T): ISQLCommand<T>;
     function NewKeyValue(const ASequenceName: String): ISQLCommand<T>;
     function Find(const AIModel: IModel<T>; const AModelKey: T; const AKeyValue: Int64): ISQLCommand<T>;
-    function DoInsert(const AIModel: IModel<T>; const AModelKey: T): Boolean;
     function Exists(const AIModel: IModel<T>; const AModelKey: T): ISQLCommand<T>;
 
     function Build: string; override;
@@ -522,21 +521,6 @@ end;
 
 
 
-function TSQLCommand<T>.DoInsert(const AIModel: IModel<T>; const AModelKey: T): Boolean;
-var
-  sValue: String;
-begin
-  Result := False;
-  sValue := VarToStr(AIModel.GetValue(AModelKey));
-
-  if (not((sValue.IsEmpty) or (sValue.Equals('0')))) then
-    Result := False
-  else
-    Result := True;
-end;
-
-
-
 function TSQLCommand<T>.Exists(const AIModel: IModel<T>; const AModelKey: T): ISQLCommand<T>;
 begin
   Result := Self;
@@ -603,8 +587,6 @@ end;
 function TSQLCommand<T>.Ref: TSQLCommand<T>;
 begin
   Result := Self;
-
-  {TODO -oMarcelo -cImplement : Implement}
 end;
 
 
