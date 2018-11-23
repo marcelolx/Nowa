@@ -157,7 +157,7 @@ begin
   CheckEquals(sDelete,
     TSQLCommand<TEPerson>.Create.Ref
       .Delete(oIPerson)
-      .WhereKey(oIPerson, tepSequential)
+      .WhereKey(oIPerson, [tepSequential])
       .Build
   );
 end;
@@ -266,7 +266,7 @@ begin
   CheckEquals(sUpdate,
     TSQLCommand<TEPerson>.Create.Ref
       .Update(oIPerson)
-      .WhereKey(oIPerson, tepSequential)
+      .WhereKey(oIPerson, [tepSequential])
       .Build
   );
 end;

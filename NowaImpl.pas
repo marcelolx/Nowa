@@ -132,7 +132,7 @@ type
     function Insert(const AIModel: IModel<T>): ISQLCommand<T>;
     function Update(const AIModel: IModel<T>): ISQLCommand<T>;
     function Delete(const AIModel: IModel<T>): ISQLCommand<T>;
-    function WhereKey(const AIModel: IModel<T>; const AModelKey: T): ISQLCommand<T>;
+    function WhereKey(const AIModel: IModel<T>; const AModelKey: TArray<T>): ISQLCommand<T>;
     function NewKeyValue(const ASequenceName: String): ISQLCommand<T>;
     function Find(const AIModel: IModel<T>; const AModelKey: T; const AKeyValue: Int64): ISQLCommand<T>;
     function Exists(const AIModel: IModel<T>; const AModelKey: T): ISQLCommand<T>;
@@ -612,10 +612,23 @@ end;
 
 
 
-function TSQLCommand<T>.WhereKey(const AIModel: IModel<T>; const AModelKey: T): ISQLCommand<T>;
+function TSQLCommand<T>.WhereKey(const AIModel: IModel<T>; const AModelKey: TArray<T>): ISQLCommand<T>;
+var
+  oEFieldKey: T;
+  Condition: String;
 begin
   Result := Self;
-  sCommand := sCommand + ' where ' + LowerCase(AIModel.Field(AModelKey).Name) + ' = :' + AIModel.Field(AModelKey).Alias;
+  Condition := EmptyStr;
+
+  for oEFieldKey in AModelKey do
+  begin
+    if (not(Condition.IsEmpty)) then
+      Condition := Condition + ' and ';
+
+    Condition := Condition + LowerCase(AIModel.Field(oEFieldKey).Name) + ' = :' + AIModel.Field(oEFieldKey).Alias;
+  end;
+
+  sCommand := sCommand + ' where ' + Condition;
 end;
 
 

@@ -80,7 +80,7 @@ type
     function Update(const AModel: IModel<T>): ISQLCommand<T>;
     function Delete(const AModel: IModel<T>): ISQLCommand<T>;
     function Find(const AModel: IModel<T>; const AModelKey: T; const AKeyValue: Int64): ISQLCommand<T>;
-    function WhereKey(const AModel: IModel<T>; const AModelKey: T): ISQLCommand<T>;
+    function WhereKey(const AModel: IModel<T>; const AModelKey: TArray<T>): ISQLCommand<T>;
     function NewKeyValue(const ASequenceName: String): ISQLCommand<T>;
     function Exists(const AModel: IModel<T>; const AModelKey: T): ISQLCommand<T>;
   end;
