@@ -96,7 +96,6 @@ type
     function Build: string; override;
 
     function Ref: ISQLCondition;
-    constructor Create; reintroduce;
   end;
 
   TSQLSelect = class(TSQL, ISQLSelect)
@@ -135,7 +134,7 @@ type
     function WhereKey(const AIModel: IModel<T>; const AModelKey: TArray<T>): ISQLCommand<T>;
     function NewKeyValue(const ASequenceName: String): ISQLCommand<T>;
     function Find(const AIModel: IModel<T>; const AModelKey: T; const AKeyValue: Int64): ISQLCommand<T>;
-    function Exists(const AIModel: IModel<T>; const AModelKey: T): ISQLCommand<T>;
+    function Exists(const AIModel: IModel<T>; const AModelKey: TArray<T>): ISQLCommand<T>;
 
     function Build: string; override;
 
@@ -201,7 +200,7 @@ end;
 function TSQLWhere.Equal(const AValue: Variant): ISQLWhere;
 begin
   Result := Self;
-  sWhere := sWhere + sEqual + VarToStr(AValue);
+  sWhere := sWhere + sEqual + VarToStr(AValue); //TODO: Whe string, whe need QuotedStr!!
 end;
 
 
@@ -430,7 +429,7 @@ end;
 function TSQLSelect.LeftJoin(const AJoin: ISQLJoin): ISQLSelect;
 begin
   Result := Self;
-  {TODO -oMarcelo -cGeneral : Implementar}
+  sSelect := sSelect + ' left join ' + AJoin.Build;
 end;
 
 
@@ -438,7 +437,7 @@ end;
 function TSQLSelect.LeftOuterJoin(const AJoin: ISQLJoin): ISQLSelect;
 begin
   Result := Self;
-  {TODO -oMarcelo -cGeneral : Implementar}
+  sSelect := sSelect + ' left outer join ' + AJoin.Build;
 end;
 
 
@@ -461,7 +460,7 @@ end;
 function TSQLSelect.RightJoin(const AJoin: ISQLJoin): ISQLSelect;
 begin
   Result := Self;
-  {TODO -oMarcelo -cGeneral : Implementar}
+  sSelect := sSelect + ' right join ' + AJoin.Build;
 end;
 
 
@@ -469,7 +468,7 @@ end;
 function TSQLSelect.RightOuterJoin(const AJoin: ISQLJoin): ISQLSelect;
 begin
   Result := Self;
-  {TODO -oMarcelo -cGeneral : Implementar}
+  sSelect := sSelect + ' right outer join ' + AJoin.Build;
 end;
 
 
@@ -477,7 +476,7 @@ end;
 function TSQLSelect.Union: ISQLSelect;
 begin
   Result := Self;
-  {TODO -oMarcelo -cGeneral : Implementar}
+  sSelect := sSelect + ' union select ';
 end;
 
 
@@ -485,7 +484,7 @@ end;
 function TSQLSelect.UnionAll: ISQLSelect;
 begin
   Result := Self;
-  {TODO -oMarcelo -cGeneral : Implementar}
+  sSelect := sSelect + ' union all select ';
 end;
 
 
@@ -521,7 +520,7 @@ end;
 
 
 
-function TSQLCommand<T>.Exists(const AIModel: IModel<T>; const AModelKey: T): ISQLCommand<T>;
+function TSQLCommand<T>.Exists(const AIModel: IModel<T>; const AModelKey: TArray<T>): ISQLCommand<T>;
 begin
   Result := Self;
   //TODO: Do Implement
@@ -725,7 +724,7 @@ end;
 function TSQLJoin.Table(const ATable: ITable): ISQLJoin;
 begin
   Result := Self;
-  JoinCommand := JoinCommand + Space + ATable.Name + sAs + ATable.Alias;
+  JoinCommand := JoinCommand + ATable.Name + sAs + ATable.Alias;
 end;
 
 
@@ -739,17 +738,10 @@ end;
 
 
 
-constructor TSQLCondition.Create;
-begin
-  ConditionCommand := EmptyStr;
-end;
-
-
-
 function TSQLCondition.LeftTerm(const AIField: IField): ISQLCondition;
 begin
   Result := Self;
-  ConditionCommand := ConditionCommand + AIField.Table.Alias + Point + AIField.Name;
+  ConditionCommand := AIField.Table.Alias + Point + AIField.Name;
 end;
 
 

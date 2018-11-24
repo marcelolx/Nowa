@@ -127,10 +127,23 @@ var
   fIModel: IModel<TEPerson>;
 begin
   fIModel := TPerson.Create;
-  fIModel.PrepareModel('', []);
+  fIModel.PrepareModel('', [tepSequential, tepName, tepEmail]);
 
-  CheckEquals('not implemented', '');
-  //CheckEquals(fIModel.Fields[0], fIModel.PreparedFields.Fields[0]); //TODO: Increment test
+  CheckEquals(fIModel.Field(tepSequential).Name, fIModel.Fields[0].Name);
+  CheckEquals(fIModel.Field(tepSequential).Alias, fIModel.Fields[0].Alias);
+  CheckEquals(fIModel.Field(tepSequential).Table.Name, fIModel.Fields[0].Table.Name);
+  CheckEquals(fIModel.Field(tepSequential).Table.Alias, fIModel.Fields[0].Table.Alias);
+  CheckEquals(fIModel.Field(tepSequential).Table.Sequence, fIModel.Fields[0].Table.Sequence);
+  CheckEquals(fIModel.Field(tepName).Name, fIModel.Fields[1].Name);
+  CheckEquals(fIModel.Field(tepName).Alias, fIModel.Fields[1].Alias);
+  CheckEquals(fIModel.Field(tepName).Table.Name, fIModel.Fields[1].Table.Name);
+  CheckEquals(fIModel.Field(tepName).Table.Alias, fIModel.Fields[1].Table.Alias);
+  CheckEquals(fIModel.Field(tepName).Table.Sequence, fIModel.Fields[1].Table.Sequence);
+  CheckEquals(fIModel.Field(tepEmail).Name, fIModel.Fields[2].Name);
+  CheckEquals(fIModel.Field(tepEmail).Alias, fIModel.Fields[2].Alias);
+  CheckEquals(fIModel.Field(tepEmail).Table.Name, fIModel.Fields[2].Table.Name);
+  CheckEquals(fIModel.Field(tepEmail).Table.Alias, fIModel.Fields[2].Table.Alias);
+  CheckEquals(fIModel.Field(tepEmail).Table.Sequence, fIModel.Fields[2].Table.Sequence);
 end;
 
 

@@ -173,7 +173,7 @@ begin
 
   CheckEquals('not implemented',
     TSQLCommand<TEPerson>.Create.Ref
-      .Exists(oIPerson, tepSequential)
+      .Exists(oIPerson, [tepSequential])
       .Build
   );
 end;
@@ -409,79 +409,308 @@ end;
 
 
 procedure TNowaTest.TestSQLSelectInnerJoin;
+const
+  sInnerJoin = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL,' +
+                     ' PERSON.FL_NAME as PERSON_FL_NAME,' +
+                     ' PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE,' +
+                     ' PERSON.TX_EMAIL as PERSON_TX_EMAIL,' +
+                     ' PERSON.TX_PASSWORD as PERSON_TX_PASSWORD,' +
+                     ' MATRICULATION.NR_SEQUENTIAL as MATRICULATION_NR_SEQUENTIAL,' +
+                     ' MATRICULATION.NR_PERSONSEQUENTIAL as MATRICULATION_NR_PERSONSEQUENTIAL,' +
+                     ' MATRICULATION.DT_DATA as MATRICULATION_DT_DATA,' +
+                     ' MATRICULATION.CD_USER as MATRICULATION_CD_USER' +
+                ' from TB_PERSON as PERSON' +
+               ' inner join TB_MATRICULATION as MATRICULATION on (MATRICULATION.NR_PERSONSEQUENTIAL = PERSON.NR_SEQUENTIAL)';
 var
   oIPerson: IModel<TEPerson>;
   oIMatriculation: IModel<TEMatriculation>;
-  teste: string;
 begin
   oIPerson := TPerson.Create;
   oIMatriculation := TMatriculation.Create;
 
   oIPerson.PrepareModel('', []);
   oIMatriculation.PrepareModel('', []);
-  teste := TSQLSelect.Create.Ref
-    .Fields([oIPerson.Fields, oIMatriculation.Fields])
-    .From(oIPerson.Table)
-    .InnerJoin(
-      TSQLJoin.Create.Ref
-        .Table(oIMatriculation.Table)
-        .&On(
-          TSQLCondition.Create.Ref
-            .LeftTerm(oIMatriculation.Field(temPersonSequential))
-            .Op(opEqual)
-            .RightTerm(oIPerson.Field(tepSequential))
-        )
-    )
-    .Build;
 
-
-  CheckEquals('NOT IMPLEMENTED',
-         ''
+  CheckEquals(sInnerJoin,
+    TSQLSelect.Create.Ref
+      .Fields([oIPerson.Fields, oIMatriculation.Fields])
+      .From(oIPerson.Table)
+      .InnerJoin(
+        TSQLJoin.Create.Ref
+          .Table(oIMatriculation.Table)
+          .&On(
+            TSQLCondition.Create.Ref
+              .LeftTerm(oIMatriculation.Field(temPersonSequential))
+              .Op(opEqual)
+              .RightTerm(oIPerson.Field(tepSequential))
+          )
+      )
+      .Build
   );
-
-
 end;
 
 
 
 procedure TNowaTest.TestSQLSelectLeftJoin;
+const
+  sInnerJoin = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL,' +
+                     ' PERSON.FL_NAME as PERSON_FL_NAME,' +
+                     ' PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE,' +
+                     ' PERSON.TX_EMAIL as PERSON_TX_EMAIL,' +
+                     ' PERSON.TX_PASSWORD as PERSON_TX_PASSWORD,' +
+                     ' MATRICULATION.NR_SEQUENTIAL as MATRICULATION_NR_SEQUENTIAL,' +
+                     ' MATRICULATION.NR_PERSONSEQUENTIAL as MATRICULATION_NR_PERSONSEQUENTIAL,' +
+                     ' MATRICULATION.DT_DATA as MATRICULATION_DT_DATA,' +
+                     ' MATRICULATION.CD_USER as MATRICULATION_CD_USER' +
+                ' from TB_PERSON as PERSON' +
+               ' left join TB_MATRICULATION as MATRICULATION on (MATRICULATION.NR_PERSONSEQUENTIAL = PERSON.NR_SEQUENTIAL)';
+var
+  oIPerson: IModel<TEPerson>;
+  oIMatriculation: IModel<TEMatriculation>;
 begin
-  Check(False, 'TestSQLSelectBuildLeftJoin NOT IMPMPLEMENTED');
+  oIPerson := TPerson.Create;
+  oIMatriculation := TMatriculation.Create;
+
+  oIPerson.PrepareModel('', []);
+  oIMatriculation.PrepareModel('', []);
+
+  CheckEquals(sInnerJoin,
+    TSQLSelect.Create.Ref
+      .Fields([oIPerson.Fields, oIMatriculation.Fields])
+      .From(oIPerson.Table)
+      .LeftJoin(
+        TSQLJoin.Create.Ref
+          .Table(oIMatriculation.Table)
+          .&On(
+            TSQLCondition.Create.Ref
+              .LeftTerm(oIMatriculation.Field(temPersonSequential))
+              .Op(opEqual)
+              .RightTerm(oIPerson.Field(tepSequential))
+          )
+      )
+      .Build
+  );
 end;
 
 
 
 procedure TNowaTest.TestSQLSelectLeftOuterJoin;
+const
+  sInnerJoin = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL,' +
+                     ' PERSON.FL_NAME as PERSON_FL_NAME,' +
+                     ' PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE,' +
+                     ' PERSON.TX_EMAIL as PERSON_TX_EMAIL,' +
+                     ' PERSON.TX_PASSWORD as PERSON_TX_PASSWORD,' +
+                     ' MATRICULATION.NR_SEQUENTIAL as MATRICULATION_NR_SEQUENTIAL,' +
+                     ' MATRICULATION.NR_PERSONSEQUENTIAL as MATRICULATION_NR_PERSONSEQUENTIAL,' +
+                     ' MATRICULATION.DT_DATA as MATRICULATION_DT_DATA,' +
+                     ' MATRICULATION.CD_USER as MATRICULATION_CD_USER' +
+                ' from TB_PERSON as PERSON' +
+               ' left outer join TB_MATRICULATION as MATRICULATION on (MATRICULATION.NR_PERSONSEQUENTIAL = PERSON.NR_SEQUENTIAL)';
+var
+  oIPerson: IModel<TEPerson>;
+  oIMatriculation: IModel<TEMatriculation>;
 begin
-  Check(False, 'TestSQLSelectBuildLeftOuterJoin NOT IMPMPLEMENTED');
+  oIPerson := TPerson.Create;
+  oIMatriculation := TMatriculation.Create;
+
+  oIPerson.PrepareModel('', []);
+  oIMatriculation.PrepareModel('', []);
+
+  CheckEquals(sInnerJoin,
+    TSQLSelect.Create.Ref
+      .Fields([oIPerson.Fields, oIMatriculation.Fields])
+      .From(oIPerson.Table)
+      .LeftOuterJoin(
+        TSQLJoin.Create.Ref
+          .Table(oIMatriculation.Table)
+          .&On(
+            TSQLCondition.Create.Ref
+              .LeftTerm(oIMatriculation.Field(temPersonSequential))
+              .Op(opEqual)
+              .RightTerm(oIPerson.Field(tepSequential))
+          )
+      )
+      .Build
+  );
 end;
 
 
 
 procedure TNowaTest.TestSQLSelectRightJoin;
+const
+  sInnerJoin = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL,' +
+                     ' PERSON.FL_NAME as PERSON_FL_NAME,' +
+                     ' PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE,' +
+                     ' PERSON.TX_EMAIL as PERSON_TX_EMAIL,' +
+                     ' PERSON.TX_PASSWORD as PERSON_TX_PASSWORD,' +
+                     ' MATRICULATION.NR_SEQUENTIAL as MATRICULATION_NR_SEQUENTIAL,' +
+                     ' MATRICULATION.NR_PERSONSEQUENTIAL as MATRICULATION_NR_PERSONSEQUENTIAL,' +
+                     ' MATRICULATION.DT_DATA as MATRICULATION_DT_DATA,' +
+                     ' MATRICULATION.CD_USER as MATRICULATION_CD_USER' +
+                ' from TB_PERSON as PERSON' +
+               ' right join TB_MATRICULATION as MATRICULATION on (MATRICULATION.NR_PERSONSEQUENTIAL = PERSON.NR_SEQUENTIAL)';
+var
+  oIPerson: IModel<TEPerson>;
+  oIMatriculation: IModel<TEMatriculation>;
 begin
-  Check(False, 'TestSQLSelectBuildRightJoin NOT IMPMPLEMENTED');
+  oIPerson := TPerson.Create;
+  oIMatriculation := TMatriculation.Create;
+
+  oIPerson.PrepareModel('', []);
+  oIMatriculation.PrepareModel('', []);
+
+  CheckEquals(sInnerJoin,
+    TSQLSelect.Create.Ref
+      .Fields([oIPerson.Fields, oIMatriculation.Fields])
+      .From(oIPerson.Table)
+      .RightJoin(
+        TSQLJoin.Create.Ref
+          .Table(oIMatriculation.Table)
+          .&On(
+            TSQLCondition.Create.Ref
+              .LeftTerm(oIMatriculation.Field(temPersonSequential))
+              .Op(opEqual)
+              .RightTerm(oIPerson.Field(tepSequential))
+          )
+      )
+      .Build
+  );
 end;
 
 
 
 procedure TNowaTest.TestSQLSelectRightOuterJoin;
+const
+  sInnerJoin = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL,' +
+                     ' PERSON.FL_NAME as PERSON_FL_NAME,' +
+                     ' PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE,' +
+                     ' PERSON.TX_EMAIL as PERSON_TX_EMAIL,' +
+                     ' PERSON.TX_PASSWORD as PERSON_TX_PASSWORD,' +
+                     ' MATRICULATION.NR_SEQUENTIAL as MATRICULATION_NR_SEQUENTIAL,' +
+                     ' MATRICULATION.NR_PERSONSEQUENTIAL as MATRICULATION_NR_PERSONSEQUENTIAL,' +
+                     ' MATRICULATION.DT_DATA as MATRICULATION_DT_DATA,' +
+                     ' MATRICULATION.CD_USER as MATRICULATION_CD_USER' +
+                ' from TB_PERSON as PERSON' +
+               ' right outer join TB_MATRICULATION as MATRICULATION on (MATRICULATION.NR_PERSONSEQUENTIAL = PERSON.NR_SEQUENTIAL)';
+var
+  oIPerson: IModel<TEPerson>;
+  oIMatriculation: IModel<TEMatriculation>;
 begin
-  Check(False, 'TestSQLSelectBuildRightOuterJoin NOT IMPMPLEMENTED');
+  oIPerson := TPerson.Create;
+  oIMatriculation := TMatriculation.Create;
+
+  oIPerson.PrepareModel('', []);
+  oIMatriculation.PrepareModel('', []);
+
+  CheckEquals(sInnerJoin,
+    TSQLSelect.Create.Ref
+      .Fields([oIPerson.Fields, oIMatriculation.Fields])
+      .From(oIPerson.Table)
+      .RightOuterJoin(
+        TSQLJoin.Create.Ref
+          .Table(oIMatriculation.Table)
+          .&On(
+            TSQLCondition.Create.Ref
+              .LeftTerm(oIMatriculation.Field(temPersonSequential))
+              .Op(opEqual)
+              .RightTerm(oIPerson.Field(tepSequential))
+          )
+      )
+      .Build
+  );
 end;
 
 
 
 procedure TNowaTest.TestSQLSelectUnion;
+const
+  sInnerJoin = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL,' +
+                     ' PERSON.FL_NAME as PERSON_FL_NAME,' +
+                     ' PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE,' +
+                     ' PERSON.TX_EMAIL as PERSON_TX_EMAIL,' +
+                     ' PERSON.TX_PASSWORD as PERSON_TX_PASSWORD,' +
+                ' from TB_PERSON as PERSON' +
+                ' where PERSON.FL_NAME = ''MARCELO''' +
+                ' union' +
+               ' select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL,' +
+                     ' PERSON.FL_NAME as PERSON_FL_NAME,' +
+                     ' PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE,' +
+                     ' PERSON.TX_EMAIL as PERSON_TX_EMAIL,' +
+                     ' PERSON.TX_PASSWORD as PERSON_TX_PASSWORD,' +
+                ' from TB_PERSON as PERSON' +
+                ' where PERSON.FL_NAME = ''RANDOM''';
+var
+  oIPerson: IModel<TEPerson>;
 begin
-  Check(False, 'TestSQLSelectBuildUnion NOT IMPMPLEMENTED');
+  oIPerson := TPerson.Create;
+  oIPerson.PrepareModel('', []);
+
+  CheckEquals(sInnerJoin,
+    TSQLSelect.Create.Ref
+      .Fields([oIPerson.Fields])
+      .From(oIPerson.Table)
+      .Where(
+        TSQLWhere.Create.Ref
+          .Field(oIPerson.Field(tepName))
+          .Equal('MARCELO')
+      )
+      .Union
+      .Fields([oIPerson.Fields])
+      .From(oIPerson.Table)
+      .Where(
+        TSQLWhere.Create.Ref
+          .Field(oIPerson.Field(tepName))
+          .Equal('RANDOM')
+      )
+      .Build
+  );
 end;
 
 
 
 procedure TNowaTest.TestSQLSelectUnionAll;
+const
+  sInnerJoin = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL,' +
+                     ' PERSON.FL_NAME as PERSON_FL_NAME,' +
+                     ' PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE,' +
+                     ' PERSON.TX_EMAIL as PERSON_TX_EMAIL,' +
+                     ' PERSON.TX_PASSWORD as PERSON_TX_PASSWORD,' +
+                ' from TB_PERSON as PERSON' +
+                ' where PERSON.FL_NAME = ''MARCELO''' +
+                ' union all' +
+               ' select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL,' +
+                     ' PERSON.FL_NAME as PERSON_FL_NAME,' +
+                     ' PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE,' +
+                     ' PERSON.TX_EMAIL as PERSON_TX_EMAIL,' +
+                     ' PERSON.TX_PASSWORD as PERSON_TX_PASSWORD,' +
+                ' from TB_PERSON as PERSON' +
+                ' where PERSON.FL_NAME = ''RANDOM''';
+var
+  oIPerson: IModel<TEPerson>;
 begin
-  Check(False, 'TestSQLSelectBuildUnionAll NOT IMPMPLEMENTED');
+  oIPerson := TPerson.Create;
+  oIPerson.PrepareModel('', []);
+
+  CheckEquals(sInnerJoin,
+    TSQLSelect.Create.Ref
+      .Fields([oIPerson.Fields])
+      .From(oIPerson.Table)
+      .Where(
+        TSQLWhere.Create.Ref
+          .Field(oIPerson.Field(tepName))
+          .Equal('MARCELO')
+      )
+      .UnionAll
+      .Fields([oIPerson.Fields])
+      .From(oIPerson.Table)
+      .Where(
+        TSQLWhere.Create.Ref
+          .Field(oIPerson.Field(tepName))
+          .Equal('RANDOM')
+      )
+      .Build
+  );
 end;
 
 
