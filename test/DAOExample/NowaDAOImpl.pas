@@ -22,7 +22,7 @@ type
 
     procedure Insert(const AModel: IModel<T>);
     procedure Update(const AModel: IModel<T>);
-    procedure Save(const AModel: IModel<T>; const AModelKey: T);
+    procedure Save(const AModel: IModel<T>);
     procedure FillModel(const AModel: IModel<T>; const AQuery: TFDQuery);
   end;
 
@@ -79,18 +79,20 @@ end;
 
 
 
-procedure TNowaDAO<T>.Save(const AModel: IModel<T>; const AModelKey: T);
+procedure TNowaDAO<T>.Save(const AModel: IModel<T>);
 begin
   if AModel.IsNew then
   begin
     fCommand.CommandText.Text := TSQLCommand<T>.Create.Ref.Insert(AModel).Build;
-    AModel.SetValue(AModelKey, GenerateModelKey(AModel.Table.Sequence));
+
+    if (Length(AModel.PrimaryKey) = 1) then
+      AModel.SetValue(AModel.PrimaryKey[0], GenerateModelKey(AModel.Table.Sequence));
   end
   else
     fCommand.CommandText.Text :=
       TSQLCommand<T>.Create.Ref
         .Update(AModel)
-        .WhereKey(AModel, AModelKey)
+        .WhereKey(AModel, AModel.PrimaryKey)
         .Build;
 
   SaveModel(AModel);
@@ -113,8 +115,8 @@ end;
 
 
 procedure TNowaDAO<T>.Update(const AModel: IModel<T>);
-begin                                                                                    //TODO: Change it that pass TArray<T> of primary keys...
-  fCommand.CommandText.Text := TSQLCommand<T>.Create.Ref.Update(AModel).WhereKey(AModel, AModel.PrimaryKey[0]).Build;
+begin
+  fCommand.CommandText.Text := TSQLCommand<T>.Create.Ref.Update(AModel).WhereKey(AModel, AModel.PrimaryKey).Build;
   SaveModel(AModel);
 end;
 
