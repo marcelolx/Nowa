@@ -16,6 +16,8 @@ type
     procedure SaveModel(const AModel: IModel<T>);
   strict protected
     fCommand: TFDCommand;
+
+    procedure GenerateModelCompoundKey(const AModel: IModel<T>); virtual; abstract;
   public
     constructor Create(const AFDCommand: TFDCommand); reintroduce;
     function Ref: INowaDAO<T>;
@@ -86,7 +88,9 @@ begin
     fCommand.CommandText.Text := TSQLCommand<T>.Create.Ref.Insert(AModel).Build;
 
     if (Length(AModel.PrimaryKey) = 1) then
-      AModel.SetValue(AModel.PrimaryKey[0], GenerateModelKey(AModel.Table.Sequence));
+      AModel.SetValue(AModel.PrimaryKey[0], GenerateModelKey(AModel.Table.Sequence))
+    else
+      GenerateModelCompoundKey(AModel);
   end
   else
     fCommand.CommandText.Text :=
