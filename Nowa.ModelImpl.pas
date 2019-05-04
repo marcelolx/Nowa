@@ -4,7 +4,7 @@ interface
 
 uses
   Nowa.Model,
-  Enumerator,
+  Nowa.Enumerator,
   System.Generics.Collections;
 
 type

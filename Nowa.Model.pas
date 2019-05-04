@@ -20,13 +20,13 @@ type
 
   IModel<T> = interface
   ['{C466292A-8F89-4B1F-B3BF-EE5588621D00}']
-    procedure PrepareModel(const ATableAlias: String; const AFields: TArray<T>);
-    procedure SetValue(const AField: T; const AValue: Variant);
+    procedure PrepareModel(const TableAlias: String; const Fields: TArray<T>);
+    procedure SetValue(const Field: T; const Value: Variant);
 
     function Table: ITable;
-    function GetValue(const AField: T): Variant;
-    function Field(const AField: T): IField; overload;
-    function Field(const AField: IField): T; overload;
+    function GetValue(const Field: T): Variant;
+    function Field(const Field: T): IField; overload;
+    function Field(const Field: IField): T; overload;
     function Fields: TArray<IField>;
     function PrimaryKey: TArray<T>;
     function IsNew: Boolean;

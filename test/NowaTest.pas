@@ -275,21 +275,21 @@ end;
 
 procedure TNowaTest.TestSQLConditionLeftTerm;
 begin
-  CheckTrue(False);
+  CheckTrue(False, 'TestSQLConditionLeftTerm not implemented');
 end;
 
 
 
 procedure TNowaTest.TestSQLConditionOp;
 begin
-  CheckTrue(False);
+  CheckTrue(False, 'TestSQLConditionOp not implemented');
 end;
 
 
 
 procedure TNowaTest.TestSQLConditionRightTerm;
 begin
-  CheckTrue(False);
+  CheckTrue(False, 'TestSQLConditionRightTerm not implemented');
 end;
 
 

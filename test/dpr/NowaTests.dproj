@@ -92,7 +92,7 @@
         <DCCReference Include="..\ModelTest.pas"/>
         <DCCReference Include="..\..\Nowa.Model.pas"/>
         <DCCReference Include="..\..\Nowa.ModelImpl.pas"/>
-        <DCCReference Include="..\..\Enumerator.pas"/>
+        <DCCReference Include="..\..\Nowa.Enumerator.pas"/>
         <DCCReference Include="..\Person\Enumerator.Person.pas"/>
         <DCCReference Include="..\Person\PersonImpl.pas"/>
         <DCCReference Include="..\..\Nowa.pas"/>

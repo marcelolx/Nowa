@@ -9,47 +9,62 @@ uses
 
 type
   TSQL = class(TInterfacedObject, ISQL)
-  strict protected const
-    Space = ' ';
-    CommaSpace = ', ';
-    sAs = ' as ';
-    Point = '.';
-    sFrom = ' from ';
-    sEqual = ' = ';
-    sDifferent = ' <> ';
-    sGreater = ' > ';
-    sGreaterOrEqual = ' >= ';
-    sLess = ' < ';
-    sLessOrEqual = ' <= ';
-    sOn = ' on ';
+  protected const
+    SpaceSQL = ' ';
+    CommaSpaceSQL = ', ';
+    AsSQL = ' as ';
+    PointSQL = '.';
+    FromSQL = ' from ';
+    EqualSQL = ' = ';
+    DifferentSQL = ' <> ';
+    GreaterSQL = ' > ';
+    GreaterOrEqualSQL = ' >= ';
+    LessSQL = ' < ';
+    LessOrEqualSQL = ' <= ';
+    OnSQL = ' on ';
+    NotSQL = ' not ';
+    SelectSQL = ' select ';
+    WhereSQL = ' where ';
+    UpdateSQL = ' udpate ';
+    InnerJoinSQL = ' inner join ';
+    LeftJoinSQL = ' left join ';
+    LeftOuterJoinSQL = ' left outer join ';
+    RightJoinSQL = ' right join ';
+    RightOuterJoinSQL = ' right outer join ';
+    AndSQL = ' and ';
+    SetSQL = ' set ';
+    InsertSQL = ' insert ';
+    DeleteSQL = ' delete ';
+    UnionAllSelectSQL = ' union all select ';
+    UnionSelectSQL = ' union select ';
   public
     function Build: String; virtual; abstract;
   end;
 
   TSQLWhere = class(TSQL, ISQLWhere)
   strict private
-    sWhere: String;     //TODO: Do Implement
+    FWhere: String;     //TODO: Do Implement
   public
-    function Field(const AIField: IField): ISQLWhere;
+    function Field(const Field: IField): ISQLWhere;
     function Equal: ISQLWhere; overload;
-    function Equal(const AValue: Variant): ISQLWhere; overload;
+    function Equal(const Value: Variant): ISQLWhere; overload;
     function Different: ISQLWhere; overload;
-    function Different(const AValue: Variant): ISQLWhere; overload;
+    function Different(const Value: Variant): ISQLWhere; overload;
     function Greater: ISQLWhere; overload;
-    function Greater(const AValue: Variant): ISQLWhere; overload;
+    function Greater(const Value: Variant): ISQLWhere; overload;
     function GreaterOrEqual: ISQLWhere; overload;
-    function GreaterOrEqual(const AValue: Variant): ISQLWhere; overload;
+    function GreaterOrEqual(const Value: Variant): ISQLWhere; overload;
     function Less: ISQLWhere; overload;
-    function Less(const AValue: Variant): ISQLWhere; overload;
+    function Less(const Value: Variant): ISQLWhere; overload;
     function LessOrEqual: ISQLWhere; overload;
-    function LessOrEqual(const AValue: Variant): ISQLWhere; overload;
-    function Like(const AOperator: TSQLLikeOperator; const AValue: Variant): ISQLWhere;
-    function NotLike(const AOperator: TSQLLikeOperator; const AValue: Variant): ISQLWhere;
+    function LessOrEqual(const Value: Variant): ISQLWhere; overload;
+    function Like(const Operator: TSQLLikeOperator; const Value: Variant): ISQLWhere;
+    function NotLike(const Operator: TSQLLikeOperator; const Value: Variant): ISQLWhere;
     function IsNull: ISQLWhere;
     function IsNotNull: ISQLWhere;
-    function InList(const AArray: TArray<Variant>): ISQLWhere;
+    function InList(const Value: TArray<Variant>): ISQLWhere;
     function &Not: ISQLWhere;
-    function Between(const AStartValue, AEndValue: Variant): ISQLWhere;
+    function Between(const StartValue, EndValue: Variant): ISQLWhere;
 
     function Build: string; override;
 
@@ -59,10 +74,10 @@ type
 
   TSQLBy<T> = class(TSQL, ISQLBy<T>)
   strict private
-    ByCommand: String;
+    FByCommand: String;
   public
-    function Column(const AColumn: T): ISQLBy<T>;
-    function Columns(const AColumn: TArray<T>): ISQLBy<T>;
+    function Column(const Column: T): ISQLBy<T>;
+    function Columns(const Column: TArray<T>): ISQLBy<T>;
 
     function Build: string; override;
 
@@ -72,12 +87,12 @@ type
 
   TSQLJoin = class(TSQL, ISQLJoin)
   strict private
-    JoinCommand: String;
+    FJoinCommand: String;
   public
-    function Table(const ATable: ITable): ISQLJoin;
-    function &On(const ACondition: ISQLCondition): ISQLJoin;
-    function &And(const ACondition: ISQLCondition): ISQLJoin;
-    function &Or(const ACondition: ISQLCondition): ISQLJoin;
+    function Table(const Table: ITable): ISQLJoin;
+    function &On(const Condition: ISQLCondition): ISQLJoin;
+    function &And(const Condition: ISQLCondition): ISQLJoin;
+    function &Or(const Condition: ISQLCondition): ISQLJoin;
 
     function Build: string; override;
 
@@ -87,11 +102,11 @@ type
 
   TSQLCondition = class(TSQL, ISQLCondition)
   strict private
-    ConditionCommand: String;
+    FConditionCommand: String;
   public
-    function LeftTerm(const AIField: IField): ISQLCondition;
-    function RightTerm(const AIField: IField): ISQLCondition;
-    function Op(const AOperator: TSQLOperator): ISQLCondition;
+    function LeftTerm(const Field: IField): ISQLCondition;
+    function RightTerm(const Field: IField): ISQLCondition;
+    function Op(const Operator: TSQLOperator): ISQLCondition;
 
     function Build: string; override;
 
@@ -100,23 +115,23 @@ type
 
   TSQLSelect = class(TSQL, ISQLSelect)
   strict private
-    sSelect: string;
+    FSelect: string;
 
-    function GetTableFieldAlias(const AIField: IField): String;
+    function GetTableFieldAlias(const Field: IField): String;
   public
-    function Fields(const AModelsFieldsPrepared: TArray<TArray<IField>>): ISQLSelect;
-    function From(const ATable: ITable): ISQLSelect;
-    function Where(const AWhereCondition: ISQLWhere): ISQLSelect;
-    function Having(const AHavingQuery: ISQLSelect): ISQLSelect;
-    function GroupBy(const AGroupBy: ISQLBy<TObject>): ISQLSelect;
-    function OrderBy(const AOrderBy: ISQLBy<TObject>): ISQLSelect;
+    function Fields(const ModelsFieldsPrepared: TArray<TArray<IField>>): ISQLSelect;
+    function From(const Table: ITable): ISQLSelect;
+    function Where(const WhereCondition: ISQLWhere): ISQLSelect;
+    function Having(const HavingQuery: ISQLSelect): ISQLSelect;
+    function GroupBy(const GroupBy: ISQLBy<TObject>): ISQLSelect;
+    function OrderBy(const OrderBy: ISQLBy<TObject>): ISQLSelect;
     function Union: ISQLSelect;
     function UnionAll: ISQLSelect;
-    function InnerJoin(const AJoin: ISQLJoin): ISQLSelect;
-    function LeftJoin(const AJoin: ISQLJoin): ISQLSelect;
-    function LeftOuterJoin(const AJoin: ISQLJoin): ISQLSelect;
-    function RightJoin(const AJoin: ISQLJoin): ISQLSelect;
-    function RightOuterJoin(const AJoin: ISQLJoin): ISQLSelect;
+    function InnerJoin(const Join: ISQLJoin): ISQLSelect;
+    function LeftJoin(const Join: ISQLJoin): ISQLSelect;
+    function LeftOuterJoin(const Join: ISQLJoin): ISQLSelect;
+    function RightJoin(const Join: ISQLJoin): ISQLSelect;
+    function RightOuterJoin(const Join: ISQLJoin): ISQLSelect;
 
     function Build: string; override;
 
@@ -126,15 +141,15 @@ type
 
   TSQLCommand<T> = class(TSQL, ISQLCommand<T>)
   strict private
-    sCommand: String;
+    FCommand: String;
   public
-    function Insert(const AIModel: IModel<T>): ISQLCommand<T>;
-    function Update(const AIModel: IModel<T>): ISQLCommand<T>;
-    function Delete(const AIModel: IModel<T>): ISQLCommand<T>;
-    function WhereKey(const AIModel: IModel<T>; const AModelKey: TArray<T>): ISQLCommand<T>;
-    function NewKeyValue(const ASequenceName: String): ISQLCommand<T>;
-    function Find(const AIModel: IModel<T>; const AModelKey: T; const AKeyValue: Int64): ISQLCommand<T>;
-    function Exists(const AIModel: IModel<T>; const AModelKey: TArray<T>): ISQLCommand<T>;
+    function Insert(const Model: IModel<T>): ISQLCommand<T>;
+    function Update(const Model: IModel<T>): ISQLCommand<T>;
+    function Delete(const Model: IModel<T>): ISQLCommand<T>;
+    function WhereKey(const Model: IModel<T>; const ModelKey: TArray<T>): ISQLCommand<T>;
+    function NewKeyValue(const SequenceName: String): ISQLCommand<T>;
+    function Find(const Model: IModel<T>; const ModelKey: T; const KeyValue: Int64): ISQLCommand<T>;
+    function Exists(const Model: IModel<T>; const ModelKey: TArray<T>): ISQLCommand<T>;
 
     function Build: string; override;
 
@@ -154,12 +169,12 @@ uses
 function TSQLWhere.&Not: ISQLWhere;
 begin
   Result := Self;
-  sWhere := sWhere + ' not ';
+  FWhere := FWhere + NotSQL;
 end;
 
 
 
-function TSQLWhere.Between(const AStartValue, AEndValue: Variant): ISQLWhere;
+function TSQLWhere.Between(const StartValue, EndValue: Variant): ISQLWhere;
 begin
   Result := Self;
   {TODO -oMarcelo -cImplement : Implementar}
@@ -169,22 +184,22 @@ end;
 
 function TSQLWhere.Build: string;
 begin
-  Result := sWhere;
+  Result := FWhere;
 end;
 
 
 
 constructor TSQLWhere.Create;
 begin
-  sWhere := ' where ';
+  FWhere := WhereSQL;
 end;
 
 
 
-function TSQLWhere.Different(const AValue: Variant): ISQLWhere;
+function TSQLWhere.Different(const Value: Variant): ISQLWhere;
 begin
   Result := Self;
-  sWhere := sWhere + sDifferent + VarToStr(AValue);
+  FWhere := FWhere + DifferentSQL + VarToStr(Value);
 end;
 
 
@@ -192,15 +207,15 @@ end;
 function TSQLWhere.Different: ISQLWhere;
 begin
   Result := Self;
-  sWhere := sWhere + sDifferent;
+  FWhere := FWhere + DifferentSQL;
 end;
 
 
 
-function TSQLWhere.Equal(const AValue: Variant): ISQLWhere;
+function TSQLWhere.Equal(const Value: Variant): ISQLWhere;
 begin
   Result := Self;
-  sWhere := sWhere + sEqual + VarToStr(AValue); //TODO: Whe string, whe need QuotedStr!!
+  FWhere := FWhere + EqualSQL + VarToStr(Value); //TODO: Whe string, whe need QuotedStr!!
 end;
 
 
@@ -208,23 +223,23 @@ end;
 function TSQLWhere.Equal: ISQLWhere;
 begin
   Result := Self;
-  sWhere := sWhere + sEqual;
+  FWhere := FWhere + EqualSQL;
 end;
 
 
 
-function TSQLWhere.Field(const AIField: IField): ISQLWhere;
+function TSQLWhere.Field(const Field: IField): ISQLWhere;
 begin
   Result := Self;
-  sWhere := sWhere + AIField.Table.Alias + Point + AIField.Name;
+  FWhere := FWhere + Field.Table.Alias + PointSQL + Field.Name;
 end;
 
 
 
-function TSQLWhere.Greater(const AValue: Variant): ISQLWhere;
+function TSQLWhere.Greater(const Value: Variant): ISQLWhere;
 begin
   Result := Self;
-  sWhere := sWhere + sGreater + VarToStr(AValue);
+  FWhere := FWhere + GreaterSQL + VarToStr(Value);
 end;
 
 
@@ -232,39 +247,39 @@ end;
 function TSQLWhere.Greater: ISQLWhere;
 begin
   Result := Self;
-  sWhere := sWhere + sGreater;
+  FWhere := FWhere + GreaterSQL;
 end;
 
 
 
-function TSQLWhere.GreaterOrEqual(const AValue: Variant): ISQLWhere;
+function TSQLWhere.GreaterOrEqual(const Value: Variant): ISQLWhere;
 begin
   Result := Self;
-  sWhere := sWhere + sGreaterOrEqual + VarToStr(AValue);
+  FWhere := FWhere + GreaterOrEqualSQL + VarToStr(Value);
 end;
 
 
 
-function TSQLWhere.InList(const AArray: TArray<Variant>): ISQLWhere;
+function TSQLWhere.InList(const Value: TArray<Variant>): ISQLWhere;
 var
   iIndex: Integer;
 begin
   Result := Self;
 
-  if (Length(AArray) = 0) then
+  if Length(Value) = 0 then
     raise Exception.Create('Error: InList need array with length >= 1');
 
-  sWhere := sWhere + ' in (';
+  FWhere := FWhere + ' in (';
 
-  for iIndex := Low(AArray) to High(AArray) do
+  for iIndex := Low(Value) to High(Value) do
   begin
-    sWhere := sWhere + VarToStr(AArray[iIndex]);
+    FWhere := FWhere + VarToStr(Value[iIndex]);
 
-    if (iIndex < High(AArray)) then
-      sWhere := sWhere + ',';
+    if (iIndex < High(Value)) then
+      FWhere := FWhere + ',';
   end;
 
-  sWhere := sWhere + ')';
+  FWhere := FWhere + ')';
 end;
 
 
@@ -288,15 +303,15 @@ end;
 function TSQLWhere.GreaterOrEqual: ISQLWhere;
 begin
   Result := Self;
-  sWhere := sWhere + sGreaterOrEqual;
+  FWhere := FWhere + GreaterOrEqualSQL;
 end;
 
 
 
-function TSQLWhere.Less(const AValue: Variant): ISQLWhere;
+function TSQLWhere.Less(const Value: Variant): ISQLWhere;
 begin
   Result := Self;
-  sWhere := sWhere + sLess + VarToStr(AValue);
+  FWhere := FWhere + LessSQL + VarToStr(Value);
 end;
 
 
@@ -304,20 +319,20 @@ end;
 function TSQLWhere.Less: ISQLWhere;
 begin
   Result := Self;
-  sWhere := sWhere + sLess;
+  FWhere := FWhere + LessSQL;
 end;
 
 
 
-function TSQLWhere.LessOrEqual(const AValue: Variant): ISQLWhere;
+function TSQLWhere.LessOrEqual(const Value: Variant): ISQLWhere;
 begin
   Result := Self;
-  sWhere := sWhere + sLessOrEqual + VarToStr(AValue);
+  FWhere := FWhere + LessOrEqualSQL + VarToStr(Value);
 end;
 
 
 
-function TSQLWhere.Like(const AOperator: TSQLLikeOperator; const AValue: Variant): ISQLWhere;
+function TSQLWhere.Like(const Operator: TSQLLikeOperator; const Value: Variant): ISQLWhere;
 begin
   Result := Self;
   //TODO: Do Implement
@@ -325,7 +340,7 @@ end;
 
 
 
-function TSQLWhere.NotLike(const AOperator: TSQLLikeOperator; const AValue: Variant): ISQLWhere;
+function TSQLWhere.NotLike(const Operator: TSQLLikeOperator; const Value: Variant): ISQLWhere;
 begin
   Result := Self;
   //TODO: Do Implement
@@ -336,7 +351,7 @@ end;
 function TSQLWhere.LessOrEqual: ISQLWhere;
 begin
   Result := Self;
-  sWhere := sWhere + sLessOrEqual;
+  FWhere := FWhere + LessOrEqualSQL;
 end;
 
 
@@ -351,66 +366,58 @@ end;
 
 function TSQLSelect.Build: string;
 begin
-  Result := sSelect;
+  Result := FSelect;
 end;
 
 
 
 constructor TSQLSelect.Create;
 begin
-  sSelect := 'select';
+  FSelect := SelectSQL.Trim;
 end;
 
 
 
-function TSQLSelect.Fields(const AModelsFieldsPrepared: TArray<TArray<IField>>): ISQLSelect;
+function TSQLSelect.Fields(const ModelsFieldsPrepared: TArray<TArray<IField>>): ISQLSelect;
 var
-  fFieldsPrepared: TArray<IField>;
-  oIField: IField;
-  sFieldsPrepared: string;
+  FieldsPrepared: TArray<IField>;
+  Field: IField;
+  QueryFieldsPrepared: string;
 begin
   Result := Self;
 
-  for fFieldsPrepared in AModelsFieldsPrepared do
+  for FieldsPrepared in ModelsFieldsPrepared do
   begin
-    for oIField in fFieldsPrepared do
+    for Field in FieldsPrepared do
     begin
-      if (not(sFieldsPrepared.IsEmpty)) then
-        sFieldsPrepared := sFieldsPrepared + CommaSpace;
+      if (not(QueryFieldsPrepared.IsEmpty)) then
+        QueryFieldsPrepared := QueryFieldsPrepared + CommaSpaceSQL;
 
-      sFieldsPrepared := sFieldsPrepared + GetTableFieldAlias(oIField);
+      QueryFieldsPrepared := QueryFieldsPrepared + GetTableFieldAlias(Field);
     end;
   end;
 
-  sSelect := sSelect + Space + sFieldsPrepared;
+  FSelect := FSelect + SpaceSQL + QueryFieldsPrepared;
 end;
 
 
 
-function TSQLSelect.From(const ATable: ITable): ISQLSelect;
+function TSQLSelect.From(const Table: ITable): ISQLSelect;
 begin
   Result  := Self;
-  sSelect := sSelect + sFrom + ATable.Name + sAs + ATable.Alias;
+  FSelect := FSelect + FromSQL + Table.Name + AsSQL + Table.Alias;
 end;
 
 
 
-function TSQLSelect.GetTableFieldAlias(const AIField: IField): String;
+function TSQLSelect.GetTableFieldAlias(const Field: IField): String;
 begin
-  Result := AIField.Table.Alias + Point + AIField.Name + sAs + AIField.Alias;
+  Result := Field.Table.Alias + PointSQL + Field.Name + AsSQL + Field.Alias;
 end;
 
 
 
-function TSQLSelect.GroupBy(const AGroupBy: ISQLBy<TObject>): ISQLSelect;
-begin
-  Result := Self;
-  {TODO -oMarcelo -cGeneral : Implementar}
-end;
-
-
-
-function TSQLSelect.Having(const AHavingQuery: ISQLSelect): ISQLSelect;
+function TSQLSelect.GroupBy(const GroupBy: ISQLBy<TObject>): ISQLSelect;
 begin
   Result := Self;
   {TODO -oMarcelo -cGeneral : Implementar}
@@ -418,31 +425,39 @@ end;
 
 
 
-function TSQLSelect.InnerJoin(const AJoin: ISQLJoin): ISQLSelect;
+function TSQLSelect.Having(const HavingQuery: ISQLSelect): ISQLSelect;
 begin
   Result := Self;
-  sSelect := sSelect + ' inner join ' + AJoin.Build;
+  {TODO -oMarcelo -cGeneral : Implementar}
 end;
 
 
 
-function TSQLSelect.LeftJoin(const AJoin: ISQLJoin): ISQLSelect;
+function TSQLSelect.InnerJoin(const Join: ISQLJoin): ISQLSelect;
 begin
   Result := Self;
-  sSelect := sSelect + ' left join ' + AJoin.Build;
+  FSelect := FSelect + InnerJoinSQL + Join.Build;
 end;
 
 
 
-function TSQLSelect.LeftOuterJoin(const AJoin: ISQLJoin): ISQLSelect;
+function TSQLSelect.LeftJoin(const Join: ISQLJoin): ISQLSelect;
 begin
   Result := Self;
-  sSelect := sSelect + ' left outer join ' + AJoin.Build;
+  FSelect := FSelect + LeftJoinSQL + Join.Build;
 end;
 
 
 
-function TSQLSelect.OrderBy(const AOrderBy: ISQLBy<TObject>): ISQLSelect;
+function TSQLSelect.LeftOuterJoin(const Join: ISQLJoin): ISQLSelect;
+begin
+  Result := Self;
+  FSelect := FSelect + LeftOuterJoinSQL + Join.Build;
+end;
+
+
+
+function TSQLSelect.OrderBy(const OrderBy: ISQLBy<TObject>): ISQLSelect;
 begin
   Result := Self;
   {TODO -oMarcelo -cGeneral : Implementar}
@@ -457,18 +472,18 @@ end;
 
 
 
-function TSQLSelect.RightJoin(const AJoin: ISQLJoin): ISQLSelect;
+function TSQLSelect.RightJoin(const Join: ISQLJoin): ISQLSelect;
 begin
   Result := Self;
-  sSelect := sSelect + ' right join ' + AJoin.Build;
+  FSelect := FSelect + RightJoinSQL + Join.Build;
 end;
 
 
 
-function TSQLSelect.RightOuterJoin(const AJoin: ISQLJoin): ISQLSelect;
+function TSQLSelect.RightOuterJoin(const Join: ISQLJoin): ISQLSelect;
 begin
   Result := Self;
-  sSelect := sSelect + ' right outer join ' + AJoin.Build;
+  FSelect := FSelect + RightOuterJoinSQL + Join.Build;
 end;
 
 
@@ -476,7 +491,7 @@ end;
 function TSQLSelect.Union: ISQLSelect;
 begin
   Result := Self;
-  sSelect := sSelect + ' union select ';
+  FSelect := FSelect + UnionSelectSQL;
 end;
 
 
@@ -484,15 +499,15 @@ end;
 function TSQLSelect.UnionAll: ISQLSelect;
 begin
   Result := Self;
-  sSelect := sSelect + ' union all select ';
+  FSelect := FSelect + UnionAllSelectSQL;
 end;
 
 
 
-function TSQLSelect.Where(const AWhereCondition: ISQLWhere): ISQLSelect;
+function TSQLSelect.Where(const WhereCondition: ISQLWhere): ISQLSelect;
 begin
   Result  := Self;
-  sSelect := sSelect + AWhereCondition.Build;
+  FSelect := FSelect + WhereCondition.Build;
 end;
 
 
@@ -500,27 +515,27 @@ end;
 
 function TSQLCommand<T>.Build: string;
 begin
-  Result := sCommand;
+  Result := FCommand;
 end;
 
 
 
 constructor TSQLCommand<T>.Create;
 begin
-  sCommand := EmptyStr;
+  FCommand := EmptyStr;
 end;
 
 
 
-function TSQLCommand<T>.Delete(const AIModel: IModel<T>): ISQLCommand<T>;
+function TSQLCommand<T>.Delete(const Model: IModel<T>): ISQLCommand<T>;
 begin
   Result   := Self;
-  sCommand := 'delete' + sFrom + LowerCase(AIModel.Table.Name);
+  FCommand := DeleteSQL.Trim + FromSQL + LowerCase(Model.Table.Name);
 end;
 
 
 
-function TSQLCommand<T>.Exists(const AIModel: IModel<T>; const AModelKey: TArray<T>): ISQLCommand<T>;
+function TSQLCommand<T>.Exists(const Model: IModel<T>; const ModelKey: TArray<T>): ISQLCommand<T>;
 begin
   Result := Self;
   //TODO: Do Implement
@@ -528,57 +543,54 @@ end;
 
 
 
-function TSQLCommand<T>.Find(const AIModel: IModel<T>; const AModelKey: T; const AKeyValue: Int64): ISQLCommand<T>;
-var
-  oEField: T;
-  sFind: string;
+function TSQLCommand<T>.Find(const Model: IModel<T>; const ModelKey: T; const KeyValue: Int64): ISQLCommand<T>;
 begin
   Result := Self;
 
-  sCommand := TSQLSelect.Create.Ref
-    .Fields([AIModel.Fields])
-    .From(AIModel.Table)
+  FCommand := TSQLSelect.Create.Ref
+    .Fields([Model.Fields])
+    .From(Model.Table)
     .Where(
       TSQLWhere.Create.Ref
-        .Field(AIModel.Field(AModelKey))
-        .Equal(AKeyValue)
+        .Field(Model.Field(ModelKey))
+        .Equal(KeyValue)
     ).Build;
 end;
 
 
 
-function TSQLCommand<T>.Insert(const AIModel: IModel<T>): ISQLCommand<T>;
+function TSQLCommand<T>.Insert(const Model: IModel<T>): ISQLCommand<T>;
 var
-  oIField: IField;
-  sFields, sParamFields: String;
+  Field: IField;
+  Fields, ParamFields: String;
 begin
-  Result       := Self;
-  sFields      := EmptyStr;
-  sParamFields := EmptyStr;
-  sCommand     := EmptyStr;
+  Result := Self;
+  Fields := EmptyStr;
+  ParamFields := EmptyStr;
+  FCommand := EmptyStr;
 
-  for oIField in AIModel.Fields do
+  for Field in Model.Fields do
   begin
-    if (not(sFields.IsEmpty)) then
-      sFields := sFields + CommaSpace;
+    if not(Fields.IsEmpty) then
+      Fields := Fields + CommaSpaceSQL;
 
-    sFields := sFields + LowerCase(oIField.Name);
+    Fields := Fields + LowerCase(Field.Name);
 
-    if (not(sParamFields.IsEmpty)) then
-      sParamFields := sParamFields + CommaSpace;
+    if not(ParamFields.IsEmpty) then
+      ParamFields := ParamFields + CommaSpaceSQL;
 
-    sParamFields := sParamFields + ':' + oIField.Alias;
+    ParamFields := ParamFields + ':' + Field.Alias;
   end;
 
-  sCommand := 'insert into ' + LowerCase(AIModel.Table.Name) + ' (' + sFields + ') values (' + sParamFields + ')';
+  FCommand := InsertSQL.TrimLeft + 'into ' + LowerCase(Model.Table.Name) + ' (' + Fields + ') values (' + ParamFields + ')';
 end;
 
 
 
-function TSQLCommand<T>.NewKeyValue(const ASequenceName: String): ISQLCommand<T>;
+function TSQLCommand<T>.NewKeyValue(const SequenceName: String): ISQLCommand<T>;
 begin
   Result   := Self;
-  sCommand := 'select nextval(' + QuotedStr(LowerCase(ASequenceName)) + ') as sequence';
+  FCommand := SelectSQL.TrimLeft + 'nextval(' + QuotedStr(LowerCase(SequenceName)) + ') as sequence';
 end;
 
 
@@ -590,44 +602,43 @@ end;
 
 
 
-function TSQLCommand<T>.Update(const AIModel: IModel<T>): ISQLCommand<T>;
+function TSQLCommand<T>.Update(const Model: IModel<T>): ISQLCommand<T>;
 var
-  oEField: T;
-  oIField: IField;
+  Field: IField;
 begin
   Result   := Self;
-  sCommand := EmptyStr;
+  FCommand := EmptyStr;
 
-  for oIField in AIModel.Fields do
+  for Field in Model.Fields do
   begin
-    if (not(sCommand.IsEmpty)) then
-      sCommand := sCommand + CommaSpace;
+    if not(FCommand.IsEmpty) then
+      FCommand := FCommand + CommaSpaceSQL;
 
-    sCommand := sCommand + LowerCase(oIField.Name) + ' = :' + oIField.Alias;
+    FCommand := FCommand + LowerCase(Field.Name) + ' = :' + Field.Alias;
   end;
 
-  sCommand := 'update ' + LowerCase(AIModel.Table.Name) + ' set ' + sCommand;
+  FCommand := UpdateSQL.TrimLeft + LowerCase(Model.Table.Name) + SetSQL + FCommand;
 end;
 
 
 
-function TSQLCommand<T>.WhereKey(const AIModel: IModel<T>; const AModelKey: TArray<T>): ISQLCommand<T>;
+function TSQLCommand<T>.WhereKey(const Model: IModel<T>; const ModelKey: TArray<T>): ISQLCommand<T>;
 var
-  oEFieldKey: T;
+  FieldKey: T;
   Condition: String;
 begin
   Result := Self;
   Condition := EmptyStr;
 
-  for oEFieldKey in AModelKey do
+  for FieldKey in ModelKey do
   begin
     if (not(Condition.IsEmpty)) then
-      Condition := Condition + ' and ';
+      Condition := Condition + AndSQL;
 
-    Condition := Condition + LowerCase(AIModel.Field(oEFieldKey).Name) + ' = :' + AIModel.Field(oEFieldKey).Alias;
+    Condition := Condition + LowerCase(Model.Field(FieldKey).Name) + ' = :' + Model.Field(FieldKey).Alias;
   end;
 
-  sCommand := sCommand + ' where ' + Condition;
+  FCommand := FCommand + WhereSQL + Condition;
 end;
 
 
@@ -635,12 +646,12 @@ end;
 
 function TSQLBy<T>.Build: string;
 begin
-  Result := ByCommand;
+  Result := FByCommand;
 end;
 
 
 
-function TSQLBy<T>.Column(const AColumn: T): ISQLBy<T>;
+function TSQLBy<T>.Column(const Column: T): ISQLBy<T>;
 begin
   Result := Self;
 
@@ -649,7 +660,7 @@ end;
 
 
 
-function TSQLBy<T>.Columns(const AColumn: TArray<T>): ISQLBy<T>;
+function TSQLBy<T>.Columns(const Column: TArray<T>): ISQLBy<T>;
 begin
   Result := Self;
 
@@ -660,7 +671,7 @@ end;
 
 constructor TSQLBy<T>.Create;
 begin
-  ByCommand := EmptyStr;
+  FByCommand := EmptyStr;
 end;
 
 
@@ -674,7 +685,7 @@ end;
 
 { TSQLJoin }
 
-function TSQLJoin.&And(const ACondition: ISQLCondition): ISQLJoin;
+function TSQLJoin.&And(const Condition: ISQLCondition): ISQLJoin;
 begin
   Result := Self;
 
@@ -685,27 +696,27 @@ end;
 
 function TSQLJoin.Build: string;
 begin
-  Result := JoinCommand;
+  Result := FJoinCommand;
 end;
 
 
 
 constructor TSQLJoin.Create;
 begin
-  JoinCommand := EmptyStr;
+  FJoinCommand := EmptyStr;
 end;
 
 
 
-function TSQLJoin.&On(const ACondition: ISQLCondition): ISQLJoin;
+function TSQLJoin.&On(const Condition: ISQLCondition): ISQLJoin;
 begin
   Result := Self;
-  JoinCommand := JoinCommand + sOn + ACondition.Build;
+  FJoinCommand := FJoinCommand + OnSQL + Condition.Build;
 end;
 
 
 
-function TSQLJoin.&Or(const ACondition: ISQLCondition): ISQLJoin;
+function TSQLJoin.&Or(const Condition: ISQLCondition): ISQLJoin;
 begin
   Result := Self;
 
@@ -721,10 +732,10 @@ end;
 
 
 
-function TSQLJoin.Table(const ATable: ITable): ISQLJoin;
+function TSQLJoin.Table(const Table: ITable): ISQLJoin;
 begin
   Result := Self;
-  JoinCommand := JoinCommand + ATable.Name + sAs + ATable.Alias;
+  FJoinCommand := FJoinCommand + Table.Name + AsSQL + Table.Alias;
 end;
 
 
@@ -733,23 +744,23 @@ end;
 
 function TSQLCondition.Build: string;
 begin
-  Result := '(' + ConditionCommand + ')';
+  Result := '(' + FConditionCommand + ')';
 end;
 
 
 
-function TSQLCondition.LeftTerm(const AIField: IField): ISQLCondition;
+function TSQLCondition.LeftTerm(const Field: IField): ISQLCondition;
 begin
   Result := Self;
-  ConditionCommand := AIField.Table.Alias + Point + AIField.Name;
+  FConditionCommand := Field.Table.Alias + PointSQL + Field.Name;
 end;
 
 
 
-function TSQLCondition.Op(const AOperator: TSQLOperator): ISQLCondition;
+function TSQLCondition.Op(const Operator: TSQLOperator): ISQLCondition;
 begin
   Result := Self;
-  ConditionCommand := ConditionCommand + TNowaEnumerators.GetOperator(AOperator);
+  FConditionCommand := FConditionCommand + TNowaEnumerators.GetOperator(Operator);
 end;
 
 
@@ -761,10 +772,10 @@ end;
 
 
 
-function TSQLCondition.RightTerm(const AIField: IField): ISQLCondition;
+function TSQLCondition.RightTerm(const Field: IField): ISQLCondition;
 begin
   Result := Self;
-  ConditionCommand := ConditionCommand + AIField.Table.Alias + Point + AIField.Name;
+  FConditionCommand := FConditionCommand + Field.Table.Alias + PointSQL + Field.Name;
 end;
 
 end.

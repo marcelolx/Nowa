@@ -9,7 +9,7 @@ uses
   ModelTest in '..\ModelTest.pas',
   Nowa.Model in '..\..\Nowa.Model.pas',
   Nowa.ModelImpl in '..\..\Nowa.ModelImpl.pas',
-  Enumerator in '..\..\Enumerator.pas',
+  Nowa.Enumerator in '..\..\Nowa.Enumerator.pas',
   Enumerator.Person in '..\Person\Enumerator.Person.pas',
   PersonImpl in '..\Person\PersonImpl.pas',
   Nowa in '..\..\Nowa.pas',

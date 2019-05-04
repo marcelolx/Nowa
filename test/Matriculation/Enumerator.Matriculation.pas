@@ -3,7 +3,7 @@ unit Enumerator.Matriculation;
 interface
 
 uses
-  Enumerator;
+  Nowa.Enumerator;
 
 type
   TEMatriculation = (temSequential, temPersonSequential, temDate, temUser);

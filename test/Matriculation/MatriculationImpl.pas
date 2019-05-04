@@ -5,7 +5,7 @@ interface
 uses
   Nowa.Model,
   Nowa.ModelImpl,
-  Enumerator,
+  Nowa.Enumerator,
   Enumerator.Matriculation;
 
 type

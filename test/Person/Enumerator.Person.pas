@@ -3,7 +3,7 @@ unit Enumerator.Person;
 interface
 
 uses
-  Enumerator;
+  Nowa.Enumerator;
 
 type
   TEPerson = (tepSequential, tepName, tepBirthDate, tepEMail, tepPassword);
