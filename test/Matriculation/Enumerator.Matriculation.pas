@@ -45,16 +45,13 @@ begin
 
   case EnumeratedField of
     temSequential:
-      Result := 'NR_SEQUENTIAL';
-
+      Result := 'SEQUENTIAL';
     temPersonSequential:
-      Result := 'NR_PERSONSEQUENTIAL';
-
+      Result := 'PERSONSEQUENTIAL';
     temDate:
-      Result := 'DT_DATA';
-
+      Result := 'DATA';
     temUser:
-      Result := 'CD_USER';
+      Result := 'USER';
   else
     raise Exception.Create('Enumerated field doesn''t have a column.');
   end;
@@ -77,7 +74,7 @@ end;
 
 function TEnumMatriculation.Table: string;
 begin
-  Result := 'TB_MATRICULATION';
+  Result := 'MATRICULATION';
 end;
 
 function TEnumMatriculation.TableAlias(const Alias: string): string;
@@ -85,7 +82,7 @@ begin
   Result := Alias;
 
   if Result.IsEmpty then
-    Result := 'MATRICULATION';
+    Result := 'MT';
 end;
 
 end.

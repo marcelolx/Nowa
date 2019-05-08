@@ -32,19 +32,15 @@ begin
 
   case EnumeratedField of
     tepSequential:
-      Result := 'NR_SEQUENTIAL';
-
+      Result := 'SEQUENTIAL';
     tepName:
-      Result := 'FL_NAME';
-
+      Result := 'NAME';
     tepBirthDate:
-      Result := 'DT_BIRTHDATE';
-
+      Result := 'BIRTHDATE';
     tepEMail:
-      Result := 'TX_EMAIL';
-
+      Result := 'EMAIL';
     tepPassword:
-      Result := 'TX_PASSWORD';
+      Result := 'PASSWORD';
   else
     raise Exception.Create('Enumerated field doesn''t have a column.');
   end;
@@ -80,7 +76,7 @@ end;
 
 function TEnumPerson.Table: string;
 begin
-  Result := 'TB_PERSON';
+  Result := 'PERSON';
 end;
 
 function TEnumPerson.TableAlias(const Alias: string): string;
@@ -88,7 +84,7 @@ begin
   Result := Alias;
 
   if Result.IsEmpty then
-    Result := 'PERSON';
+    Result := 'P';
 end;
 
 end.

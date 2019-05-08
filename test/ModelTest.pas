@@ -60,14 +60,14 @@ var
   Field: IField;
   Table: ITable;
 begin
-  Table := TTable.Create('TB_PERSON', '');
+  Table := TTable.Create('PERSON', '');
   Table.Prepare('PERSON');
 
   Field := TField.Create('ID', Table);
 
   CheckEquals('ID', Field.Name);
   CheckEquals('PERSON_ID', Field.Alias);
-  CheckEquals('TB_PERSON', Field.Table.Name);
+  CheckEquals('PERSON', Field.Table.Name);
   CheckEquals('PERSON', Field.Table.Alias);
 end;
 
@@ -88,16 +88,16 @@ begin
   Person.PrepareModel('', [tepSequential]);
 
   CheckEquals(1, Length(Person.Fields), 'More or less fields on array that should');
-  CheckEquals('TB_PERSON', Person.Table.Name, 'Wrong table name');
-  CheckEquals('PERSON', Person.Table.Alias, 'Wrong default table alias name');
+  CheckEquals('PERSON', Person.Table.Name, 'Wrong table name');
+  CheckEquals('P', Person.Table.Alias, 'Wrong default table alias name');
   CheckEquals(TEnumPerson.Create.Ref.Column(tepSequential) + &As + GetEnumFieldAlias(Person, tepSequential),
     Person.Field(tepSequential).Name + &As + Person.Field(tepSequential).Alias);
 
   Person.PrepareModel('', [tepSequential, tepName, tepBirthDate, tepEmail, tepPassword]);
 
   CheckEquals(5, Length(Person.Fields), 'More or less fields on array that should');
-  CheckEquals('TB_PERSON', Person.Table.Name, 'Wrong table name');
-  CheckEquals('PERSON', Person.Table.Alias, 'Wrong default table alias name');
+  CheckEquals('PERSON', Person.Table.Name, 'Wrong table name');
+  CheckEquals('P', Person.Table.Alias, 'Wrong default table alias name');
   CheckEquals(TEnumPerson.Create.Ref.Column(tepSequential) + &As + GetEnumFieldAlias(Person, tepSequential),
     Person.Field(tepSequential).Name + &As + Person.Field(tepSequential).Alias);
   CheckEquals(TEnumPerson.Create.Ref.Column(tepName) + &As + GetEnumFieldAlias(Person, tepName),
@@ -153,7 +153,7 @@ begin
   Person.PrepareModel('DEFINE_ALIAS_TABLE', [tepSequential]);
 
   CheckEquals(1, Length(Person.Fields), 'More or less fields on array that should');
-  CheckEquals('TB_PERSON', Person.Table.Name, 'Wrong table name');
+  CheckEquals('PERSON', Person.Table.Name, 'Wrong table name');
   CheckEquals('DEFINE_ALIAS_TABLE', Person.Table.Alias, 'Wrong default table alias name');
   CheckEquals(TEnumPerson.Create.Ref.Column(tepSequential) + &As + GetEnumFieldAlias(Person, tepSequential),
     Person.Field(tepSequential).Name + &As + Person.Field(tepSequential).Alias);
@@ -167,8 +167,8 @@ begin
   Person.PrepareModel('', []);
 
   CheckEquals(5, Length(Person.Fields), 'More or less fields on array that should');
-  CheckEquals('TB_PERSON', Person.Table.Name, 'Wrong table name');
-  CheckEquals('PERSON', Person.Table.Alias, 'Wrong default table alias name');
+  CheckEquals('PERSON', Person.Table.Name, 'Wrong table name');
+  CheckEquals('P', Person.Table.Alias, 'Wrong default table alias name');
   CheckEquals(TEnumPerson.Create.Ref.Column(tepSequential) + &As + GetEnumFieldAlias(Person, tepSequential),
     Person.Field(tepSequential).Name + &As + Person.Field(tepSequential).Alias);
   CheckEquals(TEnumPerson.Create.Ref.Column(tepName) + &As + GetEnumFieldAlias(Person, tepName),

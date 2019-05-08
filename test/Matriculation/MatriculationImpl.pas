@@ -42,13 +42,10 @@ begin
   case Field of
     temSequential:
       Result := Sequential;
-
     temPersonSequential:
       Result := PersonSequential;
-
     temDate:
       Result := RegisterDate;
-
     temUser:
       Result := User;
   else
@@ -61,13 +58,10 @@ begin
   case Field of
     temSequential:
       Sequential := Value;
-
     temPersonSequential:
       PersonSequential := Value;
-
     temDate:
       RegisterDate := Value;
-
     temUser:
       User := Value;
   else

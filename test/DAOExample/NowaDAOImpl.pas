@@ -14,7 +14,7 @@ type
     function GenerateModelKey(const SequenceName: string): Int64;
 
     procedure SaveModel(const Model: IModel<T>);
-  strict protected
+  protected
     FCommand: TFDCommand;
 
     procedure GenerateModelCompoundKey(const Model: IModel<T>); virtual; abstract;

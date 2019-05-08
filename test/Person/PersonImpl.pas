@@ -53,16 +53,12 @@ begin
   case Field of
     tepSequential:
       Result := Sequential;
-
     tepName:
-      Result := name;
-
+      Result := Name;
     tepBirthDate:
       Result := BirthDate;
-
     tepEMail:
       Result := Email;
-
     tepPassword:
       Result := Password;
   else
@@ -75,16 +71,12 @@ begin
   case Field of
     tepSequential:
       Sequential := Value;
-
     tepName:
-      name := Value;
-
+      Name := Value;
     tepBirthDate:
       BirthDate := Value;
-
     tepEMail:
       Email := Value;
-
     tepPassword:
       Password := Value;
   else

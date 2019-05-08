@@ -99,8 +99,8 @@ end;
 
 procedure TNowaTest.TestBasicSelect;
 const
-  QueryExpected = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL, PERSON.FL_NAME as PERSON_FL_NAME, PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE, PERSON.TX_EMAIL as PERSON_TX_EMAIL, PERSON.TX_PASSWORD as PERSON_TX_PASSWORD from TB_PERSON as PERSON';
-  QueryExpected2 = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL from TB_PERSON as PERSON';
+  QueryExpected = 'select P.SEQUENTIAL as P_SEQUENTIAL, P.NAME as P_NAME, P.BIRTHDATE as P_BIRTHDATE, P.EMAIL as P_EMAIL, P.PASSWORD as P_PASSWORD from PERSON as P';
+  QueryExpected2 = 'select P.SEQUENTIAL as P_SEQUENTIAL from PERSON as P';
 var
   Person: IModel<TEPerson>;
   Query: String;
@@ -129,7 +129,7 @@ end;
 
 procedure TNowaTest.TestSQLCommandDelete;
 const
-  Delete = 'delete from tb_person';
+  Delete = 'delete from person';
 var
   Person: IModel<TEPerson>;
 begin
@@ -147,7 +147,7 @@ end;
 
 procedure TNowaTest.TestSQLCommandDeleteWhere;
 const
-  Delete = 'delete from tb_person where nr_sequential = :PERSON_NR_SEQUENTIAL';
+  Delete = 'delete from person where sequential = :P_SEQUENTIAL';
 var
   Person: IModel<TEPerson>;
 begin
@@ -182,8 +182,8 @@ end;
 
 procedure TNowaTest.TestSQLCommandFind;
 const
-  Find = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL, PERSON.FL_NAME as PERSON_FL_NAME, PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE,' +
-    ' PERSON.TX_EMAIL as PERSON_TX_EMAIL, PERSON.TX_PASSWORD as PERSON_TX_PASSWORD from TB_PERSON as PERSON where PERSON.NR_SEQUENTIAL = 1';
+  Find = 'select P.SEQUENTIAL as P_SEQUENTIAL, P.NAME as P_NAME, P.BIRTHDATE as P_BIRTHDATE,' +
+    ' P.EMAIL as P_EMAIL, P.PASSWORD as P_PASSWORD from PERSON as P where P.SEQUENTIAL = 1';
 var
   Person: IModel<TEPerson>;
 begin
@@ -201,7 +201,7 @@ end;
 
 procedure TNowaTest.TestSQLCommandInsert;
 const
-  Insert = 'insert into tb_person (nr_sequential, fl_name, dt_birthdate, tx_email, tx_password) values (:PERSON_NR_SEQUENTIAL, :PERSON_FL_NAME, :PERSON_DT_BIRTHDATE, :PERSON_TX_EMAIL, :PERSON_TX_PASSWORD)';
+  Insert = 'insert into person (sequential, name, birthdate, email, password) values (:P_SEQUENTIAL, :P_NAME, :P_BIRTHDATE, :P_EMAIL, :P_PASSWORD)';
 var
   Person: IModel<TEPerson>;
 begin
@@ -237,7 +237,7 @@ end;
 
 procedure TNowaTest.TestSQLCommandUpdate;
 const
-  Update = 'update tb_person set nr_sequential = :PERSON_NR_SEQUENTIAL, fl_name = :PERSON_FL_NAME, dt_birthdate = :PERSON_DT_BIRTHDATE, tx_email = :PERSON_TX_EMAIL, tx_password = :PERSON_TX_PASSWORD';
+  Update = 'update person set sequential = :P_SEQUENTIAL, name = :P_NAME, birthdate = :P_BIRTHDATE, email = :P_EMAIL, password = :P_PASSWORD';
 var
   Person: IModel<TEPerson>;
 begin
@@ -255,8 +255,8 @@ end;
 
 procedure TNowaTest.TestSQLCommandUpdateWhereKey;
 const
-  Update = 'update tb_person set nr_sequential = :PERSON_NR_SEQUENTIAL, fl_name = :PERSON_FL_NAME, dt_birthdate = :PERSON_DT_BIRTHDATE,' +
-    ' tx_email = :PERSON_TX_EMAIL, tx_password = :PERSON_TX_PASSWORD where nr_sequential = :PERSON_NR_SEQUENTIAL';
+  Update = 'update person set sequential = :P_SEQUENTIAL, name = :P_NAME, birthdate = :P_BIRTHDATE,' +
+    ' email = :P_EMAIL, password = :P_PASSWORD where sequential = :P_SEQUENTIAL';
 var
   Person: IModel<TEPerson>;
 begin
@@ -345,16 +345,18 @@ end;
 
 procedure TNowaTest.TestSQLSelectFields;
 const
-  Query = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL';
-  QueryExpected = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL, PERSON.FL_NAME as PERSON_FL_NAME, PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE, PERSON.TX_EMAIL as PERSON_TX_EMAIL, PERSON.TX_PASSWORD as PERSON_TX_PASSWORD';
+  Query = 'select P.SEQUENTIAL as P_SEQUENTIAL';
+  QueryExpected =
+    'select PERSON.SEQUENTIAL as PERSON_SEQUENTIAL, PERSON.NAME as PERSON_NAME, PERSON.BIRTHDATE as PERSON_BIRTHDATE,' +
+    'PERSON.EMAIL as PERSON_EMAIL, PERSON.PASSWORD as PERSON_PASSWORD';
 var
   Person: IModel<TEPerson>;
   Table: ITable;
   Field: IField;
 begin
-  Table := TTable.Create('TB_PERSON', 'GEN_PERSON');
+  Table := TTable.Create('PERSON', 'GEN_PERSON');
   Table.Prepare('PERSON');
-  Field := TField.Create('NR_SEQUENTIAL', Table);
+  Field := TField.Create('SEQUENTIAL', Table);
 
   CheckEquals(Query, TSQLSelect.Create.Ref.Fields([[Field]]).Build);
 
@@ -370,8 +372,8 @@ end;
 
 procedure TNowaTest.TestSQLSelectFromWithFields;
 const
-  Query = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL from TB_PERSON as PERSON';
-  QueryExpected = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL, PERSON.FL_NAME as PERSON_FL_NAME, PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE, PERSON.TX_EMAIL as PERSON_TX_EMAIL, PERSON.TX_PASSWORD as PERSON_TX_PASSWORD from TB_PERSON as PERSON';
+  Query = 'select P.SEQUENTIAL as P_SEQUENTIAL from PERSON as P';
+  QueryExpected = 'select P.SEQUENTIAL as P_SEQUENTIAL, P.NAME as P_NAME, P.BIRTHDATE as P_BIRTHDATE, P.EMAIL as P_EMAIL, P.PASSWORD as P_PASSWORD from PERSON as P';
 var
   Person: IModel<TEPerson>;
 begin
@@ -410,17 +412,17 @@ end;
 
 procedure TNowaTest.TestSQLSelectInnerJoin;
 const
-  InnerJoin = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL,' +
-                     ' PERSON.FL_NAME as PERSON_FL_NAME,' +
-                     ' PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE,' +
-                     ' PERSON.TX_EMAIL as PERSON_TX_EMAIL,' +
-                     ' PERSON.TX_PASSWORD as PERSON_TX_PASSWORD,' +
-                     ' MATRICULATION.NR_SEQUENTIAL as MATRICULATION_NR_SEQUENTIAL,' +
-                     ' MATRICULATION.NR_PERSONSEQUENTIAL as MATRICULATION_NR_PERSONSEQUENTIAL,' +
-                     ' MATRICULATION.DT_DATA as MATRICULATION_DT_DATA,' +
-                     ' MATRICULATION.CD_USER as MATRICULATION_CD_USER' +
-                ' from TB_PERSON as PERSON' +
-               ' inner join TB_MATRICULATION as MATRICULATION on (MATRICULATION.NR_PERSONSEQUENTIAL = PERSON.NR_SEQUENTIAL)';
+  InnerJoin = 'select P.SEQUENTIAL as P_SEQUENTIAL,' +
+                     ' P.NAME as P_NAME,' +
+                     ' P.BIRTHDATE as P_BIRTHDATE,' +
+                     ' P.EMAIL as P_EMAIL,' +
+                     ' P.PASSWORD as P_PASSWORD,' +
+                     ' MT.SEQUENTIAL as MT_SEQUENTIAL,' +
+                     ' MT.PERSONSEQUENTIAL as MT_PERSONSEQUENTIAL,' +
+                     ' MT.DATA as MT_DATA,' +
+                     ' MT.USER as MT_USER' +
+                ' from PERSON as P' +
+               ' inner join MATRICULATION as MT on (MT.PERSONSEQUENTIAL = P.SEQUENTIAL)';
 var
   Person: IModel<TEPerson>;
   Matriculation: IModel<TEMatriculation>;
@@ -453,17 +455,17 @@ end;
 
 procedure TNowaTest.TestSQLSelectLeftJoin;
 const
-  InnerJoin = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL,' +
-                     ' PERSON.FL_NAME as PERSON_FL_NAME,' +
-                     ' PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE,' +
-                     ' PERSON.TX_EMAIL as PERSON_TX_EMAIL,' +
-                     ' PERSON.TX_PASSWORD as PERSON_TX_PASSWORD,' +
-                     ' MATRICULATION.NR_SEQUENTIAL as MATRICULATION_NR_SEQUENTIAL,' +
-                     ' MATRICULATION.NR_PERSONSEQUENTIAL as MATRICULATION_NR_PERSONSEQUENTIAL,' +
-                     ' MATRICULATION.DT_DATA as MATRICULATION_DT_DATA,' +
-                     ' MATRICULATION.CD_USER as MATRICULATION_CD_USER' +
-                ' from TB_PERSON as PERSON' +
-               ' left join TB_MATRICULATION as MATRICULATION on (MATRICULATION.NR_PERSONSEQUENTIAL = PERSON.NR_SEQUENTIAL)';
+  InnerJoin = 'select P.SEQUENTIAL as P_SEQUENTIAL,' +
+                     ' P.NAME as P_NAME,' +
+                     ' P.BIRTHDATE as P_BIRTHDATE,' +
+                     ' P.EMAIL as P_EMAIL,' +
+                     ' P.PASSWORD as P_PASSWORD,' +
+                     ' MT.SEQUENTIAL as MT_SEQUENTIAL,' +
+                     ' MT.PERSONSEQUENTIAL as MT_PERSONSEQUENTIAL,' +
+                     ' MT.DATA as MT_DATA,' +
+                     ' MT.USER as MT_USER' +
+                ' from PERSON as P' +
+               ' left join MATRICULATION as MT on (MT.PERSONSEQUENTIAL = P.SEQUENTIAL)';
 var
   Person: IModel<TEPerson>;
   Matriculation: IModel<TEMatriculation>;
@@ -496,17 +498,17 @@ end;
 
 procedure TNowaTest.TestSQLSelectLeftOuterJoin;
 const
-  InnerJoin = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL,' +
-                     ' PERSON.FL_NAME as PERSON_FL_NAME,' +
-                     ' PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE,' +
-                     ' PERSON.TX_EMAIL as PERSON_TX_EMAIL,' +
-                     ' PERSON.TX_PASSWORD as PERSON_TX_PASSWORD,' +
-                     ' MATRICULATION.NR_SEQUENTIAL as MATRICULATION_NR_SEQUENTIAL,' +
-                     ' MATRICULATION.NR_PERSONSEQUENTIAL as MATRICULATION_NR_PERSONSEQUENTIAL,' +
-                     ' MATRICULATION.DT_DATA as MATRICULATION_DT_DATA,' +
-                     ' MATRICULATION.CD_USER as MATRICULATION_CD_USER' +
-                ' from TB_PERSON as PERSON' +
-               ' left outer join TB_MATRICULATION as MATRICULATION on (MATRICULATION.NR_PERSONSEQUENTIAL = PERSON.NR_SEQUENTIAL)';
+  InnerJoin = 'select P.SEQUENTIAL as P_SEQUENTIAL,' +
+                     ' P.NAME as P_NAME,' +
+                     ' P.BIRTHDATE as P_BIRTHDATE,' +
+                     ' P.EMAIL as P_EMAIL,' +
+                     ' P.PASSWORD as P_PASSWORD,' +
+                     ' MT.SEQUENTIAL as MT_SEQUENTIAL,' +
+                     ' MT.PERSONSEQUENTIAL as MT_PERSONSEQUENTIAL,' +
+                     ' MT.DATA as MT_DATA,' +
+                     ' MT.USER as MT_USER' +
+                ' from PERSON as P' +
+               ' left outer join MATRICULATION as MT on (MT.PERSONSEQUENTIAL = P.SEQUENTIAL)';
 var
   Person: IModel<TEPerson>;
   Matriculation: IModel<TEMatriculation>;
@@ -539,17 +541,17 @@ end;
 
 procedure TNowaTest.TestSQLSelectRightJoin;
 const
-  InnerJoin = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL,' +
-                     ' PERSON.FL_NAME as PERSON_FL_NAME,' +
-                     ' PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE,' +
-                     ' PERSON.TX_EMAIL as PERSON_TX_EMAIL,' +
-                     ' PERSON.TX_PASSWORD as PERSON_TX_PASSWORD,' +
-                     ' MATRICULATION.NR_SEQUENTIAL as MATRICULATION_NR_SEQUENTIAL,' +
-                     ' MATRICULATION.NR_PERSONSEQUENTIAL as MATRICULATION_NR_PERSONSEQUENTIAL,' +
-                     ' MATRICULATION.DT_DATA as MATRICULATION_DT_DATA,' +
-                     ' MATRICULATION.CD_USER as MATRICULATION_CD_USER' +
-                ' from TB_PERSON as PERSON' +
-               ' right join TB_MATRICULATION as MATRICULATION on (MATRICULATION.NR_PERSONSEQUENTIAL = PERSON.NR_SEQUENTIAL)';
+  InnerJoin = 'select P.SEQUENTIAL as P_SEQUENTIAL,' +
+                     ' P.NAME as P_NAME,' +
+                     ' P.BIRTHDATE as P_BIRTHDATE,' +
+                     ' P.EMAIL as P_EMAIL,' +
+                     ' P.PASSWORD as P_PASSWORD,' +
+                     ' MT.SEQUENTIAL as MT_SEQUENTIAL,' +
+                     ' MT.PERSONSEQUENTIAL as MT_PERSONSEQUENTIAL,' +
+                     ' MT.DATA as MT_DATA,' +
+                     ' MT.USER as MT_USER' +
+                ' from PERSON as P' +
+               ' right join MATRICULATION as MT on (MT.PERSONSEQUENTIAL = P.SEQUENTIAL)';
 var
   Person: IModel<TEPerson>;
   Matriculation: IModel<TEMatriculation>;
@@ -582,17 +584,17 @@ end;
 
 procedure TNowaTest.TestSQLSelectRightOuterJoin;
 const
-  InnerJoin = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL,' +
-                     ' PERSON.FL_NAME as PERSON_FL_NAME,' +
-                     ' PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE,' +
-                     ' PERSON.TX_EMAIL as PERSON_TX_EMAIL,' +
-                     ' PERSON.TX_PASSWORD as PERSON_TX_PASSWORD,' +
-                     ' MATRICULATION.NR_SEQUENTIAL as MATRICULATION_NR_SEQUENTIAL,' +
-                     ' MATRICULATION.NR_PERSONSEQUENTIAL as MATRICULATION_NR_PERSONSEQUENTIAL,' +
-                     ' MATRICULATION.DT_DATA as MATRICULATION_DT_DATA,' +
-                     ' MATRICULATION.CD_USER as MATRICULATION_CD_USER' +
-                ' from TB_PERSON as PERSON' +
-               ' right outer join TB_MATRICULATION as MATRICULATION on (MATRICULATION.NR_PERSONSEQUENTIAL = PERSON.NR_SEQUENTIAL)';
+  InnerJoin = 'select P.SEQUENTIAL as P_SEQUENTIAL,' +
+                     ' P.NAME as P_NAME,' +
+                     ' P.BIRTHDATE as P_BIRTHDATE,' +
+                     ' P.EMAIL as P_EMAIL,' +
+                     ' P.PASSWORD as P_PASSWORD,' +
+                     ' MT.SEQUENTIAL as MT_SEQUENTIAL,' +
+                     ' MT.PERSONSEQUENTIAL as MT_PERSONSEQUENTIAL,' +
+                     ' MT.DATA as MT_DATA,' +
+                     ' MT.USER as MT_USER' +
+                ' from PERSON as P' +
+               ' right outer join MATRICULATION as MT on (MT.PERSONSEQUENTIAL = P.SEQUENTIAL)';
 var
   Person: IModel<TEPerson>;
   Matriculation: IModel<TEMatriculation>;
@@ -625,21 +627,21 @@ end;
 
 procedure TNowaTest.TestSQLSelectUnion;
 const
-  InnerJoin = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL,' +
-                     ' PERSON.FL_NAME as PERSON_FL_NAME,' +
-                     ' PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE,' +
-                     ' PERSON.TX_EMAIL as PERSON_TX_EMAIL,' +
-                     ' PERSON.TX_PASSWORD as PERSON_TX_PASSWORD' +
-                ' from TB_PERSON as PERSON' +
-                ' where PERSON.FL_NAME = ''MARCELO''' +
+  InnerJoin = 'select P.SEQUENTIAL as P_SEQUENTIAL,' +
+                     ' P.NAME as P_NAME,' +
+                     ' P.BIRTHDATE as P_BIRTHDATE,' +
+                     ' P.EMAIL as P_EMAIL,' +
+                     ' P.PASSWORD as P_PASSWORD' +
+                ' from PERSON as P' +
+                ' where P.NAME = ''MARCELO''' +
                 ' union' +
-               ' select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL,' +
-                     ' PERSON.FL_NAME as PERSON_FL_NAME,' +
-                     ' PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE,' +
-                     ' PERSON.TX_EMAIL as PERSON_TX_EMAIL,' +
-                     ' PERSON.TX_PASSWORD as PERSON_TX_PASSWORD' +
-                ' from TB_PERSON as PERSON' +
-                ' where PERSON.FL_NAME = ''RANDOM''';
+               ' select P.SEQUENTIAL as P_SEQUENTIAL,' +
+                     ' P.NAME as P_NAME,' +
+                     ' P.BIRTHDATE as P_BIRTHDATE,' +
+                     ' P.EMAIL as P_EMAIL,' +
+                     ' P.PASSWORD as P_PASSWORD' +
+                ' from PERSON as P' +
+                ' where P.NAME = ''RANDOM''';
 var
   Person: IModel<TEPerson>;
 begin
@@ -671,21 +673,21 @@ end;
 
 procedure TNowaTest.TestSQLSelectUnionAll;
 const
-  InnerJoin = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL,' +
-                     ' PERSON.FL_NAME as PERSON_FL_NAME,' +
-                     ' PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE,' +
-                     ' PERSON.TX_EMAIL as PERSON_TX_EMAIL,' +
-                     ' PERSON.TX_PASSWORD as PERSON_TX_PASSWORD' +
-                ' from TB_PERSON as PERSON' +
-                ' where PERSON.FL_NAME = ''MARCELO''' +
+  InnerJoin = 'select P.SEQUENTIAL as P_SEQUENTIAL,' +
+                     ' P.NAME as P_NAME,' +
+                     ' P.BIRTHDATE as P_BIRTHDATE,' +
+                     ' P.EMAIL as P_EMAIL,' +
+                     ' P.PASSWORD as P_PASSWORD' +
+                ' from PERSON as P' +
+                ' where P.NAME = ''MARCELO''' +
                 ' union all' +
-               ' select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL,' +
-                     ' PERSON.FL_NAME as PERSON_FL_NAME,' +
-                     ' PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE,' +
-                     ' PERSON.TX_EMAIL as PERSON_TX_EMAIL,' +
-                     ' PERSON.TX_PASSWORD as PERSON_TX_PASSWORD' +
-                ' from TB_PERSON as PERSON' +
-                ' where PERSON.FL_NAME = ''RANDOM''';
+               ' select P.SEQUENTIAL as P_SEQUENTIAL,' +
+                     ' P.NAME as P_NAME,' +
+                     ' P.BIRTHDATE as P_BIRTHDATE,' +
+                     ' P.EMAIL as P_EMAIL,' +
+                     ' P.PASSWORD as P_PASSWORD' +
+                ' from PERSON as P' +
+                ' where P.NAME = ''RANDOM''';
 var
   Person: IModel<TEPerson>;
 begin
@@ -717,10 +719,10 @@ end;
 
 procedure TNowaTest.TestSQLSelectWhere;
 const
-  Query = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL from TB_PERSON as PERSON where PERSON.NR_SEQUENTIAL = 1';
+  Query = 'select P.SEQUENTIAL as P_SEQUENTIAL from PERSON as P where P.SEQUENTIAL = 1';
   QueryExpected =
-    'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL, PERSON.FL_NAME as PERSON_FL_NAME, PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE, ' +
-    'PERSON.TX_EMAIL as PERSON_TX_EMAIL, PERSON.TX_PASSWORD as PERSON_TX_PASSWORD from TB_PERSON as PERSON where PERSON.NR_SEQUENTIAL = 1';
+    'select P.SEQUENTIAL as P_SEQUENTIAL, P.NAME as P_NAME, P.BIRTHDATE as P_BIRTHDATE, ' +
+    'P.EMAIL as P_EMAIL, P.PASSWORD as P_PASSWORD from PERSON as P where P.SEQUENTIAL = 1';
 var
   Person: IModel<TEPerson>;
 begin
@@ -760,7 +762,7 @@ const
   Query = ' where  <> ';
   Query2 = ' where T.EXAMPLE <> ';
   Query3 = ' where T1.EXAMPLE <> T2.EXAMPLE';
-  Query4 = ' where PERSON.NR_SEQUENTIAL <> MATRICULATION.NR_PERSONSEQUENTIAL';
+  Query4 = ' where P.SEQUENTIAL <> MT.PERSONSEQUENTIAL';
 var
   Person: IModel<TEPerson>;
   Matriculation: IModel<TEMatriculation>;
@@ -815,7 +817,7 @@ procedure TNowaTest.TestSQLWhereDifferentValue;
 const
   Query1 = ' where T.EXAMPLE <> 1';
   Query2 = ' where T.EXAMPLE <> ''ABC''';
-  Query3 = ' where PERSON.NR_SEQUENTIAL <> 1';
+  Query3 = ' where P.SEQUENTIAL <> 1';
 var
   Person: IModel<TEPerson>;
   Table: ITable;
@@ -882,8 +884,8 @@ const
   Query3 = ' where T.EXAMPLEVAL = 1';
   Query4 = ' where T.EXAMPLEVAL = ''ABC''';
   Query5 = ' where T1.EXAMPLE = T2.EXAMPLE';
-  Query6 = ' where PERSON.NR_SEQUENTIAL = 1';
-  Query7 = ' where PERSON.NR_SEQUENTIAL = MATRICULATION.NR_PERSONSEQUENTIAL';
+  Query6 = ' where P.SEQUENTIAL = 1';
+  Query7 = ' where P.SEQUENTIAL = MT.PERSONSEQUENTIAL';
 var
   Person: IModel<TEPerson>;
   Matriculation: IModel<TEMatriculation>;
@@ -956,7 +958,7 @@ end;
 procedure TNowaTest.TestSQLWhereField;
 const
   Query = ' where T.EXAMPLE';
-  QueryPerson = ' where PERSON.FL_NAME';
+  QueryPerson = ' where P.NAME';
 var
   Person: IModel<TEPerson>;
   Table: ITable;
@@ -985,7 +987,7 @@ procedure TNowaTest.TestSQLWhereGreater;
 const
   Query1 = ' where T.EXAMPLE > ';
   Query2 = ' where T1.EXAMPLE > T2.EXAMPLE';
-  Query3 = ' where PERSON.NR_SEQUENTIAL > MATRICULATION.NR_PERSONSEQUENTIAL';
+  Query3 = ' where P.SEQUENTIAL > MT.PERSONSEQUENTIAL';
 var
   Person: IModel<TEPerson>;
   Matriculation: IModel<TEMatriculation>;
@@ -1032,7 +1034,7 @@ procedure TNowaTest.TestSQLWhereGreaterOrEqual;
 const
   Query1 = ' where T.EXAMPLE >= ';
   Query2 = ' where T1.EXAMPLE >= T2.EXAMPLE';
-  Query3 = ' where PERSON.NR_SEQUENTIAL >= MATRICULATION.NR_PERSONSEQUENTIAL';
+  Query3 = ' where P.SEQUENTIAL >= MT.PERSONSEQUENTIAL';
 var
   Person: IModel<TEPerson>;
   Matriculation: IModel<TEMatriculation>;
@@ -1079,7 +1081,7 @@ procedure TNowaTest.TestSQLWhereGreaterOrEqualValue;
 const
   Query1 = ' where T.EXAMPLE >= 1';
   Query2 = ' where T.EXAMPLE >= ''ABC''';
-  Query3 = ' where PERSON.NR_SEQUENTIAL >= 1';
+  Query3 = ' where P.SEQUENTIAL >= 1';
 var
   Person: IModel<TEPerson>;
   Table: ITable;
@@ -1117,7 +1119,7 @@ procedure TNowaTest.TestSQLWhereGreaterValue;
 const
   Query1 = ' where T.EXAMPLE > 1';
   Query2 = ' where T.EXAMPLE > ''ABC''';
-  Query3 = ' where PERSON.NR_SEQUENTIAL > 1';
+  Query3 = ' where P.SEQUENTIAL > 1';
 var
   Person: IModel<TEPerson>;
   Table: ITable;
@@ -1158,7 +1160,7 @@ begin
   Person := TPerson.Create;
   Person.PrepareModel('', []);
 
-  CheckEquals(' where PERSON.NR_SEQUENTIAL in (1,2,3,4)',
+  CheckEquals(' where P.SEQUENTIAL in (1,2,3,4)',
     TSQLWhere.Create.Ref
       .Field(Person.Field(tepSequential))
       .InList([1,2,3,4])
@@ -1206,7 +1208,7 @@ procedure TNowaTest.TestSQLWhereLess;
 const
   Query1 = ' where T.EXAMPLE < ';
   Query2 = ' where T1.EXAMPLE < T2.EXAMPLE';
-  Query3 = ' where PERSON.NR_SEQUENTIAL < MATRICULATION.NR_PERSONSEQUENTIAL';
+  Query3 = ' where P.SEQUENTIAL < MT.PERSONSEQUENTIAL';
 var
   Person: IModel<TEPerson>;
   Matriculation: IModel<TEMatriculation>;
@@ -1253,7 +1255,7 @@ procedure TNowaTest.TestSQLWhereLessOrEqual;
 const
   Query1 = ' where T.EXAMPLE <= ';
   Query2 = ' where T1.EXAMPLE <= T2.EXAMPLE';
-  Query3 = ' where PERSON.NR_SEQUENTIAL <= MATRICULATION.NR_PERSONSEQUENTIAL';
+  Query3 = ' where P.SEQUENTIAL <= MT.PERSONSEQUENTIAL';
 var
   Person: IModel<TEPerson>;
   Matriculation: IModel<TEMatriculation>;
@@ -1299,7 +1301,7 @@ procedure TNowaTest.TestSQLWhereLessOrEqualValue;
 const
   Query1 = ' where T.EXAMPLE <= 1';
   Query2 = ' where T.EXAMPLE <= ''ABC''';
-  Query3 = ' where PERSON.NR_SEQUENTIAL <= 1';
+  Query3 = ' where P.SEQUENTIAL <= 1';
 var
   Person: IModel<TEPerson>;
   Table: ITable;
@@ -1337,7 +1339,7 @@ procedure TNowaTest.TestSQLWhereLessValue;
 const
   Query1 = ' where T.EXAMPLE < 1';
   Query2 = ' where T.EXAMPLE < ''ABC''';
-  Query3 = ' where PERSON.NR_SEQUENTIAL < 1';
+  Query3 = ' where P.SEQUENTIAL < 1';
 var
   Person: IModel<TEPerson>;
   Table: ITable;
@@ -1416,7 +1418,7 @@ begin
   Person := TPerson.Create;
   Person.PrepareModel('', []);
 
-  CheckEquals(' where PERSON.NR_SEQUENTIAL not ',
+  CheckEquals(' where P.SEQUENTIAL not ',
     TSQLWhere.Create.Ref
       .Field(Person.Field(tepSequential))
       .&Not
@@ -1433,7 +1435,7 @@ begin
   Person := TPerson.Create;
   Person.PrepareModel('', []);
 
-  CheckEquals(' where PERSON.NR_SEQUENTIAL not  in (1,2,3,4)',
+  CheckEquals(' where P.SEQUENTIAL not  in (1,2,3,4)',
     TSQLWhere.Create.Ref
       .Field(Person.Field(tepSequential))
       .&Not.InList([1,2,3,4])
