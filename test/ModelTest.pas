@@ -9,10 +9,11 @@ uses
 
 type
   TModelTest = class(TTestCase)
-  strict private const
+  strict private
+  const
     &As = ' as ';
   strict private
-    function GetEnumFieldAlias(const AIModel: IModel<TEPerson>; const AEnumerated: TEPerson): String;
+    function GetEnumFieldAlias(const Model: IModel<TEPerson>; const Enumerated: TEPerson): string;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -35,15 +36,12 @@ uses
   Person,
   Nowa.ModelImpl;
 
-
 { TModelTest }
 
-function TModelTest.GetEnumFieldAlias(const AIModel: IModel<TEPerson>; const AEnumerated: TEPerson): String;
+function TModelTest.GetEnumFieldAlias(const Model: IModel<TEPerson>; const Enumerated: TEPerson): string;
 begin
-  Result := AIModel.Table.Alias + '_' + TEnumPerson.Create.Ref.Column(AEnumerated);
+  Result := Model.Table.Alias + '_' + TEnumPerson.Create.Ref.Column(Enumerated);
 end;
-
-
 
 procedure TModelTest.SetUp;
 begin
@@ -51,159 +49,165 @@ begin
 
 end;
 
-
-
 procedure TModelTest.TearDown;
 begin
   inherited;
 
 end;
 
-
-
 procedure TModelTest.TestBasicField;
 var
-  oIField: IField;
-  oITable: ITable;
+  Field: IField;
+  Table: ITable;
 begin
-  oITable := TTable.Create('TB_PERSON', '');
-  oITable.Prepare('PERSON');
+  Table := TTable.Create('TB_PERSON', '');
+  Table.Prepare('PERSON');
 
-  oIField := TField.Create('ID', oITable);
+  Field := TField.Create('ID', Table);
 
-  CheckEquals('ID', oIField.Name);
-  CheckEquals('PERSON_ID', oIField.Alias);
-  CheckEquals('TB_PERSON', oIField.Table.Name);
-  CheckEquals('PERSON', oIField.Table.Alias);
+  CheckEquals('ID', Field.Name);
+  CheckEquals('PERSON_ID', Field.Alias);
+  CheckEquals('TB_PERSON', Field.Table.Name);
+  CheckEquals('PERSON', Field.Table.Alias);
 end;
-
-
 
 procedure TModelTest.TestCreateModel;
 var
-  fIModel: IModel<TEPerson>;
+  Person: IModel<TEPerson>;
 begin
-  fIModel := TPerson.Create;
+  Person := TPerson.Create;
 
-  CheckNotNull(fIModel);
+  CheckNotNull(Person);
 end;
-
-
 
 procedure TModelTest.TestPrepareModel;
 var
-  fIModel: IModel<TEPerson>;
+  Person: IModel<TEPerson>;
 begin
-  fIModel := TPerson.Create;
-  fIModel.PrepareModel('', [tepSequential]);
+  Person := TPerson.Create;
+  Person.PrepareModel('', [tepSequential]);
 
-  CheckEquals(1, Length(fIModel.Fields), 'More or less fields on array that should');
-  CheckEquals('TB_PERSON', fIModel.Table.Name, 'Wrong table name');
-  CheckEquals('PERSON', fIModel.Table.Alias, 'Wrong default table alias name');
-  CheckEquals(TEnumPerson.Create.Ref.Column(tepSequential) + &As + GetEnumFieldAlias(fIModel, tepSequential), fIModel.Field(tepSequential).Name + &As + fIModel.Field(tepSequential).Alias);
+  CheckEquals(1, Length(Person.Fields), 'More or less fields on array that should');
+  CheckEquals('TB_PERSON', Person.Table.Name, 'Wrong table name');
+  CheckEquals('PERSON', Person.Table.Alias, 'Wrong default table alias name');
+  CheckEquals(TEnumPerson.Create.Ref.Column(tepSequential) + &As + GetEnumFieldAlias(Person, tepSequential),
+    Person.Field(tepSequential).Name + &As + Person.Field(tepSequential).Alias);
 
-  fIModel.PrepareModel('', [tepSequential, tepName, tepBirthDate, tepEmail, tepPassword]);
+  Person.PrepareModel('', [tepSequential, tepName, tepBirthDate, tepEmail, tepPassword]);
 
-  CheckEquals(5, Length(fIModel.Fields), 'More or less fields on array that should');
-  CheckEquals('TB_PERSON', fIModel.Table.Name, 'Wrong table name');
-  CheckEquals('PERSON', fIModel.Table.Alias, 'Wrong default table alias name');
-  CheckEquals(TEnumPerson.Create.Ref.Column(tepSequential) + &As + GetEnumFieldAlias(fIModel, tepSequential), fIModel.Field(tepSequential).Name + &As + fIModel.Field(tepSequential).Alias);
-  CheckEquals(TEnumPerson.Create.Ref.Column(tepName) + &As + GetEnumFieldAlias(fIModel, tepName)            , fIModel.Field(tepName).Name + &As + fIModel.Field(tepName).Alias);
-  CheckEquals(TEnumPerson.Create.Ref.Column(tepBirthDate) + &As + GetEnumFieldAlias(fIModel, tepBirthDate)  , fIModel.Field(tepBirthDate).Name + &As + fIModel.Field(tepBirthDate).Alias);
-  CheckEquals(TEnumPerson.Create.Ref.Column(tepEmail) + &As + GetEnumFieldAlias(fIModel, tepEmail)          , fIModel.Field(tepEmail).Name + &As + fIModel.Field(tepEMail).Alias);
-  CheckEquals(TEnumPerson.Create.Ref.Column(tepPassword) + &As + GetEnumFieldAlias(fIModel, tepPassword)    , fIModel.Field(tepPassword).Name + &As + fIModel.Field(tepPassword).Alias);
+  CheckEquals(5, Length(Person.Fields), 'More or less fields on array that should');
+  CheckEquals('TB_PERSON', Person.Table.Name, 'Wrong table name');
+  CheckEquals('PERSON', Person.Table.Alias, 'Wrong default table alias name');
+  CheckEquals(TEnumPerson.Create.Ref.Column(tepSequential) + &As + GetEnumFieldAlias(Person, tepSequential),
+    Person.Field(tepSequential).Name + &As + Person.Field(tepSequential).Alias);
+  CheckEquals(TEnumPerson.Create.Ref.Column(tepName) + &As + GetEnumFieldAlias(Person, tepName),
+    Person.Field(tepName).Name + &As + Person.Field(tepName).Alias);
+  CheckEquals(TEnumPerson.Create.Ref.Column(tepBirthDate) + &As + GetEnumFieldAlias(Person, tepBirthDate),
+    Person.Field(tepBirthDate).Name + &As + Person.Field(tepBirthDate).Alias);
+  CheckEquals(TEnumPerson.Create.Ref.Column(tepEmail) + &As + GetEnumFieldAlias(Person, tepEmail),
+    Person.Field(tepEmail).Name + &As + Person.Field(tepEmail).Alias);
+  CheckEquals(TEnumPerson.Create.Ref.Column(tepPassword) + &As + GetEnumFieldAlias(Person, tepPassword),
+    Person.Field(tepPassword).Name + &As + Person.Field(tepPassword).Alias);
 
-  CheckEquals(fIModel.Field(tepSequential).Name + &As + fIModel.Field(tepSequential).Alias , fIModel.Field(tepSequential).Name + &As + fIModel.Field(tepSequential).Alias);
-  CheckEquals(fIModel.Field(tepName).Name + &As + fIModel.Field(tepName).Alias             , fIModel.Field(tepName).Name + &As + fIModel.Field(tepName).Alias);
-  CheckEquals(fIModel.Field(tepBirthDate).Name + &As + fIModel.Field(tepBirthDate).Alias   , fIModel.Field(tepBirthDate).Name + &As + fIModel.Field(tepBirthDate).Alias);
-  CheckEquals(fIModel.Field(tepEmail).Name + &As + fIModel.Field(tepEmail).Alias           , fIModel.Field(tepEmail).Name + &As + fIModel.Field(tepEmail).Alias);
-  CheckEquals(fIModel.Field(tepPassword).Name + &As + fIModel.Field(tepPassword).Alias     , fIModel.Field(tepPassword).Name + &As + fIModel.Field(tepPassword).Alias);
+  CheckEquals(Person.Field(tepSequential).Name + &As + Person.Field(tepSequential).Alias,
+    Person.Field(tepSequential).Name + &As + Person.Field(tepSequential).Alias);
+  CheckEquals(Person.Field(tepName).Name + &As + Person.Field(tepName).Alias, Person.Field(tepName).Name + &As +
+    Person.Field(tepName).Alias);
+  CheckEquals(Person.Field(tepBirthDate).Name + &As + Person.Field(tepBirthDate).Alias,
+    Person.Field(tepBirthDate).Name + &As + Person.Field(tepBirthDate).Alias);
+  CheckEquals(Person.Field(tepEmail).Name + &As + Person.Field(tepEmail).Alias, Person.Field(tepEmail).Name + &As +
+    Person.Field(tepEmail).Alias);
+  CheckEquals(Person.Field(tepPassword).Name + &As + Person.Field(tepPassword).Alias,
+    Person.Field(tepPassword).Name + &As + Person.Field(tepPassword).Alias);
 end;
-
-
 
 procedure TModelTest.TestPrepareModelAndGetPreparedFields;
 var
-  fIModel: IModel<TEPerson>;
+  Person: IModel<TEPerson>;
 begin
-  fIModel := TPerson.Create;
-  fIModel.PrepareModel('', [tepSequential, tepName, tepEmail]);
+  Person := TPerson.Create;
+  Person.PrepareModel('', [tepSequential, tepName, tepEmail]);
 
-  CheckEquals(fIModel.Field(tepSequential).Name, fIModel.Fields[0].Name);
-  CheckEquals(fIModel.Field(tepSequential).Alias, fIModel.Fields[0].Alias);
-  CheckEquals(fIModel.Field(tepSequential).Table.Name, fIModel.Fields[0].Table.Name);
-  CheckEquals(fIModel.Field(tepSequential).Table.Alias, fIModel.Fields[0].Table.Alias);
-  CheckEquals(fIModel.Field(tepSequential).Table.Sequence, fIModel.Fields[0].Table.Sequence);
-  CheckEquals(fIModel.Field(tepName).Name, fIModel.Fields[1].Name);
-  CheckEquals(fIModel.Field(tepName).Alias, fIModel.Fields[1].Alias);
-  CheckEquals(fIModel.Field(tepName).Table.Name, fIModel.Fields[1].Table.Name);
-  CheckEquals(fIModel.Field(tepName).Table.Alias, fIModel.Fields[1].Table.Alias);
-  CheckEquals(fIModel.Field(tepName).Table.Sequence, fIModel.Fields[1].Table.Sequence);
-  CheckEquals(fIModel.Field(tepEmail).Name, fIModel.Fields[2].Name);
-  CheckEquals(fIModel.Field(tepEmail).Alias, fIModel.Fields[2].Alias);
-  CheckEquals(fIModel.Field(tepEmail).Table.Name, fIModel.Fields[2].Table.Name);
-  CheckEquals(fIModel.Field(tepEmail).Table.Alias, fIModel.Fields[2].Table.Alias);
-  CheckEquals(fIModel.Field(tepEmail).Table.Sequence, fIModel.Fields[2].Table.Sequence);
+  CheckEquals(Person.Field(tepSequential).Name, Person.Fields[0].Name);
+  CheckEquals(Person.Field(tepSequential).Alias, Person.Fields[0].Alias);
+  CheckEquals(Person.Field(tepSequential).Table.Name, Person.Fields[0].Table.Name);
+  CheckEquals(Person.Field(tepSequential).Table.Alias, Person.Fields[0].Table.Alias);
+  CheckEquals(Person.Field(tepSequential).Table.Sequence, Person.Fields[0].Table.Sequence);
+  CheckEquals(Person.Field(tepName).Name, Person.Fields[1].Name);
+  CheckEquals(Person.Field(tepName).Alias, Person.Fields[1].Alias);
+  CheckEquals(Person.Field(tepName).Table.Name, Person.Fields[1].Table.Name);
+  CheckEquals(Person.Field(tepName).Table.Alias, Person.Fields[1].Table.Alias);
+  CheckEquals(Person.Field(tepName).Table.Sequence, Person.Fields[1].Table.Sequence);
+  CheckEquals(Person.Field(tepEmail).Name, Person.Fields[2].Name);
+  CheckEquals(Person.Field(tepEmail).Alias, Person.Fields[2].Alias);
+  CheckEquals(Person.Field(tepEmail).Table.Name, Person.Fields[2].Table.Name);
+  CheckEquals(Person.Field(tepEmail).Table.Alias, Person.Fields[2].Table.Alias);
+  CheckEquals(Person.Field(tepEmail).Table.Sequence, Person.Fields[2].Table.Sequence);
 end;
-
-
 
 procedure TModelTest.TestPrepareModelSetTableAlias;
 var
-  fIModel: IModel<TEPerson>;
+  Person: IModel<TEPerson>;
 begin
-  fIModel := TPerson.Create;
-  fIModel.PrepareModel('DEFINE_ALIAS_TABLE', [tepSequential]);
+  Person := TPerson.Create;
+  Person.PrepareModel('DEFINE_ALIAS_TABLE', [tepSequential]);
 
-  CheckEquals(1, Length(fIModel.Fields), 'More or less fields on array that should');
-  CheckEquals('TB_PERSON', fIModel.Table.Name, 'Wrong table name');
-  CheckEquals('DEFINE_ALIAS_TABLE', fIModel.Table.Alias, 'Wrong default table alias name');
-  CheckEquals(TEnumPerson.Create.Ref.Column(tepSequential) + &As + GetEnumFieldAlias(fIModel, tepSequential), fIModel.Field(tepSequential).Name + &As + fIModel.Field(tepSequential).Alias);
+  CheckEquals(1, Length(Person.Fields), 'More or less fields on array that should');
+  CheckEquals('TB_PERSON', Person.Table.Name, 'Wrong table name');
+  CheckEquals('DEFINE_ALIAS_TABLE', Person.Table.Alias, 'Wrong default table alias name');
+  CheckEquals(TEnumPerson.Create.Ref.Column(tepSequential) + &As + GetEnumFieldAlias(Person, tepSequential),
+    Person.Field(tepSequential).Name + &As + Person.Field(tepSequential).Alias);
 end;
-
-
 
 procedure TModelTest.TestPrepareModelWithoutDefineFields;
 var
-  fIModel: IModel<TEPerson>;
+  Person: IModel<TEPerson>;
 begin
-  fIModel := TPerson.Create;
-  fIModel.PrepareModel('', []);
+  Person := TPerson.Create;
+  Person.PrepareModel('', []);
 
-  CheckEquals(5, Length(fIModel.Fields), 'More or less fields on array that should');
-  CheckEquals('TB_PERSON', fIModel.Table.Name, 'Wrong table name');
-  CheckEquals('PERSON', fIModel.Table.Alias, 'Wrong default table alias name');
-  CheckEquals(TEnumPerson.Create.Ref.Column(tepSequential) + &As + GetEnumFieldAlias(fIModel, tepSequential), fIModel.Field(tepSequential).Name + &As + fIModel.Field(tepSequential).Alias);
-  CheckEquals(TEnumPerson.Create.Ref.Column(tepName) + &As + GetEnumFieldAlias(fIModel, tepName)            , fIModel.Field(tepName).Name + &As + fIModel.Field(tepName).Alias);
-  CheckEquals(TEnumPerson.Create.Ref.Column(tepBirthDate) + &As + GetEnumFieldAlias(fIModel, tepBirthDate)  , fIModel.Field(tepBirthDate).Name + &As + fIModel.Field(tepBirthDate).Alias);
-  CheckEquals(TEnumPerson.Create.Ref.Column(tepEmail) + &As + GetEnumFieldAlias(fIModel, tepEmail)          , fIModel.Field(tepEmail).Name + &As + fIModel.Field(tepEmail).Alias);
-  CheckEquals(TEnumPerson.Create.Ref.Column(tepPassword) + &As + GetEnumFieldAlias(fIModel, tepPassword)    , fIModel.Field(tepPassword).Name + &As + fIModel.Field(tepPassword).Alias);
+  CheckEquals(5, Length(Person.Fields), 'More or less fields on array that should');
+  CheckEquals('TB_PERSON', Person.Table.Name, 'Wrong table name');
+  CheckEquals('PERSON', Person.Table.Alias, 'Wrong default table alias name');
+  CheckEquals(TEnumPerson.Create.Ref.Column(tepSequential) + &As + GetEnumFieldAlias(Person, tepSequential),
+    Person.Field(tepSequential).Name + &As + Person.Field(tepSequential).Alias);
+  CheckEquals(TEnumPerson.Create.Ref.Column(tepName) + &As + GetEnumFieldAlias(Person, tepName),
+    Person.Field(tepName).Name + &As + Person.Field(tepName).Alias);
+  CheckEquals(TEnumPerson.Create.Ref.Column(tepBirthDate) + &As + GetEnumFieldAlias(Person, tepBirthDate),
+    Person.Field(tepBirthDate).Name + &As + Person.Field(tepBirthDate).Alias);
+  CheckEquals(TEnumPerson.Create.Ref.Column(tepEmail) + &As + GetEnumFieldAlias(Person, tepEmail),
+    Person.Field(tepEmail).Name + &As + Person.Field(tepEmail).Alias);
+  CheckEquals(TEnumPerson.Create.Ref.Column(tepPassword) + &As + GetEnumFieldAlias(Person, tepPassword),
+    Person.Field(tepPassword).Name + &As + Person.Field(tepPassword).Alias);
 
-  CheckEquals(fIModel.Field(tepSequential).Name + &As + fIModel.Field(tepSequential).Alias , fIModel.Field(tepSequential).Name + &As + fIModel.Field(tepSequential).Alias);
-  CheckEquals(fIModel.Field(tepName).Name + &As + fIModel.Field(tepName).Alias             , fIModel.Field(tepName).Name + &As + fIModel.Field(tepName).Alias);
-  CheckEquals(fIModel.Field(tepBirthDate).Name + &As + fIModel.Field(tepBirthDate).Alias   , fIModel.Field(tepBirthDate).Name + &As + fIModel.Field(tepBirthDate).Alias);
-  CheckEquals(fIModel.Field(tepEmail).Name + &As + fIModel.Field(tepEmail).Alias           , fIModel.Field(tepEmail).Name + &As + fIModel.Field(tepEmail).Alias);
-  CheckEquals(fIModel.Field(tepPassword).Name + &As + fIModel.Field(tepPassword).Alias     , fIModel.Field(tepPassword).Name + &As + fIModel.Field(tepPassword).Alias);
+  CheckEquals(Person.Field(tepSequential).Name + &As + Person.Field(tepSequential).Alias,
+    Person.Field(tepSequential).Name + &As + Person.Field(tepSequential).Alias);
+  CheckEquals(Person.Field(tepName).Name + &As + Person.Field(tepName).Alias, Person.Field(tepName).Name + &As +
+    Person.Field(tepName).Alias);
+  CheckEquals(Person.Field(tepBirthDate).Name + &As + Person.Field(tepBirthDate).Alias,
+    Person.Field(tepBirthDate).Name + &As + Person.Field(tepBirthDate).Alias);
+  CheckEquals(Person.Field(tepEmail).Name + &As + Person.Field(tepEmail).Alias, Person.Field(tepEmail).Name + &As +
+    Person.Field(tepEmail).Alias);
+  CheckEquals(Person.Field(tepPassword).Name + &As + Person.Field(tepPassword).Alias,
+    Person.Field(tepPassword).Name + &As + Person.Field(tepPassword).Alias);
 end;
-
-
 
 procedure TModelTest.TestSetGetValue;
 var
-  fIModel: IPerson<TEPerson>;
+  Person: IPerson<TEPerson>;
 begin
-  fIModel := TPerson.Create;
-  fIModel.SetValue(tepSequential, 1);
-  fIModel.SetValue(tepName, 'Marcelo Lauxen');
-  fIModel.SetValue(tepBirthDate, StrToDateTime('12/01/1998'));
-  fIModel.SetValue(tepEMail, 'marcelolauxen16@gmail.com');
-  fIModel.SetValue(tepPassword, 'SafePassword');
+  Person := TPerson.Create;
+  Person.SetValue(tepSequential, 1);
+  Person.SetValue(tepName, 'Marcelo Lauxen');
+  Person.SetValue(tepBirthDate, StrToDateTime('12/01/1998'));
+  Person.SetValue(tepEmail, 'marcelolauxen16@gmail.com');
+  Person.SetValue(tepPassword, 'SafePassword');
 
-  CheckEquals(1, fIModel.GetValue(tepSequential));
-  CheckEquals('Marcelo Lauxen', fIModel.GetValue(tepName));
-  CheckEquals('12/01/1998', fIModel.GetValue(tepBirthDate));
-  CheckEquals('marcelolauxen16@gmail.com', fIModel.GetValue(tepEMail));
-  CheckEquals('SafePassword', fIModel.GetValue(tepPassword));
+  CheckEquals(1, Person.GetValue(tepSequential));
+  CheckEquals('Marcelo Lauxen', Person.GetValue(tepName));
+  CheckEquals('12/01/1998', Person.GetValue(tepBirthDate));
+  CheckEquals('marcelolauxen16@gmail.com', Person.GetValue(tepEmail));
+  CheckEquals('SafePassword', Person.GetValue(tepPassword));
 end;
 
 initialization

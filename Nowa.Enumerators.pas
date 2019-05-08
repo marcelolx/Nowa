@@ -9,16 +9,16 @@ type
 
   TNowaEnumerators = class
   public
-    class function GetOperator(const AOperator: TSQLOperator): String;
+    class function GetOperator(const Operator: TSQLOperator): String;
   end;
 
 implementation
 
 { TNowaEnumerators }
 
-class function TNowaEnumerators.GetOperator(const AOperator: TSQLOperator): String;
+class function TNowaEnumerators.GetOperator(const Operator: TSQLOperator): String;
 begin
-  case AOperator of
+  case Operator of
     opEqual:
       Result := ' = ';
     opDifferent:

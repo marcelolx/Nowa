@@ -10,10 +10,10 @@ type
 
   TEnumPerson = class(TEnumAbstract<TEPerson>, IEnum<TEPerson>)
   public
-    function Column(const AEnumeratedField: TEPerson): String; override;
-    function Table: String; override;
-    function TableAlias(const AAlias: String = ''): String; override;
-    function Sequence: String; override;
+    function Column(const EnumeratedField: TEPerson): string; override;
+    function Table: string; override;
+    function TableAlias(const Alias: string = ''): string; override;
+    function Sequence: string; override;
     function AllColumns: TArray<TEPerson>; override;
     function PrimaryKey: TArray<TEPerson>; override;
     function Ref: IEnum<TEPerson>; override;
@@ -26,11 +26,11 @@ uses
 
 { TEnumPerson }
 
-function TEnumPerson.Column(const AEnumeratedField: TEPerson): String;
+function TEnumPerson.Column(const EnumeratedField: TEPerson): string;
 begin
   Result := EmptyStr;
 
-  case AEnumeratedField of
+  case EnumeratedField of
     tepSequential:
       Result := 'NR_SEQUENTIAL';
 
@@ -50,56 +50,44 @@ begin
   end;
 end;
 
-
-
 function TEnumPerson.PrimaryKey: TArray<TEPerson>;
 begin
   Result := [tepSequential];
 end;
 
-
-
 function TEnumPerson.AllColumns: TArray<TEPerson>;
 var
-  oEField: TEPerson;
+  Field: TEPerson;
 begin
   SetLength(Result, 0);
 
-  for oEField := Low(TEPerson) to High(TEPerson) do
+  for Field := low(TEPerson) to high(TEPerson) do
   begin
     SetLength(Result, Succ(Length(Result)));
-    Result[Pred(Length(Result))] := oEField;
+    Result[Pred(Length(Result))] := Field;
   end;
 end;
-
-
 
 function TEnumPerson.Ref: IEnum<TEPerson>;
 begin
   Result := Self;
 end;
 
-
-
-function TEnumPerson.Sequence: String;
+function TEnumPerson.Sequence: string;
 begin
   Result := 'GEN_PERSON';
 end;
 
-
-
-function TEnumPerson.Table: String;
+function TEnumPerson.Table: string;
 begin
   Result := 'TB_PERSON';
 end;
 
-
-
-function TEnumPerson.TableAlias(const AAlias: String): String;
+function TEnumPerson.TableAlias(const Alias: string): string;
 begin
-  Result := AAlias;
+  Result := Alias;
 
-  if (Result.IsEmpty) then
+  if Result.IsEmpty then
     Result := 'PERSON';
 end;
 

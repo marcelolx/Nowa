@@ -99,46 +99,46 @@ end;
 
 procedure TNowaTest.TestBasicSelect;
 const
-  sQueryExpected = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL, PERSON.FL_NAME as PERSON_FL_NAME, PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE, PERSON.TX_EMAIL as PERSON_TX_EMAIL, PERSON.TX_PASSWORD as PERSON_TX_PASSWORD from TB_PERSON as PERSON';
-  sQueryExpected2 = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL from TB_PERSON as PERSON';
+  QueryExpected = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL, PERSON.FL_NAME as PERSON_FL_NAME, PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE, PERSON.TX_EMAIL as PERSON_TX_EMAIL, PERSON.TX_PASSWORD as PERSON_TX_PASSWORD from TB_PERSON as PERSON';
+  QueryExpected2 = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL from TB_PERSON as PERSON';
 var
-  fIModel: IModel<TEPerson>;
-  sQuery: String;
+  Person: IModel<TEPerson>;
+  Query: String;
 begin
-  fIModel := TPerson.Create;
-  fIModel.PrepareModel('', []);
+  Person := TPerson.Create;
+  Person.PrepareModel('', []);
 
-  sQuery := TSQLSelect.Create.Ref
-    .Fields([fIModel.Fields])
-    .From(fIModel.Table)
+  Query := TSQLSelect.Create.Ref
+    .Fields([Person.Fields])
+    .From(Person.Table)
     .Build;
 
-  CheckEquals(sQueryExpected, sQuery);
+  CheckEquals(QueryExpected, Query);
 
-  fIModel.PrepareModel('', [tepSequential]);
+  Person.PrepareModel('', [tepSequential]);
 
-  sQuery := TSQLSelect.Create.Ref
-    .Fields([fIModel.Fields])
-    .From(fIModel.Table)
+  Query := TSQLSelect.Create.Ref
+    .Fields([Person.Fields])
+    .From(Person.Table)
     .Build;
 
-  CheckEquals(sQueryExpected2, sQuery);
+  CheckEquals(QueryExpected2, Query);
 end;
 
 
 
 procedure TNowaTest.TestSQLCommandDelete;
 const
-  sDelete = 'delete from tb_person';
+  Delete = 'delete from tb_person';
 var
-  oIPerson: IModel<TEPerson>;
+  Person: IModel<TEPerson>;
 begin
-  oIPerson := TPerson.Create;
-  oIPerson.PrepareModel('', []);
+  Person := TPerson.Create;
+  Person.PrepareModel('', []);
 
-  CheckEquals(sDelete,
+  CheckEquals(Delete,
     TSQLCommand<TEPerson>.Create.Ref
-      .Delete(oIPerson)
+      .Delete(Person)
       .Build
   );
 end;
@@ -147,17 +147,17 @@ end;
 
 procedure TNowaTest.TestSQLCommandDeleteWhere;
 const
-  sDelete = 'delete from tb_person where nr_sequential = :PERSON_NR_SEQUENTIAL';
+  Delete = 'delete from tb_person where nr_sequential = :PERSON_NR_SEQUENTIAL';
 var
-  oIPerson: IModel<TEPerson>;
+  Person: IModel<TEPerson>;
 begin
-  oIPerson := TPerson.Create;
-  oIPerson.PrepareModel('', []);
+  Person := TPerson.Create;
+  Person.PrepareModel('', []);
 
-  CheckEquals(sDelete,
+  CheckEquals(Delete,
     TSQLCommand<TEPerson>.Create.Ref
-      .Delete(oIPerson)
-      .WhereKey(oIPerson, [tepSequential])
+      .Delete(Person)
+      .WhereKey(Person, [tepSequential])
       .Build
   );
 end;
@@ -166,14 +166,14 @@ end;
 
 procedure TNowaTest.TestSQLCommandExists;
 var
-  oIPerson: IModel<TEPerson>;
+  Person: IModel<TEPerson>;
 begin
-  oIPerson := TPerson.Create;
-  oIPerson.PrepareModel('', []);
+  Person := TPerson.Create;
+  Person.PrepareModel('', []);
 
   CheckEquals('not implemented',
     TSQLCommand<TEPerson>.Create.Ref
-      .Exists(oIPerson, [tepSequential])
+      .Exists(Person, [tepSequential])
       .Build
   );
 end;
@@ -182,17 +182,17 @@ end;
 
 procedure TNowaTest.TestSQLCommandFind;
 const
-  sFind = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL, PERSON.FL_NAME as PERSON_FL_NAME, PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE,' +
+  Find = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL, PERSON.FL_NAME as PERSON_FL_NAME, PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE,' +
     ' PERSON.TX_EMAIL as PERSON_TX_EMAIL, PERSON.TX_PASSWORD as PERSON_TX_PASSWORD from TB_PERSON as PERSON where PERSON.NR_SEQUENTIAL = 1';
 var
-  oIPerson: IModel<TEPerson>;
+  Person: IModel<TEPerson>;
 begin
-  oIPerson := TPerson.Create;
-  oIPerson.PrepareModel('', []);
+  Person := TPerson.Create;
+  Person.PrepareModel('', []);
 
-  CheckEquals(sFind,
+  CheckEquals(Find,
     TSQLCommand<TEPerson>.Create.Ref
-      .Find(oIPerson, tepSequential , 1)
+      .Find(Person, tepSequential , 1)
       .Build
   );
 end;
@@ -201,16 +201,16 @@ end;
 
 procedure TNowaTest.TestSQLCommandInsert;
 const
-  sInsert = 'insert into tb_person (nr_sequential, fl_name, dt_birthdate, tx_email, tx_password) values (:PERSON_NR_SEQUENTIAL, :PERSON_FL_NAME, :PERSON_DT_BIRTHDATE, :PERSON_TX_EMAIL, :PERSON_TX_PASSWORD)';
+  Insert = 'insert into tb_person (nr_sequential, fl_name, dt_birthdate, tx_email, tx_password) values (:PERSON_NR_SEQUENTIAL, :PERSON_FL_NAME, :PERSON_DT_BIRTHDATE, :PERSON_TX_EMAIL, :PERSON_TX_PASSWORD)';
 var
-  oIPerson: IModel<TEPerson>;
+  Person: IModel<TEPerson>;
 begin
-  oIPerson := TPerson.Create;
-  oIPerson.PrepareModel('', []);
+  Person := TPerson.Create;
+  Person.PrepareModel('', []);
 
-  CheckEquals(sInsert,
+  CheckEquals(Insert,
     TSQLCommand<TEPerson>.Create.Ref
-      .Insert(oIPerson)
+      .Insert(Person)
       .Build
   );
 end;
@@ -219,16 +219,16 @@ end;
 
 procedure TNowaTest.TestSQLCommandNewKeyValue;
 const
-  sSequence = 'select nextval(''gen_person'') as sequence';
+  Sequence = 'select nextval(''gen_person'') as sequence';
 var
-  oIPerson: IModel<TEPerson>;
+  Person: IModel<TEPerson>;
 begin
-  oIPerson := TPerson.Create;
-  oIPerson.PrepareModel('', []);
+  Person := TPerson.Create;
+  Person.PrepareModel('', []);
 
-  CheckEquals(sSequence,
+  CheckEquals(Sequence,
     TSQLCommand<TEPerson>.Create.Ref
-      .NewKeyValue(oIPerson.Table.Sequence)
+      .NewKeyValue(Person.Table.Sequence)
       .Build
   );
 end;
@@ -237,16 +237,16 @@ end;
 
 procedure TNowaTest.TestSQLCommandUpdate;
 const
-  sUpdate = 'update tb_person set nr_sequential = :PERSON_NR_SEQUENTIAL, fl_name = :PERSON_FL_NAME, dt_birthdate = :PERSON_DT_BIRTHDATE, tx_email = :PERSON_TX_EMAIL, tx_password = :PERSON_TX_PASSWORD';
+  Update = 'update tb_person set nr_sequential = :PERSON_NR_SEQUENTIAL, fl_name = :PERSON_FL_NAME, dt_birthdate = :PERSON_DT_BIRTHDATE, tx_email = :PERSON_TX_EMAIL, tx_password = :PERSON_TX_PASSWORD';
 var
-  oIPerson: IModel<TEPerson>;
+  Person: IModel<TEPerson>;
 begin
-  oIPerson := TPerson.Create;
-  oIPerson.PrepareModel('', []);
+  Person := TPerson.Create;
+  Person.PrepareModel('', []);
 
-  CheckEquals(sUpdate,
+  CheckEquals(Update,
     TSQLCommand<TEPerson>.Create.Ref
-      .Update(oIPerson)
+      .Update(Person)
       .Build
   );
 end;
@@ -255,18 +255,18 @@ end;
 
 procedure TNowaTest.TestSQLCommandUpdateWhereKey;
 const
-  sUpdate = 'update tb_person set nr_sequential = :PERSON_NR_SEQUENTIAL, fl_name = :PERSON_FL_NAME, dt_birthdate = :PERSON_DT_BIRTHDATE,' +
+  Update = 'update tb_person set nr_sequential = :PERSON_NR_SEQUENTIAL, fl_name = :PERSON_FL_NAME, dt_birthdate = :PERSON_DT_BIRTHDATE,' +
     ' tx_email = :PERSON_TX_EMAIL, tx_password = :PERSON_TX_PASSWORD where nr_sequential = :PERSON_NR_SEQUENTIAL';
 var
-  oIPerson: IModel<TEPerson>;
+  Person: IModel<TEPerson>;
 begin
-  oIPerson := TPerson.Create;
-  oIPerson.PrepareModel('', []);
+  Person := TPerson.Create;
+  Person.PrepareModel('', []);
 
-  CheckEquals(sUpdate,
+  CheckEquals(Update,
     TSQLCommand<TEPerson>.Create.Ref
-      .Update(oIPerson)
-      .WhereKey(oIPerson, [tepSequential])
+      .Update(Person)
+      .WhereKey(Person, [tepSequential])
       .Build
   );
 end;
@@ -345,50 +345,50 @@ end;
 
 procedure TNowaTest.TestSQLSelectFields;
 const
-  sQuery = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL';
-  sQueryExpected = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL, PERSON.FL_NAME as PERSON_FL_NAME, PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE, PERSON.TX_EMAIL as PERSON_TX_EMAIL, PERSON.TX_PASSWORD as PERSON_TX_PASSWORD';
+  Query = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL';
+  QueryExpected = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL, PERSON.FL_NAME as PERSON_FL_NAME, PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE, PERSON.TX_EMAIL as PERSON_TX_EMAIL, PERSON.TX_PASSWORD as PERSON_TX_PASSWORD';
 var
-  oIPerson: IModel<TEPerson>;
-  oITable: ITable;
-  oIField: IField;
+  Person: IModel<TEPerson>;
+  Table: ITable;
+  Field: IField;
 begin
-  oITable := TTable.Create('TB_PERSON', 'GEN_PERSON');
-  oITable.Prepare('PERSON');
-  oIField := TField.Create('NR_SEQUENTIAL', oITable);
+  Table := TTable.Create('TB_PERSON', 'GEN_PERSON');
+  Table.Prepare('PERSON');
+  Field := TField.Create('NR_SEQUENTIAL', Table);
 
-  CheckEquals(sQuery, TSQLSelect.Create.Ref.Fields([[oIField]]).Build);
+  CheckEquals(Query, TSQLSelect.Create.Ref.Fields([[Field]]).Build);
 
-  oIPerson := TPerson.Create;
-  oIPerson.PrepareModel('', [tepSequential]);
-  CheckEquals(sQuery, TSQLSelect.Create.Ref.Fields([oIPerson.Fields]).Build);
+  Person := TPerson.Create;
+  Person.PrepareModel('', [tepSequential]);
+  CheckEquals(Query, TSQLSelect.Create.Ref.Fields([Person.Fields]).Build);
 
-  oIPerson.PrepareModel('', []);
-  CheckEquals(sQueryExpected, TSQLSelect.Create.Ref.Fields([oIPerson.Fields]).Build);
+  Person.PrepareModel('', []);
+  CheckEquals(QueryExpected, TSQLSelect.Create.Ref.Fields([Person.Fields]).Build);
 end;
 
 
 
 procedure TNowaTest.TestSQLSelectFromWithFields;
 const
-  sQuery = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL from TB_PERSON as PERSON';
-  sQueryExpected = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL, PERSON.FL_NAME as PERSON_FL_NAME, PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE, PERSON.TX_EMAIL as PERSON_TX_EMAIL, PERSON.TX_PASSWORD as PERSON_TX_PASSWORD from TB_PERSON as PERSON';
+  Query = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL from TB_PERSON as PERSON';
+  QueryExpected = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL, PERSON.FL_NAME as PERSON_FL_NAME, PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE, PERSON.TX_EMAIL as PERSON_TX_EMAIL, PERSON.TX_PASSWORD as PERSON_TX_PASSWORD from TB_PERSON as PERSON';
 var
-  oIPerson: IModel<TEPerson>;
+  Person: IModel<TEPerson>;
 begin
-  oIPerson := TPerson.Create;
+  Person := TPerson.Create;
 
-  oIPerson.PrepareModel('', [tepSequential]);
-  CheckEquals(sQuery,
+  Person.PrepareModel('', [tepSequential]);
+  CheckEquals(Query,
     TSQLSelect.Create.Ref
-      .Fields([oIPerson.Fields])
-      .From(oIPerson.Table)
+      .Fields([Person.Fields])
+      .From(Person.Table)
       .Build);
 
-  oIPerson.PrepareModel('', []);
-  CheckEquals(sQueryExpected,
+  Person.PrepareModel('', []);
+  CheckEquals(QueryExpected,
     TSQLSelect.Create.Ref
-      .Fields([oIPerson.Fields])
-      .From(oIPerson.Table)
+      .Fields([Person.Fields])
+      .From(Person.Table)
       .Build);
 end;
 
@@ -410,7 +410,7 @@ end;
 
 procedure TNowaTest.TestSQLSelectInnerJoin;
 const
-  sInnerJoin = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL,' +
+  InnerJoin = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL,' +
                      ' PERSON.FL_NAME as PERSON_FL_NAME,' +
                      ' PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE,' +
                      ' PERSON.TX_EMAIL as PERSON_TX_EMAIL,' +
@@ -422,27 +422,27 @@ const
                 ' from TB_PERSON as PERSON' +
                ' inner join TB_MATRICULATION as MATRICULATION on (MATRICULATION.NR_PERSONSEQUENTIAL = PERSON.NR_SEQUENTIAL)';
 var
-  oIPerson: IModel<TEPerson>;
-  oIMatriculation: IModel<TEMatriculation>;
+  Person: IModel<TEPerson>;
+  Matriculation: IModel<TEMatriculation>;
 begin
-  oIPerson := TPerson.Create;
-  oIMatriculation := TMatriculation.Create;
+  Person := TPerson.Create;
+  Matriculation := TMatriculation.Create;
 
-  oIPerson.PrepareModel('', []);
-  oIMatriculation.PrepareModel('', []);
+  Person.PrepareModel('', []);
+  Matriculation.PrepareModel('', []);
 
-  CheckEquals(sInnerJoin,
+  CheckEquals(InnerJoin,
     TSQLSelect.Create.Ref
-      .Fields([oIPerson.Fields, oIMatriculation.Fields])
-      .From(oIPerson.Table)
+      .Fields([Person.Fields, Matriculation.Fields])
+      .From(Person.Table)
       .InnerJoin(
         TSQLJoin.Create.Ref
-          .Table(oIMatriculation.Table)
+          .Table(Matriculation.Table)
           .&On(
             TSQLCondition.Create.Ref
-              .LeftTerm(oIMatriculation.Field(temPersonSequential))
+              .LeftTerm(Matriculation.Field(temPersonSequential))
               .Op(opEqual)
-              .RightTerm(oIPerson.Field(tepSequential))
+              .RightTerm(Person.Field(tepSequential))
           )
       )
       .Build
@@ -453,7 +453,7 @@ end;
 
 procedure TNowaTest.TestSQLSelectLeftJoin;
 const
-  sInnerJoin = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL,' +
+  InnerJoin = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL,' +
                      ' PERSON.FL_NAME as PERSON_FL_NAME,' +
                      ' PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE,' +
                      ' PERSON.TX_EMAIL as PERSON_TX_EMAIL,' +
@@ -465,27 +465,27 @@ const
                 ' from TB_PERSON as PERSON' +
                ' left join TB_MATRICULATION as MATRICULATION on (MATRICULATION.NR_PERSONSEQUENTIAL = PERSON.NR_SEQUENTIAL)';
 var
-  oIPerson: IModel<TEPerson>;
-  oIMatriculation: IModel<TEMatriculation>;
+  Person: IModel<TEPerson>;
+  Matriculation: IModel<TEMatriculation>;
 begin
-  oIPerson := TPerson.Create;
-  oIMatriculation := TMatriculation.Create;
+  Person := TPerson.Create;
+  Matriculation := TMatriculation.Create;
 
-  oIPerson.PrepareModel('', []);
-  oIMatriculation.PrepareModel('', []);
+  Person.PrepareModel('', []);
+  Matriculation.PrepareModel('', []);
 
-  CheckEquals(sInnerJoin,
+  CheckEquals(InnerJoin,
     TSQLSelect.Create.Ref
-      .Fields([oIPerson.Fields, oIMatriculation.Fields])
-      .From(oIPerson.Table)
+      .Fields([Person.Fields, Matriculation.Fields])
+      .From(Person.Table)
       .LeftJoin(
         TSQLJoin.Create.Ref
-          .Table(oIMatriculation.Table)
+          .Table(Matriculation.Table)
           .&On(
             TSQLCondition.Create.Ref
-              .LeftTerm(oIMatriculation.Field(temPersonSequential))
+              .LeftTerm(Matriculation.Field(temPersonSequential))
               .Op(opEqual)
-              .RightTerm(oIPerson.Field(tepSequential))
+              .RightTerm(Person.Field(tepSequential))
           )
       )
       .Build
@@ -496,7 +496,7 @@ end;
 
 procedure TNowaTest.TestSQLSelectLeftOuterJoin;
 const
-  sInnerJoin = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL,' +
+  InnerJoin = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL,' +
                      ' PERSON.FL_NAME as PERSON_FL_NAME,' +
                      ' PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE,' +
                      ' PERSON.TX_EMAIL as PERSON_TX_EMAIL,' +
@@ -508,27 +508,27 @@ const
                 ' from TB_PERSON as PERSON' +
                ' left outer join TB_MATRICULATION as MATRICULATION on (MATRICULATION.NR_PERSONSEQUENTIAL = PERSON.NR_SEQUENTIAL)';
 var
-  oIPerson: IModel<TEPerson>;
-  oIMatriculation: IModel<TEMatriculation>;
+  Person: IModel<TEPerson>;
+  Matriculation: IModel<TEMatriculation>;
 begin
-  oIPerson := TPerson.Create;
-  oIMatriculation := TMatriculation.Create;
+  Person := TPerson.Create;
+  Matriculation := TMatriculation.Create;
 
-  oIPerson.PrepareModel('', []);
-  oIMatriculation.PrepareModel('', []);
+  Person.PrepareModel('', []);
+  Matriculation.PrepareModel('', []);
 
-  CheckEquals(sInnerJoin,
+  CheckEquals(InnerJoin,
     TSQLSelect.Create.Ref
-      .Fields([oIPerson.Fields, oIMatriculation.Fields])
-      .From(oIPerson.Table)
+      .Fields([Person.Fields, Matriculation.Fields])
+      .From(Person.Table)
       .LeftOuterJoin(
         TSQLJoin.Create.Ref
-          .Table(oIMatriculation.Table)
+          .Table(Matriculation.Table)
           .&On(
             TSQLCondition.Create.Ref
-              .LeftTerm(oIMatriculation.Field(temPersonSequential))
+              .LeftTerm(Matriculation.Field(temPersonSequential))
               .Op(opEqual)
-              .RightTerm(oIPerson.Field(tepSequential))
+              .RightTerm(Person.Field(tepSequential))
           )
       )
       .Build
@@ -539,7 +539,7 @@ end;
 
 procedure TNowaTest.TestSQLSelectRightJoin;
 const
-  sInnerJoin = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL,' +
+  InnerJoin = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL,' +
                      ' PERSON.FL_NAME as PERSON_FL_NAME,' +
                      ' PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE,' +
                      ' PERSON.TX_EMAIL as PERSON_TX_EMAIL,' +
@@ -551,27 +551,27 @@ const
                 ' from TB_PERSON as PERSON' +
                ' right join TB_MATRICULATION as MATRICULATION on (MATRICULATION.NR_PERSONSEQUENTIAL = PERSON.NR_SEQUENTIAL)';
 var
-  oIPerson: IModel<TEPerson>;
-  oIMatriculation: IModel<TEMatriculation>;
+  Person: IModel<TEPerson>;
+  Matriculation: IModel<TEMatriculation>;
 begin
-  oIPerson := TPerson.Create;
-  oIMatriculation := TMatriculation.Create;
+  Person := TPerson.Create;
+  Matriculation := TMatriculation.Create;
 
-  oIPerson.PrepareModel('', []);
-  oIMatriculation.PrepareModel('', []);
+  Person.PrepareModel('', []);
+  Matriculation.PrepareModel('', []);
 
-  CheckEquals(sInnerJoin,
+  CheckEquals(InnerJoin,
     TSQLSelect.Create.Ref
-      .Fields([oIPerson.Fields, oIMatriculation.Fields])
-      .From(oIPerson.Table)
+      .Fields([Person.Fields, Matriculation.Fields])
+      .From(Person.Table)
       .RightJoin(
         TSQLJoin.Create.Ref
-          .Table(oIMatriculation.Table)
+          .Table(Matriculation.Table)
           .&On(
             TSQLCondition.Create.Ref
-              .LeftTerm(oIMatriculation.Field(temPersonSequential))
+              .LeftTerm(Matriculation.Field(temPersonSequential))
               .Op(opEqual)
-              .RightTerm(oIPerson.Field(tepSequential))
+              .RightTerm(Person.Field(tepSequential))
           )
       )
       .Build
@@ -582,7 +582,7 @@ end;
 
 procedure TNowaTest.TestSQLSelectRightOuterJoin;
 const
-  sInnerJoin = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL,' +
+  InnerJoin = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL,' +
                      ' PERSON.FL_NAME as PERSON_FL_NAME,' +
                      ' PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE,' +
                      ' PERSON.TX_EMAIL as PERSON_TX_EMAIL,' +
@@ -594,27 +594,27 @@ const
                 ' from TB_PERSON as PERSON' +
                ' right outer join TB_MATRICULATION as MATRICULATION on (MATRICULATION.NR_PERSONSEQUENTIAL = PERSON.NR_SEQUENTIAL)';
 var
-  oIPerson: IModel<TEPerson>;
-  oIMatriculation: IModel<TEMatriculation>;
+  Person: IModel<TEPerson>;
+  Matriculation: IModel<TEMatriculation>;
 begin
-  oIPerson := TPerson.Create;
-  oIMatriculation := TMatriculation.Create;
+  Person := TPerson.Create;
+  Matriculation := TMatriculation.Create;
 
-  oIPerson.PrepareModel('', []);
-  oIMatriculation.PrepareModel('', []);
+  Person.PrepareModel('', []);
+  Matriculation.PrepareModel('', []);
 
-  CheckEquals(sInnerJoin,
+  CheckEquals(InnerJoin,
     TSQLSelect.Create.Ref
-      .Fields([oIPerson.Fields, oIMatriculation.Fields])
-      .From(oIPerson.Table)
+      .Fields([Person.Fields, Matriculation.Fields])
+      .From(Person.Table)
       .RightOuterJoin(
         TSQLJoin.Create.Ref
-          .Table(oIMatriculation.Table)
+          .Table(Matriculation.Table)
           .&On(
             TSQLCondition.Create.Ref
-              .LeftTerm(oIMatriculation.Field(temPersonSequential))
+              .LeftTerm(Matriculation.Field(temPersonSequential))
               .Op(opEqual)
-              .RightTerm(oIPerson.Field(tepSequential))
+              .RightTerm(Person.Field(tepSequential))
           )
       )
       .Build
@@ -625,11 +625,11 @@ end;
 
 procedure TNowaTest.TestSQLSelectUnion;
 const
-  sInnerJoin = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL,' +
+  InnerJoin = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL,' +
                      ' PERSON.FL_NAME as PERSON_FL_NAME,' +
                      ' PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE,' +
                      ' PERSON.TX_EMAIL as PERSON_TX_EMAIL,' +
-                     ' PERSON.TX_PASSWORD as PERSON_TX_PASSWORD,' +
+                     ' PERSON.TX_PASSWORD as PERSON_TX_PASSWORD' +
                 ' from TB_PERSON as PERSON' +
                 ' where PERSON.FL_NAME = ''MARCELO''' +
                 ' union' +
@@ -637,30 +637,30 @@ const
                      ' PERSON.FL_NAME as PERSON_FL_NAME,' +
                      ' PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE,' +
                      ' PERSON.TX_EMAIL as PERSON_TX_EMAIL,' +
-                     ' PERSON.TX_PASSWORD as PERSON_TX_PASSWORD,' +
+                     ' PERSON.TX_PASSWORD as PERSON_TX_PASSWORD' +
                 ' from TB_PERSON as PERSON' +
                 ' where PERSON.FL_NAME = ''RANDOM''';
 var
-  oIPerson: IModel<TEPerson>;
+  Person: IModel<TEPerson>;
 begin
-  oIPerson := TPerson.Create;
-  oIPerson.PrepareModel('', []);
+  Person := TPerson.Create;
+  Person.PrepareModel('', []);
 
-  CheckEquals(sInnerJoin,
+  CheckEquals(InnerJoin,
     TSQLSelect.Create.Ref
-      .Fields([oIPerson.Fields])
-      .From(oIPerson.Table)
+      .Fields([Person.Fields])
+      .From(Person.Table)
       .Where(
         TSQLWhere.Create.Ref
-          .Field(oIPerson.Field(tepName))
+          .Field(Person.Field(tepName))
           .Equal('MARCELO')
       )
       .Union
-      .Fields([oIPerson.Fields])
-      .From(oIPerson.Table)
+      .Fields([Person.Fields])
+      .From(Person.Table)
       .Where(
         TSQLWhere.Create.Ref
-          .Field(oIPerson.Field(tepName))
+          .Field(Person.Field(tepName))
           .Equal('RANDOM')
       )
       .Build
@@ -671,11 +671,11 @@ end;
 
 procedure TNowaTest.TestSQLSelectUnionAll;
 const
-  sInnerJoin = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL,' +
+  InnerJoin = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL,' +
                      ' PERSON.FL_NAME as PERSON_FL_NAME,' +
                      ' PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE,' +
                      ' PERSON.TX_EMAIL as PERSON_TX_EMAIL,' +
-                     ' PERSON.TX_PASSWORD as PERSON_TX_PASSWORD,' +
+                     ' PERSON.TX_PASSWORD as PERSON_TX_PASSWORD' +
                 ' from TB_PERSON as PERSON' +
                 ' where PERSON.FL_NAME = ''MARCELO''' +
                 ' union all' +
@@ -683,30 +683,30 @@ const
                      ' PERSON.FL_NAME as PERSON_FL_NAME,' +
                      ' PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE,' +
                      ' PERSON.TX_EMAIL as PERSON_TX_EMAIL,' +
-                     ' PERSON.TX_PASSWORD as PERSON_TX_PASSWORD,' +
+                     ' PERSON.TX_PASSWORD as PERSON_TX_PASSWORD' +
                 ' from TB_PERSON as PERSON' +
                 ' where PERSON.FL_NAME = ''RANDOM''';
 var
-  oIPerson: IModel<TEPerson>;
+  Person: IModel<TEPerson>;
 begin
-  oIPerson := TPerson.Create;
-  oIPerson.PrepareModel('', []);
+  Person := TPerson.Create;
+  Person.PrepareModel('', []);
 
-  CheckEquals(sInnerJoin,
+  CheckEquals(InnerJoin,
     TSQLSelect.Create.Ref
-      .Fields([oIPerson.Fields])
-      .From(oIPerson.Table)
+      .Fields([Person.Fields])
+      .From(Person.Table)
       .Where(
         TSQLWhere.Create.Ref
-          .Field(oIPerson.Field(tepName))
+          .Field(Person.Field(tepName))
           .Equal('MARCELO')
       )
       .UnionAll
-      .Fields([oIPerson.Fields])
-      .From(oIPerson.Table)
+      .Fields([Person.Fields])
+      .From(Person.Table)
       .Where(
         TSQLWhere.Create.Ref
-          .Field(oIPerson.Field(tepName))
+          .Field(Person.Field(tepName))
           .Equal('RANDOM')
       )
       .Build
@@ -717,34 +717,36 @@ end;
 
 procedure TNowaTest.TestSQLSelectWhere;
 const
-  sQuery = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL from TB_PERSON as PERSON where PERSON.NR_SEQUENTIAL = 1';
-  sQueryExpected = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL, PERSON.FL_NAME' + ' as PERSON_FL_NAME, PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE, PERSON.TX_EMAIL as PERSON_TX_EMAIL, PERSON.TX_PASSWORD as PERSON_TX_PASSWORD from TB_PERSON as PERSON where PERSON.NR_SEQUENTIAL = 1';
+  Query = 'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL from TB_PERSON as PERSON where PERSON.NR_SEQUENTIAL = 1';
+  QueryExpected =
+    'select PERSON.NR_SEQUENTIAL as PERSON_NR_SEQUENTIAL, PERSON.FL_NAME as PERSON_FL_NAME, PERSON.DT_BIRTHDATE as PERSON_DT_BIRTHDATE, ' +
+    'PERSON.TX_EMAIL as PERSON_TX_EMAIL, PERSON.TX_PASSWORD as PERSON_TX_PASSWORD from TB_PERSON as PERSON where PERSON.NR_SEQUENTIAL = 1';
 var
-  oIPerson: IModel<TEPerson>;
+  Person: IModel<TEPerson>;
 begin
-  oIPerson := TPerson.Create;
+  Person := TPerson.Create;
 
-  oIPerson.PrepareModel('', [tepSequential]);
-  CheckEquals(sQuery,
+  Person.PrepareModel('', [tepSequential]);
+  CheckEquals(Query,
     TSQLSelect.Create.Ref
-      .Fields([oIPerson.Fields])
-      .From(oIPerson.Table)
+      .Fields([Person.Fields])
+      .From(Person.Table)
       .Where(
         TSQLWhere.Create.Ref
-          .Field(oIPerson.Field(tepSequential))
+          .Field(Person.Field(tepSequential))
           .Equal(1)
       )
       .Build
   );
 
-  oIPerson.PrepareModel('', []);
-  CheckEquals(sQueryExpected,
+  Person.PrepareModel('', []);
+  CheckEquals(QueryExpected,
     TSQLSelect.Create.Ref
-      .Fields([oIPerson.Fields])
-      .From(oIPerson.Table)
+      .Fields([Person.Fields])
+      .From(Person.Table)
       .Where(
         TSQLWhere.Create.Ref
-          .Field(oIPerson.Field(tepSequential))
+          .Field(Person.Field(tepSequential))
           .Equal(1)
       )
       .Build
@@ -755,53 +757,53 @@ end;
 
 procedure TNowaTest.TestSQLWhereDifferent;
 const
-  sQuery = ' where  <> ';
-  sQuery2 = ' where T.EXAMPLE <> ';
-  sQuery3 = ' where T1.EXAMPLE <> T2.EXAMPLE';
-  sQuery4 = ' where PERSON.NR_SEQUENTIAL <> MATRICULATION.NR_PERSONSEQUENTIAL';
+  Query = ' where  <> ';
+  Query2 = ' where T.EXAMPLE <> ';
+  Query3 = ' where T1.EXAMPLE <> T2.EXAMPLE';
+  Query4 = ' where PERSON.NR_SEQUENTIAL <> MATRICULATION.NR_PERSONSEQUENTIAL';
 var
-  oIPerson: IModel<TEPerson>;
-  oIMatriculation: IModel<TEMatriculation>;
-  oITable, oITable2: ITable;
+  Person: IModel<TEPerson>;
+  Matriculation: IModel<TEMatriculation>;
+  Table, Table2: ITable;
 begin
-  oITable := TTable.Create('T', '');
-  oITable.Prepare('T');
+  Table := TTable.Create('T', '');
+  Table.Prepare('T');
 
-  CheckEquals(sQuery,
+  CheckEquals(Query,
     TSQLWhere.Create.Ref
       .Different
       .Build
   );
 
-  CheckEquals(sQuery2,
+  CheckEquals(Query2,
     TSQLWhere.Create.Ref
-      .Field(TField.Create('EXAMPLE', oITable).Ref)
+      .Field(TField.Create('EXAMPLE', Table).Ref)
       .Different
       .Build
   );
 
-  oITable2 := TTable.Create('T1', '');
-  oITable2.Prepare('T1');
-  oITable.Prepare('T2');
+  Table2 := TTable.Create('T1', '');
+  Table2.Prepare('T1');
+  Table.Prepare('T2');
 
-  CheckEquals(sQuery3,
+  CheckEquals(Query3,
     TSQLWhere.Create.Ref
-      .Field(TField.Create('EXAMPLE', oITable2).Ref)
+      .Field(TField.Create('EXAMPLE', Table2).Ref)
       .Different
-      .Field(TField.Create('EXAMPLE', oITable).Ref)
+      .Field(TField.Create('EXAMPLE', Table).Ref)
       .Build
   );
 
 
-  oIPerson := TPerson.Create;
-  oIMatriculation := TMatriculation.Create;
-  oIPerson.PrepareModel('', []);
-  oIMatriculation.PrepareModel('', []);
-  CheckEquals(sQuery4,
+  Person := TPerson.Create;
+  Matriculation := TMatriculation.Create;
+  Person.PrepareModel('', []);
+  Matriculation.PrepareModel('', []);
+  CheckEquals(Query4,
     TSQLWhere.Create.Ref
-      .Field(oIPerson.Field(tepSequential))
+      .Field(Person.Field(tepSequential))
       .Different
-      .Field(oIMatriculation.Field(temPersonSequential))
+      .Field(Matriculation.Field(temPersonSequential))
       .Build
   );
 
@@ -811,35 +813,35 @@ end;
 
 procedure TNowaTest.TestSQLWhereDifferentValue;
 const
-  sQuery1 = ' where T.EXAMPLE <> 1';
-  sQuery2 = ' where T.EXAMPLE <> ''ABC''';
-  sQuery3 = ' where PERSON.NR_SEQUENTIAL <> 1';
+  Query1 = ' where T.EXAMPLE <> 1';
+  Query2 = ' where T.EXAMPLE <> ''ABC''';
+  Query3 = ' where PERSON.NR_SEQUENTIAL <> 1';
 var
-  oIPerson: IModel<TEPerson>;
-  oITable: ITable;
+  Person: IModel<TEPerson>;
+  Table: ITable;
 begin
-  oITable := TTable.Create('T', '');
-  oITable.Prepare('T');
+  Table := TTable.Create('T', '');
+  Table.Prepare('T');
 
-  CheckEquals(sQuery1,
+  CheckEquals(Query1,
     TSQLWhere.Create.Ref
-      .Field(TField.Create('EXAMPLE', oITable).Ref)
+      .Field(TField.Create('EXAMPLE', Table).Ref)
       .Different(1)
       .Build
   );
 
-  CheckEquals(sQuery2,
+  CheckEquals(Query2,
     TSQLWhere.Create.Ref
-      .Field(TField.Create('EXAMPLE', oITable).Ref)
+      .Field(TField.Create('EXAMPLE', Table).Ref)
       .Different(QuotedStr('ABC'))
       .Build
   );
 
-  oIPerson := TPerson.Create;
-  oIPerson.PrepareModel('', []);
-  CheckEquals(sQuery3,
+  Person := TPerson.Create;
+  Person.PrepareModel('', []);
+  CheckEquals(Query3,
     TSQLWhere.Create.Ref
-      .Field(oIPerson.Field(tepSequential))
+      .Field(Person.Field(tepSequential))
       .Different(1)
       .Build
   );
@@ -849,23 +851,23 @@ end;
 
 procedure TNowaTest.TestSQLWhereEqual;
 const
-  sQuery = ' where  = ';
-  sQuery2 = ' where T.EXAMPLE = ';
+  Query = ' where  = ';
+  Query2 = ' where T.EXAMPLE = ';
 var
-  oITable: ITable;
+  Table: ITable;
 begin
-  oITable := TTable.Create('T', '');
-  oITable.Prepare('T');
+  Table := TTable.Create('T', '');
+  Table.Prepare('T');
 
-  CheckEquals(sQuery,
+  CheckEquals(Query,
     TSQLWhere.Create.Ref
       .Equal
       .Build
   );
 
-  CheckEquals(sQuery2,
+  CheckEquals(Query2,
     TSQLWhere.Create.Ref
-      .Field(TField.Create('EXAMPLE', oITable).Ref)
+      .Field(TField.Create('EXAMPLE', Table).Ref)
       .Equal
       .Build
   );
@@ -875,76 +877,76 @@ end;
 
 procedure TNowaTest.TestSQLWhereEqualValue;
 const
-  sQuery = ' where  = 1';
-  sQuery2 = ' where  = ''ABC''';
-  sQuery3 = ' where T.EXAMPLEVAL = 1';
-  sQuery4 = ' where T.EXAMPLEVAL = ''ABC''';
-  sQuery5 = ' where T1.EXAMPLE = T2.EXAMPLE';
-  sQuery6 = ' where PERSON.NR_SEQUENTIAL = 1';
-  sQuery7 = ' where PERSON.NR_SEQUENTIAL = MATRICULATION.NR_PERSONSEQUENTIAL';
+  Query = ' where  = 1';
+  Query2 = ' where  = ''ABC''';
+  Query3 = ' where T.EXAMPLEVAL = 1';
+  Query4 = ' where T.EXAMPLEVAL = ''ABC''';
+  Query5 = ' where T1.EXAMPLE = T2.EXAMPLE';
+  Query6 = ' where PERSON.NR_SEQUENTIAL = 1';
+  Query7 = ' where PERSON.NR_SEQUENTIAL = MATRICULATION.NR_PERSONSEQUENTIAL';
 var
-  oIPerson: IModel<TEPerson>;
-  oIMatriculation: IModel<TEMatriculation>;
-  oITable, oITable2: ITable;
+  Person: IModel<TEPerson>;
+  Matriculation: IModel<TEMatriculation>;
+  Table, Table2: ITable;
 begin
-  oITable := TTable.Create('T', '');
-  oITable.Prepare('T');
+  Table := TTable.Create('T', '');
+  Table.Prepare('T');
 
-  CheckEquals(sQuery,
+  CheckEquals(Query,
     TSQLWhere.Create.Ref
     .Equal(1)
     .Build
   );
 
-  CheckEquals(sQuery2,
+  CheckEquals(Query2,
     TSQLWhere.Create.Ref
     .Equal(QuotedStr('ABC'))
     .Build
   );
 
-  CheckEquals(sQuery3,
+  CheckEquals(Query3,
     TSQLWhere.Create.Ref
-    .Field(TField.Create('EXAMPLEVAL', oITable).Ref)
+    .Field(TField.Create('EXAMPLEVAL', Table).Ref)
     .Equal(1)
     .Build
   );
 
-  CheckEquals(sQuery4,
+  CheckEquals(Query4,
     TSQLWhere.Create.Ref
-    .Field(TField.Create('EXAMPLEVAL', oITable).Ref)
+    .Field(TField.Create('EXAMPLEVAL', Table).Ref)
     .Equal(QuotedStr('ABC'))
     .Build
   );
 
-  oITable2 := TTable.Create('T1', '');
-  oITable2.Prepare('T1');
-  oITable.Prepare('T2');
+  Table2 := TTable.Create('T1', '');
+  Table2.Prepare('T1');
+  Table.Prepare('T2');
 
-  CheckEquals(sQuery5,
+  CheckEquals(Query5,
     TSQLWhere.Create.Ref
-    .Field(TField.Create('EXAMPLE', oITable2).Ref)
+    .Field(TField.Create('EXAMPLE', Table2).Ref)
     .Equal
-    .Field(TField.Create('EXAMPLE', oITable).Ref)
+    .Field(TField.Create('EXAMPLE', Table).Ref)
     .Build
   );
 
-  oIPerson := TPerson.Create;
-  oIPerson.PrepareModel('', []);
-  CheckEquals(sQuery6,
+  Person := TPerson.Create;
+  Person.PrepareModel('', []);
+  CheckEquals(Query6,
     TSQLWhere.Create.Ref
-    .Field(oIPerson.Field(tepSequential))
+    .Field(Person.Field(tepSequential))
     .Equal(1)
     .Build
   );
 
-  oIMatriculation := TMatriculation.Create;
-  oIPerson.PrepareModel('', []);
-  oIMatriculation.PrepareModel('', []);
-  CheckEquals(sQuery7,
+  Matriculation := TMatriculation.Create;
+  Person.PrepareModel('', []);
+  Matriculation.PrepareModel('', []);
+  CheckEquals(Query7,
     TSQLWhere.Create.Ref
-      .Field(oIPerson.Field(tepSequential))
+      .Field(Person.Field(tepSequential))
       .Equal
-      .Field(oIMatriculation.Field(temPersonSequential))
+      .Field(Matriculation.Field(temPersonSequential))
       .Build
   );
 end;
@@ -953,26 +955,26 @@ end;
 
 procedure TNowaTest.TestSQLWhereField;
 const
-  sQuery = ' where T.EXAMPLE';
-  sQueryPerson = ' where PERSON.FL_NAME';
+  Query = ' where T.EXAMPLE';
+  QueryPerson = ' where PERSON.FL_NAME';
 var
-  oIPerson: IModel<TEPerson>;
-  oITable: ITable;
+  Person: IModel<TEPerson>;
+  Table: ITable;
 begin
-  oITable := TTable.Create('T', '');
-  oITable.Prepare('T');
+  Table := TTable.Create('T', '');
+  Table.Prepare('T');
 
-  CheckEquals(sQuery,
+  CheckEquals(Query,
     TSQLWhere.Create.Ref
-    .Field(TField.Create('EXAMPLE', oITable))
+    .Field(TField.Create('EXAMPLE', Table))
     .Build
   );
 
-  oIPerson := TPerson.Create;
-  oIPerson.PrepareModel('', []);
-  CheckEquals(sQueryPerson,
+  Person := TPerson.Create;
+  Person.PrepareModel('', []);
+  CheckEquals(QueryPerson,
     TSQLWhere.Create.Ref
-    .Field(oIPerson.Field(tepName))
+    .Field(Person.Field(tepName))
     .Build
   );
 end;
@@ -981,45 +983,45 @@ end;
 
 procedure TNowaTest.TestSQLWhereGreater;
 const
-  sQuery1 = ' where T.EXAMPLE > ';
-  sQuery2 = ' where T1.EXAMPLE > T2.EXAMPLE';
-  sQuery3 = ' where PERSON.NR_SEQUENTIAL > MATRICULATION.NR_PERSONSEQUENTIAL';
+  Query1 = ' where T.EXAMPLE > ';
+  Query2 = ' where T1.EXAMPLE > T2.EXAMPLE';
+  Query3 = ' where PERSON.NR_SEQUENTIAL > MATRICULATION.NR_PERSONSEQUENTIAL';
 var
-  oIPerson: IModel<TEPerson>;
-  oIMatriculation: IModel<TEMatriculation>;
-  oITable, oITable2: ITable;
+  Person: IModel<TEPerson>;
+  Matriculation: IModel<TEMatriculation>;
+  Table, Table2: ITable;
 begin
-  oITable := TTable.Create('T', '');
-  oITable.Prepare('T');
+  Table := TTable.Create('T', '');
+  Table.Prepare('T');
 
-  CheckEquals(sQuery1,
+  CheckEquals(Query1,
     TSQLWhere.Create.Ref
-      .Field(TField.Create('EXAMPLE', oITable).Ref)
+      .Field(TField.Create('EXAMPLE', Table).Ref)
       .Greater
       .Build
   );
 
 
-  oITable2 := TTable.Create('T1', '');
-  oITable2.Prepare('T1');
-  oITable.Prepare('T2');
-  CheckEquals(sQuery2,
+  Table2 := TTable.Create('T1', '');
+  Table2.Prepare('T1');
+  Table.Prepare('T2');
+  CheckEquals(Query2,
     TSQLWhere.Create.Ref
-      .Field(TField.Create('EXAMPLE', oITable2).Ref)
+      .Field(TField.Create('EXAMPLE', Table2).Ref)
       .Greater
-      .Field(TField.Create('EXAMPLE', oITable).Ref)
+      .Field(TField.Create('EXAMPLE', Table).Ref)
       .Build
   );
 
-  oIPerson := TPerson.Create;
-  oIMatriculation := TMatriculation.Create;
-  oIPerson.PrepareModel('', []);
-  oIMatriculation.PrepareModel('', []);
-  CheckEquals(sQuery3,
+  Person := TPerson.Create;
+  Matriculation := TMatriculation.Create;
+  Person.PrepareModel('', []);
+  Matriculation.PrepareModel('', []);
+  CheckEquals(Query3,
     TSQLWhere.Create.Ref
-      .Field(oIPerson.Field(tepSequential))
+      .Field(Person.Field(tepSequential))
       .Greater
-      .Field(oIMatriculation.Field(temPersonSequential))
+      .Field(Matriculation.Field(temPersonSequential))
       .Build
   );
 end;
@@ -1028,45 +1030,45 @@ end;
 
 procedure TNowaTest.TestSQLWhereGreaterOrEqual;
 const
-  sQuery1 = ' where T.EXAMPLE >= ';
-  sQuery2 = ' where T1.EXAMPLE >= T2.EXAMPLE';
-  sQuery3 = ' where PERSON.NR_SEQUENTIAL >= MATRICULATION.NR_PERSONSEQUENTIAL';
+  Query1 = ' where T.EXAMPLE >= ';
+  Query2 = ' where T1.EXAMPLE >= T2.EXAMPLE';
+  Query3 = ' where PERSON.NR_SEQUENTIAL >= MATRICULATION.NR_PERSONSEQUENTIAL';
 var
-  oIPerson: IModel<TEPerson>;
-  oIMatriculation: IModel<TEMatriculation>;
-  oITable, oITable2: ITable;
+  Person: IModel<TEPerson>;
+  Matriculation: IModel<TEMatriculation>;
+  Table, Table2: ITable;
 begin
-  oITable := TTable.Create('T', '');
-  oITable.Prepare('T');
+  Table := TTable.Create('T', '');
+  Table.Prepare('T');
 
-  CheckEquals(sQuery1,
+  CheckEquals(Query1,
     TSQLWhere.Create.Ref
-      .Field(TField.Create('EXAMPLE', oITable).Ref)
+      .Field(TField.Create('EXAMPLE', Table).Ref)
       .GreaterOrEqual
       .Build
   );
 
-  oITable2 := TTable.Create('T2', '');
-  oITable2.Prepare('T2');
-  oITable.Prepare('T1');
+  Table2 := TTable.Create('T2', '');
+  Table2.Prepare('T2');
+  Table.Prepare('T1');
 
-  CheckEquals(sQuery2,
+  CheckEquals(Query2,
     TSQLWhere.Create.Ref
-      .Field(TField.Create('EXAMPLE', oITable).Ref)
+      .Field(TField.Create('EXAMPLE', Table).Ref)
       .GreaterOrEqual
-      .Field(TField.Create('EXAMPLE', oITable2).Ref)
+      .Field(TField.Create('EXAMPLE', Table2).Ref)
       .Build
   );
 
-  oIPerson := TPerson.Create;
-  oIMatriculation := TMatriculation.Create;
-  oIPerson.PrepareModel('', []);
-  oIMatriculation.PrepareModel('', []);
-  CheckEquals(sQuery3,
+  Person := TPerson.Create;
+  Matriculation := TMatriculation.Create;
+  Person.PrepareModel('', []);
+  Matriculation.PrepareModel('', []);
+  CheckEquals(Query3,
     TSQLWhere.Create.Ref
-      .Field(oIPerson.Field(tepSequential))
+      .Field(Person.Field(tepSequential))
       .GreaterOrEqual
-      .Field(oIMatriculation.Field(temPersonSequential))
+      .Field(Matriculation.Field(temPersonSequential))
       .Build
   );
 end;
@@ -1075,35 +1077,35 @@ end;
 
 procedure TNowaTest.TestSQLWhereGreaterOrEqualValue;
 const
-  sQuery1 = ' where T.EXAMPLE >= 1';
-  sQuery2 = ' where T.EXAMPLE >= ''ABC''';
-  sQuery3 = ' where PERSON.NR_SEQUENTIAL >= 1';
+  Query1 = ' where T.EXAMPLE >= 1';
+  Query2 = ' where T.EXAMPLE >= ''ABC''';
+  Query3 = ' where PERSON.NR_SEQUENTIAL >= 1';
 var
-  oIPerson: IModel<TEPerson>;
-  oITable: ITable;
+  Person: IModel<TEPerson>;
+  Table: ITable;
 begin
-  oITable := TTable.Create('T', '');
-  oITable.Prepare('T');
+  Table := TTable.Create('T', '');
+  Table.Prepare('T');
 
-  CheckEquals(sQuery1,
+  CheckEquals(Query1,
     TSQLWhere.Create.Ref
-      .Field(TField.Create('EXAMPLE', oITable).Ref)
+      .Field(TField.Create('EXAMPLE', Table).Ref)
       .GreaterOrEqual(1)
       .Build
   );
 
-  CheckEquals(sQuery2,
+  CheckEquals(Query2,
     TSQLWhere.Create.Ref
-      .Field(TField.Create('EXAMPLE', oITable).Ref)
+      .Field(TField.Create('EXAMPLE', Table).Ref)
       .GreaterOrEqual(QuotedStr('ABC'))
       .Build
   );
 
-  oIPerson := TPerson.Create;
-  oIPerson.PrepareModel('', []);
-  CheckEquals(sQuery3,
+  Person := TPerson.Create;
+  Person.PrepareModel('', []);
+  CheckEquals(Query3,
     TSQLWhere.Create.Ref
-      .Field(oIPerson.Field(tepSequential))
+      .Field(Person.Field(tepSequential))
       .GreaterOrEqual(1)
       .Build
   );
@@ -1113,35 +1115,35 @@ end;
 
 procedure TNowaTest.TestSQLWhereGreaterValue;
 const
-  sQuery1 = ' where T.EXAMPLE > 1';
-  sQuery2 = ' where T.EXAMPLE > ''ABC''';
-  sQuery3 = ' where PERSON.NR_SEQUENTIAL > 1';
+  Query1 = ' where T.EXAMPLE > 1';
+  Query2 = ' where T.EXAMPLE > ''ABC''';
+  Query3 = ' where PERSON.NR_SEQUENTIAL > 1';
 var
-  oIPerson: IModel<TEPerson>;
-  oITable: ITable;
+  Person: IModel<TEPerson>;
+  Table: ITable;
 begin
-  oITable := TTable.Create('T', '');
-  oITable.Prepare('T');
+  Table := TTable.Create('T', '');
+  Table.Prepare('T');
 
-  CheckEquals(sQuery1,
+  CheckEquals(Query1,
     TSQLWhere.Create.Ref
-      .Field(TField.Create('EXAMPLE', oITable).Ref)
+      .Field(TField.Create('EXAMPLE', Table).Ref)
       .Greater(1)
       .Build
   );
 
-  CheckEquals(sQuery2,
+  CheckEquals(Query2,
     TSQLWhere.Create.Ref
-      .Field(TField.Create('EXAMPLE', oITable).Ref)
+      .Field(TField.Create('EXAMPLE', Table).Ref)
       .Greater(QuotedStr('ABC'))
       .Build
   );
 
-  oIPerson := TPerson.Create;
-  oIPerson.PrepareModel('', []);
-  CheckEquals(sQuery3,
+  Person := TPerson.Create;
+  Person.PrepareModel('', []);
+  CheckEquals(Query3,
     TSQLWhere.Create.Ref
-      .Field(oIPerson.Field(tepSequential))
+      .Field(Person.Field(tepSequential))
       .Greater(1)
       .Build
   );
@@ -1151,14 +1153,14 @@ end;
 
 procedure TNowaTest.TestSQLWhereInList;
 var
-  oIPerson: IModel<TEPerson>;
+  Person: IModel<TEPerson>;
 begin
-  oIPerson := TPerson.Create;
-  oIPerson.PrepareModel('', []);
+  Person := TPerson.Create;
+  Person.PrepareModel('', []);
 
   CheckEquals(' where PERSON.NR_SEQUENTIAL in (1,2,3,4)',
     TSQLWhere.Create.Ref
-      .Field(oIPerson.Field(tepSequential))
+      .Field(Person.Field(tepSequential))
       .InList([1,2,3,4])
       .Build
   );
@@ -1168,14 +1170,14 @@ end;
 
 procedure TNowaTest.TestSQLWhereIsNotNull;
 var
-  oIPerson: IModel<TEPerson>;
+  Person: IModel<TEPerson>;
 begin
-  oIPerson := TPerson.Create;
-  oIPerson.PrepareModel('', []);
+  Person := TPerson.Create;
+  Person.PrepareModel('', []);
 
   CheckEquals('not implemented',
     TSQLWhere.Create.Ref
-      .Field(oIPerson.Field(tepSequential))
+      .Field(Person.Field(tepSequential))
       .IsNotNull
       .Build
   );
@@ -1185,14 +1187,14 @@ end;
 
 procedure TNowaTest.TestSQLWhereIsNull;
 var
-  oIPerson: IModel<TEPerson>;
+  Person: IModel<TEPerson>;
 begin
-  oIPerson := TPerson.Create;
-  oIPerson.PrepareModel('', []);
+  Person := TPerson.Create;
+  Person.PrepareModel('', []);
 
   CheckEquals('not implemented',
     TSQLWhere.Create.Ref
-      .Field(oIPerson.Field(tepSequential))
+      .Field(Person.Field(tepSequential))
       .IsNull
       .Build
   );
@@ -1202,45 +1204,45 @@ end;
 
 procedure TNowaTest.TestSQLWhereLess;
 const
-  sQuery1 = ' where T.EXAMPLE < ';
-  sQuery2 = ' where T1.EXAMPLE < T2.EXAMPLE';
-  sQuery3 = ' where PERSON.NR_SEQUENTIAL < MATRICULATION.NR_PERSONSEQUENTIAL';
+  Query1 = ' where T.EXAMPLE < ';
+  Query2 = ' where T1.EXAMPLE < T2.EXAMPLE';
+  Query3 = ' where PERSON.NR_SEQUENTIAL < MATRICULATION.NR_PERSONSEQUENTIAL';
 var
-  oIPerson: IModel<TEPerson>;
-  oIMatriculation: IModel<TEMatriculation>;
-  oITable, oITable2: ITable;
+  Person: IModel<TEPerson>;
+  Matriculation: IModel<TEMatriculation>;
+  Table, Table2: ITable;
 begin
-  oITable := TTable.Create('T', '');
-  oITable.Prepare('T');
+  Table := TTable.Create('T', '');
+  Table.Prepare('T');
 
-  CheckEquals(sQuery1,
+  CheckEquals(Query1,
     TSQLWhere.Create.Ref
-      .Field(TField.Create('EXAMPLE', oITable).Ref)
+      .Field(TField.Create('EXAMPLE', Table).Ref)
       .Less
       .Build
   );
 
-  oITable2 := TTable.Create('T1', '');
-  oITable2.Prepare('T1');
-  oITable.Prepare('T2');
+  Table2 := TTable.Create('T1', '');
+  Table2.Prepare('T1');
+  Table.Prepare('T2');
 
-  CheckEquals(sQuery2,
+  CheckEquals(Query2,
     TSQLWhere.Create.Ref
-      .Field(TField.Create('EXAMPLE', oITable2).Ref)
+      .Field(TField.Create('EXAMPLE', Table2).Ref)
       .Less
-      .Field(TField.Create('EXAMPLE', oITable).Ref)
+      .Field(TField.Create('EXAMPLE', Table).Ref)
       .Build
   );
 
-  oIPerson := TPerson.Create;
-  oIMatriculation := TMatriculation.Create;
-  oIPerson.PrepareModel('', []);
-  oIMatriculation.PrepareModel('', []);
-  CheckEquals(sQuery3,
+  Person := TPerson.Create;
+  Matriculation := TMatriculation.Create;
+  Person.PrepareModel('', []);
+  Matriculation.PrepareModel('', []);
+  CheckEquals(Query3,
     TSQLWhere.Create.Ref
-      .Field(oIPerson.Field(tepSequential))
+      .Field(Person.Field(tepSequential))
       .Less
-      .Field(oIMatriculation.Field(temPersonSequential))
+      .Field(Matriculation.Field(temPersonSequential))
       .Build
   );
 end;
@@ -1249,45 +1251,45 @@ end;
 
 procedure TNowaTest.TestSQLWhereLessOrEqual;
 const
-  sQuery1 = ' where T.EXAMPLE <= ';
-  sQuery2 = ' where T1.EXAMPLE <= T2.EXAMPLE';
-  sQuery3 = ' where PERSON.NR_SEQUENTIAL <= MATRICULATION.NR_PERSONSEQUENTIAL';
+  Query1 = ' where T.EXAMPLE <= ';
+  Query2 = ' where T1.EXAMPLE <= T2.EXAMPLE';
+  Query3 = ' where PERSON.NR_SEQUENTIAL <= MATRICULATION.NR_PERSONSEQUENTIAL';
 var
-  oIPerson: IModel<TEPerson>;
-  oIMatriculation: IModel<TEMatriculation>;
-  oITable, oITable2: ITable;
+  Person: IModel<TEPerson>;
+  Matriculation: IModel<TEMatriculation>;
+  Table, Table2: ITable;
 begin
-  oITable := TTable.Create('T', '');
-  oITable.Prepare('T');
+  Table := TTable.Create('T', '');
+  Table.Prepare('T');
 
-  CheckEquals(sQuery1,
+  CheckEquals(Query1,
     TSQLWhere.Create.Ref
-      .Field(TField.Create('EXAMPLE', oITable).Ref)
+      .Field(TField.Create('EXAMPLE', Table).Ref)
       .LessOrEqual
       .Build
   );
 
-  oITable2 := TTable.Create('T1', '');
-  oITable2.Prepare('T1');
-  oITable.Prepare('T2');
+  Table2 := TTable.Create('T1', '');
+  Table2.Prepare('T1');
+  Table.Prepare('T2');
 
-  CheckEquals(sQuery2,
+  CheckEquals(Query2,
     TSQLWhere.Create.Ref
-      .Field(TField.Create('EXAMPLE', oITable2).Ref)
+      .Field(TField.Create('EXAMPLE', Table2).Ref)
       .LessOrEqual
-      .Field(TField.Create('EXAMPLE', oITable).Ref)
+      .Field(TField.Create('EXAMPLE', Table).Ref)
       .Build
   );
 
-  oIPerson := TPerson.Create;
-  oIMatriculation := TMatriculation.Create;
-  oIPerson.PrepareModel('', []);
-  oIMatriculation.PrepareModel('', []);
-  CheckEquals(sQuery3,
+  Person := TPerson.Create;
+  Matriculation := TMatriculation.Create;
+  Person.PrepareModel('', []);
+  Matriculation.PrepareModel('', []);
+  CheckEquals(Query3,
     TSQLWhere.Create.Ref
-      .Field(oIPerson.Field(tepSequential))
+      .Field(Person.Field(tepSequential))
       .LessOrEqual
-      .Field(oIMatriculation.Field(temPersonSequential))
+      .Field(Matriculation.Field(temPersonSequential))
       .Build
   );
 end;
@@ -1295,35 +1297,35 @@ end;
 
 procedure TNowaTest.TestSQLWhereLessOrEqualValue;
 const
-  sQuery1 = ' where T.EXAMPLE <= 1';
-  sQuery2 = ' where T.EXAMPLE <= ''ABC''';
-  sQuery3 = ' where PERSON.NR_SEQUENTIAL <= 1';
+  Query1 = ' where T.EXAMPLE <= 1';
+  Query2 = ' where T.EXAMPLE <= ''ABC''';
+  Query3 = ' where PERSON.NR_SEQUENTIAL <= 1';
 var
-  oIPerson: IModel<TEPerson>;
-  oITable: ITable;
+  Person: IModel<TEPerson>;
+  Table: ITable;
 begin
-  oITable := TTable.Create('T', '');
-  oITable.Prepare('T');
+  Table := TTable.Create('T', '');
+  Table.Prepare('T');
 
-  CheckEquals(sQuery1,
+  CheckEquals(Query1,
     TSQLWhere.Create.Ref
-      .Field(TField.Create('EXAMPLE', oITable).Ref)
+      .Field(TField.Create('EXAMPLE', Table).Ref)
       .LessOrEqual(1)
       .Build
   );
 
-  CheckEquals(sQuery2,
+  CheckEquals(Query2,
     TSQLWhere.Create.Ref
-      .Field(TField.Create('EXAMPLE', oITable).Ref)
+      .Field(TField.Create('EXAMPLE', Table).Ref)
       .LessOrEqual(QuotedStr('ABC'))
       .Build
   );
 
-  oIPerson := TPerson.Create;
-  oIPerson.PrepareModel('', []);
-  CheckEquals(sQuery3,
+  Person := TPerson.Create;
+  Person.PrepareModel('', []);
+  CheckEquals(Query3,
     TSQLWhere.Create.Ref
-      .Field(oIPerson.Field(tepSequential))
+      .Field(Person.Field(tepSequential))
       .LessOrEqual(1)
       .Build
   );
@@ -1333,35 +1335,35 @@ end;
 
 procedure TNowaTest.TestSQLWhereLessValue;
 const
-  sQuery1 = ' where T.EXAMPLE < 1';
-  sQuery2 = ' where T.EXAMPLE < ''ABC''';
-  sQuery3 = ' where PERSON.NR_SEQUENTIAL < 1';
+  Query1 = ' where T.EXAMPLE < 1';
+  Query2 = ' where T.EXAMPLE < ''ABC''';
+  Query3 = ' where PERSON.NR_SEQUENTIAL < 1';
 var
-  oIPerson: IModel<TEPerson>;
-  oITable: ITable;
+  Person: IModel<TEPerson>;
+  Table: ITable;
 begin
-  oITable := TTable.Create('T', '');
-  oITable.Prepare('T');
+  Table := TTable.Create('T', '');
+  Table.Prepare('T');
 
-  CheckEquals(sQuery1,
+  CheckEquals(Query1,
     TSQLWhere.Create.Ref
-      .Field(TField.Create('EXAMPLE', oITable).Ref)
+      .Field(TField.Create('EXAMPLE', Table).Ref)
       .Less(1)
       .Build
   );
 
-  CheckEquals(sQuery2,
+  CheckEquals(Query2,
     TSQLWhere.Create.Ref
-      .Field(TField.Create('EXAMPLE', oITable).Ref)
+      .Field(TField.Create('EXAMPLE', Table).Ref)
       .Less(QuotedStr('ABC'))
       .Build
   );
 
-  oIPerson := TPerson.Create;
-  oIPerson.PrepareModel('', []);
-  CheckEquals(sQuery3,
+  Person := TPerson.Create;
+  Person.PrepareModel('', []);
+  CheckEquals(Query3,
     TSQLWhere.Create.Ref
-      .Field(oIPerson.Field(tepSequential))
+      .Field(Person.Field(tepSequential))
       .Less(1)
       .Build
   );
@@ -1371,35 +1373,35 @@ end;
 
 procedure TNowaTest.TestSQLWhereLike;
 var
-  oIPerson: IModel<TEPerson>;
+  Person: IModel<TEPerson>;
 begin
-  oIPerson := TPerson.Create;
-  oIPerson.PrepareModel('', []);
+  Person := TPerson.Create;
+  Person.PrepareModel('', []);
 
   CheckEquals('not implemented',
     TSQLWhere.Create.Ref
-      .Field(oIPerson.Field(tepName))
+      .Field(Person.Field(tepName))
       .Like(loEqual, 'Marcelo')
       .Build
   );
 
   CheckEquals('not implemented',
     TSQLWhere.Create.Ref
-      .Field(oIPerson.Field(tepName))
+      .Field(Person.Field(tepName))
       .Like(loStarting, 'Marcelo')
       .Build
   );
 
   CheckEquals('not implemented',
     TSQLWhere.Create.Ref
-      .Field(oIPerson.Field(tepName))
+      .Field(Person.Field(tepName))
       .Like(loEnding, 'Marcelo')
       .Build
   );
 
   CheckEquals('not implemented',
     TSQLWhere.Create.Ref
-      .Field(oIPerson.Field(tepName))
+      .Field(Person.Field(tepName))
       .Like(loContaining, 'Marcelo')
       .Build
   );
@@ -1409,14 +1411,14 @@ end;
 
 procedure TNowaTest.TestSQLWhereNot;
 var
-  oIPerson: IModel<TEPerson>;
+  Person: IModel<TEPerson>;
 begin
-  oIPerson := TPerson.Create;
-  oIPerson.PrepareModel('', []);
+  Person := TPerson.Create;
+  Person.PrepareModel('', []);
 
   CheckEquals(' where PERSON.NR_SEQUENTIAL not ',
     TSQLWhere.Create.Ref
-      .Field(oIPerson.Field(tepSequential))
+      .Field(Person.Field(tepSequential))
       .&Not
       .Build
   );
@@ -1426,14 +1428,14 @@ end;
 
 procedure TNowaTest.TestSQLWhereNotInList;
 var
-  oIPerson: IModel<TEPerson>;
+  Person: IModel<TEPerson>;
 begin
-  oIPerson := TPerson.Create;
-  oIPerson.PrepareModel('', []);
+  Person := TPerson.Create;
+  Person.PrepareModel('', []);
 
   CheckEquals(' where PERSON.NR_SEQUENTIAL not  in (1,2,3,4)',
     TSQLWhere.Create.Ref
-      .Field(oIPerson.Field(tepSequential))
+      .Field(Person.Field(tepSequential))
       .&Not.InList([1,2,3,4])
       .Build
   );
@@ -1443,35 +1445,35 @@ end;
 
 procedure TNowaTest.TestSQLWhereNotLike;
 var
-  oIPerson: IModel<TEPerson>;
+  Person: IModel<TEPerson>;
 begin
-  oIPerson := TPerson.Create;
-  oIPerson.PrepareModel('', []);
+  Person := TPerson.Create;
+  Person.PrepareModel('', []);
 
   CheckEquals('not implemented',
     TSQLWhere.Create.Ref
-      .Field(oIPerson.Field(tepName))
+      .Field(Person.Field(tepName))
       .NotLike(loEqual, 'Marcelo')
       .Build
   );
 
   CheckEquals('not implemented',
     TSQLWhere.Create.Ref
-      .Field(oIPerson.Field(tepName))
+      .Field(Person.Field(tepName))
       .NotLike(loStarting, 'Marcelo')
       .Build
   );
 
   CheckEquals('not implemented',
     TSQLWhere.Create.Ref
-      .Field(oIPerson.Field(tepName))
+      .Field(Person.Field(tepName))
       .NotLike(loEnding, 'Marcelo')
       .Build
   );
 
   CheckEquals('not implemented',
     TSQLWhere.Create.Ref
-      .Field(oIPerson.Field(tepName))
+      .Field(Person.Field(tepName))
       .NotLike(loContaining, 'Marcelo')
       .Build
   );

@@ -11,21 +11,21 @@ uses
 type
   TNowaDAO<T> = class(TInterfacedObject, INowaDAO<T>)
   strict private
-    function GenerateModelKey(const ASequenceName: String): Int64;
+    function GenerateModelKey(const SequenceName: string): Int64;
 
-    procedure SaveModel(const AModel: IModel<T>);
+    procedure SaveModel(const Model: IModel<T>);
   strict protected
-    fCommand: TFDCommand;
+    FCommand: TFDCommand;
 
-    procedure GenerateModelCompoundKey(const AModel: IModel<T>); virtual; abstract;
+    procedure GenerateModelCompoundKey(const Model: IModel<T>); virtual; abstract;
   public
-    constructor Create(const AFDCommand: TFDCommand); reintroduce;
+    constructor Create(const FDCommand: TFDCommand); reintroduce;
     function Ref: INowaDAO<T>;
 
-    procedure Insert(const AModel: IModel<T>);
-    procedure Update(const AModel: IModel<T>);
-    procedure Save(const AModel: IModel<T>);
-    procedure FillModel(const AModel: IModel<T>; const AQuery: TFDQuery);
+    procedure Insert(const Model: IModel<T>);
+    procedure Update(const Model: IModel<T>);
+    procedure Save(const Model: IModel<T>);
+    procedure FillModel(const Model: IModel<T>; const AQuery: TFDQuery);
   end;
 
 implementation
@@ -37,99 +37,84 @@ uses
 
 { TNowaDAO<T> }
 
-constructor TNowaDAO<T>.Create(const AFDCommand: TFDCommand);
+constructor TNowaDAO<T>.Create(const FDCommand: TFDCommand);
 begin
-  fCommand := AFDCommand;
+  FCommand := FDCommand;
 end;
 
-
-
-procedure TNowaDAO<T>.FillModel(const AModel: IModel<T>; const AQuery: TFDQuery);
+procedure TNowaDAO<T>.FillModel(const Model: IModel<T>; const AQuery: TFDQuery);
 var
-  oIField: IField;
-  oEField: T;
+  Field: IField;
 begin
-  for oIField in AModel.Fields do
-    AModel.SetValue(AModel.Field(oIField), AQuery.FieldByName(oIField.Alias).AsVariant);
+  for Field in Model.Fields do
+    Model.SetValue(Model.Field(Field), AQuery.FieldByName(Field.Alias).AsVariant);
 end;
 
-
-
-function TNowaDAO<T>.GenerateModelKey(const ASequenceName: String): Int64;
+function TNowaDAO<T>.GenerateModelKey(const SequenceName: string): Int64;
 var
-  fQuery: TFDQuery;
+  Query: TFDQuery;
 begin
   Result := 0;
 
-  fQuery := TFDQuery.Create(nil);
+  Query := TFDQuery.Create(nil);
 
   try
-    fQuery.Connection := fCommand.Connection;
-    fQuery.Open(TSQLCommand<T>.Create.Ref.NewKeyValue(ASequenceName).Build);
-    Result := fQuery.FieldByName('sequence').AsLargeInt;
-    fQuery.Close;
+    Query.Connection := FCommand.Connection;
+    Query.Open(TSQLCommand<T>.Create.Ref.NewKeyValue(SequenceName).Build);
+    Result := Query.FieldByName('sequence').AsLargeInt;
+    Query.Close;
   finally
-    fQuery.Free;
+    Query.Free;
   end;
 end;
-
 
 function TNowaDAO<T>.Ref: INowaDAO<T>;
 begin
   Result := Self;
 end;
 
-
-
-procedure TNowaDAO<T>.Save(const AModel: IModel<T>);
+procedure TNowaDAO<T>.Save(const Model: IModel<T>);
 begin
-  if AModel.IsNew then
+  if Model.IsNew then
   begin
-    fCommand.CommandText.Text := TSQLCommand<T>.Create.Ref.Insert(AModel).Build;
+    FCommand.CommandText.Text := TSQLCommand<T>.Create.Ref.Insert(Model).Build;
 
-    if (Length(AModel.PrimaryKey) = 1) then
-      AModel.SetValue(AModel.PrimaryKey[0], GenerateModelKey(AModel.Table.Sequence))
+    if Length(Model.PrimaryKey) = 1 then
+      Model.SetValue(Model.PrimaryKey[0], GenerateModelKey(Model.Table.Sequence))
     else
-      GenerateModelCompoundKey(AModel);
+      GenerateModelCompoundKey(Model);
   end
   else
-    fCommand.CommandText.Text :=
+    FCommand.CommandText.Text :=
       TSQLCommand<T>.Create.Ref
-        .Update(AModel)
-        .WhereKey(AModel, AModel.PrimaryKey)
-        .Build;
+      .Update(Model)
+      .WhereKey(Model, Model.PrimaryKey)
+      .Build;
 
-  SaveModel(AModel);
+  SaveModel(Model);
 end;
 
-
-
-procedure TNowaDAO<T>.SaveModel(const AModel: IModel<T>);
+procedure TNowaDAO<T>.SaveModel(const Model: IModel<T>);
 var
-  oEField: T;
-  oIField: IField;
+  Field: IField;
 begin
-  for oIField in AModel.Fields do
-    fCommand.ParamByName(oIField.Alias).Value := AModel.GetValue(AModel.Field(oIField));
+  for Field in Model.Fields do
+    FCommand.ParamByName(Field.Alias).Value := Model.GetValue(Model.Field(Field));
 
-  fCommand.Execute;
-  fCommand.Close;
+  FCommand.Execute;
+  FCommand.Close;
 end;
 
-
-
-procedure TNowaDAO<T>.Update(const AModel: IModel<T>);
+procedure TNowaDAO<T>.Update(const Model: IModel<T>);
 begin
-  fCommand.CommandText.Text := TSQLCommand<T>.Create.Ref.Update(AModel).WhereKey(AModel, AModel.PrimaryKey).Build;
-  SaveModel(AModel);
+  FCommand.CommandText.Text := TSQLCommand<T>.Create.Ref.Update(Model).WhereKey(Model, Model.PrimaryKey).Build;
+  SaveModel(Model);
 end;
 
-
-
-procedure TNowaDAO<T>.Insert(const AModel: IModel<T>);
+procedure TNowaDAO<T>.Insert(const Model: IModel<T>);
 begin
-  fCommand.CommandText.Text := TSQLCommand<T>.Create.Ref.Insert(AModel).Build;
-  SaveModel(AModel);
+  FCommand.CommandText.Text := TSQLCommand<T>.Create.Ref.Insert(Model).Build;
+  SaveModel(Model);
 end;
 
 end.

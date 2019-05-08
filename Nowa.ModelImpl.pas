@@ -10,21 +10,21 @@ uses
 type
   TModel<T> = class(TInterfacedObject, IModel<T>)
   strict private
-    fIModelEnumerator: IEnum<T>;
-    fTable: ITable;
-    oInternalFields: TArray<T>;
-    fFields: TDictionary<T, IField>;
-    fPrimaryKey: TArray<T>;
+    FModelEnumerator: IEnum<T>;
+    FTable: ITable;
+    FInternalFields: TArray<T>;
+    FFields: TDictionary<T, IField>;
+    FPrimaryKey: TArray<T>;
   public
-    constructor Create(const AIModelEnumerator: IEnum<T>); reintroduce;
+    constructor Create(const ModelEnumerator: IEnum<T>); reintroduce;
     destructor Destroy; override;
 
-    procedure PrepareModel(const ATableAlias: String = ''; const AFields: TArray<T> = []);
-    procedure SetValue(const AField: T; const AValue: Variant); virtual; abstract;
+    procedure PrepareModel(const TableAlias: string = ''; const Fields: TArray<T> = []);
+    procedure SetValue(const Field: T; const Value: Variant); virtual; abstract;
 
-    function GetValue(const AField: T): Variant; virtual; abstract;
-    function Field(const AField: T): IField; overload;
-    function Field(const AField: IField): T; overload;
+    function GetValue(const Field: T): Variant; virtual; abstract;
+    function Field(const Field: T): IField; overload;
+    function Field(const Field: IField): T; overload;
     function Fields: TArray<IField>;
     function Table: ITable;
     function PrimaryKey: TArray<T>;
@@ -33,30 +33,30 @@ type
 
   TField = class(TInterfacedObject, IField)
   strict private
-    FieldName: String;
-    fTable: ITable;
+    FFieldName: string;
+    FTable: ITable;
   public
-    constructor Create(const AFieldName: String; const ATable: ITable); reintroduce;
+    constructor Create(const FieldName: string; const Table: ITable); reintroduce;
     function Ref: IField;
 
-    function Name: String;
-    function Alias: String;
+    function Name: string;
+    function Alias: string;
     function Table: ITable;
   end;
 
   TTable = class(TInterfacedObject, ITable)
   strict private
-    TableName: String;
-    TableAlias: String;
-    SequenceName: String;
+    FTableName: string;
+    FTableAlias: string;
+    FSequenceName: string;
   public
-    constructor Create(const ATableName, ASequenceName: String); reintroduce;
+    constructor Create(const TableName, SequenceName: string); reintroduce;
     function Ref: ITable;
 
-    function Name: String;
-    function Alias: String;
-    function Sequence: String;
-    procedure Prepare(const AAlias: String);
+    function Name: string;
+    function Alias: string;
+    function Sequence: string;
+    procedure Prepare(const Alias: string);
   end;
 
 implementation
@@ -67,189 +67,154 @@ uses
 
 { TModel<T> }
 
-constructor TModel<T>.Create(const AIModelEnumerator: IEnum<T>);
+constructor TModel<T>.Create(const ModelEnumerator: IEnum<T>);
 var
-  oEField: T;
+  Field: T;
 begin
-  fIModelEnumerator := AIModelEnumerator;
-  fFields := TDictionary<T, IField>.Create;
-  fTable  := TTable.Create(fIModelEnumerator.Table, fIModelEnumerator.Sequence);
-  oInternalFields := fIModelEnumerator.AllColumns;
-  fPrimaryKey := fIModelEnumerator.PrimaryKey;
+  FModelEnumerator := ModelEnumerator;
+  FFields := TDictionary<T, IField>.Create;
+  FTable := TTable.Create(FModelEnumerator.Table, FModelEnumerator.Sequence);
+  FInternalFields := FModelEnumerator.AllColumns;
+  FPrimaryKey := FModelEnumerator.PrimaryKey;
 
-  for oEField in oInternalFields do
-    fFields.Add(oEField, TField.Create(fIModelEnumerator.Column(oEField), fTable).Ref);
+  for Field in FInternalFields do
+    FFields.Add(Field, TField.Create(FModelEnumerator.Column(Field), FTable).Ref);
 end;
 
-
-
-procedure TModel<T>.PrepareModel(const ATableAlias: String; const AFields: TArray<T>);
+procedure TModel<T>.PrepareModel(const TableAlias: string; const Fields: TArray<T>);
 begin
-  fTable.Prepare(fIModelEnumerator.TableAlias(ATableAlias));
+  FTable.Prepare(FModelEnumerator.TableAlias(TableAlias));
 
-  if (Length(AFields) > 0) then
-    oInternalFields := AFields
+  if Length(Fields) > 0 then
+    FInternalFields := Fields
   else
-    oInternalFields := fIModelEnumerator.AllColumns;
+    FInternalFields := FModelEnumerator.AllColumns;
 end;
-
-
 
 function TModel<T>.PrimaryKey: TArray<T>;
 begin
-  Result := fPrimaryKey;
+  Result := FPrimaryKey;
 end;
-
-
 
 function TModel<T>.Table: ITable;
 begin
-  Result := fTable;
+  Result := FTable;
 end;
-
-
 
 destructor TModel<T>.Destroy;
 begin
-  fFields.Free;
+  FFields.Free;
   inherited;
 end;
 
-
-
-function TModel<T>.Field(const AField: T): IField;
+function TModel<T>.Field(const Field: T): IField;
 begin
-  fFields.TryGetValue(AField, Result);
+  FFields.TryGetValue(Field, Result);
 end;
 
-
-
-function TModel<T>.Field(const AField: IField): T;
+function TModel<T>.Field(const Field: IField): T;
 var
-  oEKey: T;
+  Key: T;
 begin
-  //fFields always have all enumerated of enumerated type
+  // FFields always have all enumerated of enumerated type
 
-  for oEKey in fFIelds.Keys.ToArray do
+  for Key in FFields.Keys.ToArray do
   begin
-    if (fFields.Items[oEKey] = AField) then
+    if FFields.Items[Key] = Field then
     begin
-      Result := oEKey;
+      Result := Key;
       Break;
     end;
   end;
 end;
 
-
-
 function TModel<T>.Fields: TArray<IField>;
 var
-  oEField: T;
+  Field: T;
 begin
   SetLength(Result, 0);
 
-  for oEField in oInternalFields do
+  for Field in FInternalFields do
   begin
     SetLength(Result, Succ(Length(Result)));
-    Result[Pred(Length(Result))] := fFields[oEField];
+    Result[Pred(Length(Result))] := FFields[Field];
   end;
 end;
-
-
 
 function TModel<T>.IsNew: Boolean;
 begin
   Result := False;
 
-  if (Length(fPrimaryKey) = 1) then
+  if Length(FPrimaryKey) = 1 then
   begin
     try
-      Result := (GetValue(fPrimaryKey[0]) = 0);
+      Result := GetValue(FPrimaryKey[0]) = 0;
     except
-      raise Exception.Create('IsNew: Primary Key value is not an integer valid value, provide specific implementation to validate it.');
+      raise Exception.Create
+        ('IsNew: Primary Key value is not an integer valid value, provide specific implementation to validate it.');
     end;
   end;
 end;
 
 { TField }
 
-function TField.Alias: String;
+function TField.Alias: string;
 begin
-  Result := fTable.Alias + '_' + FieldName;
+  Result := FTable.Alias + '_' + FFieldName;
 end;
 
-
-
-constructor TField.Create(const AFieldName: String; const ATable: ITable);
+constructor TField.Create(const FieldName: string; const Table: ITable);
 begin
-  FieldName := AFieldName;
-  fTable := ATable;
+  FFieldName := FieldName;
+  FTable := Table;
 end;
 
-
-
-function TField.Name: String;
+function TField.Name: string;
 begin
-  Result := FieldName;
+  Result := FFieldName;
 end;
-
-
 
 function TField.Ref: IField;
 begin
   Result := Self;
 end;
 
-
-
 function TField.Table: ITable;
 begin
-  Result := fTable;
+  Result := FTable;
 end;
-
-
 
 { TTable }
 
-function TTable.Alias: String;
+function TTable.Alias: string;
 begin
-  Result := TableAlias;
+  Result := FTableAlias;
 end;
 
-
-
-constructor TTable.Create(const ATableName, ASequenceName: String);
+constructor TTable.Create(const TableName, SequenceName: string);
 begin
-  TableName    := ATableName;
-  SequenceName := ASequenceName;
+  FTableName := TableName;
+  FSequenceName := SequenceName;
 end;
 
-
-
-function TTable.Name: String;
+function TTable.Name: string;
 begin
-  Result := TableName;
+  Result := FTableName;
 end;
 
-
-
-procedure TTable.Prepare(const AAlias: String);
+procedure TTable.Prepare(const Alias: string);
 begin
-  TableAlias := AAlias;
+  FTableAlias := Alias;
 end;
-
-
 
 function TTable.Ref: ITable;
 begin
   Result := Self;
 end;
 
-
-
-function TTable.Sequence: String;
+function TTable.Sequence: string;
 begin
-  Result := SequenceName;
+  Result := FSequenceName;
 end;
 
 end.

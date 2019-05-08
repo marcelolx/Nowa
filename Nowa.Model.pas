@@ -8,7 +8,7 @@ type
     function Name: String;
     function Alias: String;
     function Sequence: String;
-    procedure Prepare(const AAlias: String);
+    procedure Prepare(const Alias: String);
   end;
 
   IField = interface

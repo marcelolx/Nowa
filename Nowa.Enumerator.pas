@@ -38,7 +38,7 @@ var
 begin
   SetLength(Result, 0);
 
-  if (Length(EnumeratedFields) = 0) then
+  if Length(EnumeratedFields) = 0 then
     InternalArray := AllColumns
   else
     InternalArray := EnumeratedFields;

@@ -18,9 +18,9 @@ type
   public
     constructor Create; reintroduce;
 
-    procedure SetValue(const AField: TEMatriculation; const AValue: Variant); reintroduce;
+    procedure SetValue(const Field: TEMatriculation; const Value: Variant); reintroduce;
 
-    function GetValue(const AField: TEMatriculation): Variant; reintroduce;
+    function GetValue(const Field: TEMatriculation): Variant; reintroduce;
   end;
 
 implementation
@@ -35,13 +35,11 @@ begin
   inherited Create(TEnumMatriculation.Create.Ref);
 end;
 
-
-
-function TMatriculation.GetValue(const AField: TEMatriculation): Variant;
+function TMatriculation.GetValue(const Field: TEMatriculation): Variant;
 begin
   Result := 0;
 
-  case AField of
+  case Field of
     temSequential:
       Result := Sequential;
 
@@ -58,22 +56,20 @@ begin
   end;
 end;
 
-
-
-procedure TMatriculation.SetValue(const AField: TEMatriculation; const AValue: Variant);
+procedure TMatriculation.SetValue(const Field: TEMatriculation; const Value: Variant);
 begin
-  case AField of
+  case Field of
     temSequential:
-      Sequential := AValue;
+      Sequential := Value;
 
     temPersonSequential:
-      PersonSequential := AValue;
+      PersonSequential := Value;
 
     temDate:
-      RegisterDate := AValue;
+      RegisterDate := Value;
 
     temUser:
-      User := AValue;
+      User := Value;
   else
     raise Exception.Create('TEMatriculation field doesn''t have relationship with model atributte.');
   end;

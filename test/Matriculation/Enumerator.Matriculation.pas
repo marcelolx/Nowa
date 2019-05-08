@@ -10,10 +10,10 @@ type
 
   TEnumMatriculation = class(TEnumAbstract<TEMatriculation>, IEnum<TEMatriculation>)
   public
-    function Column(const AEnumeratedField: TEMatriculation): String; override;
-    function Table: String; override;
-    function TableAlias(const AAlias: String = ''): String; override;
-    function Sequence: String; override;
+    function Column(const EnumeratedField: TEMatriculation): string; override;
+    function Table: string; override;
+    function TableAlias(const Alias: string = ''): string; override;
+    function Sequence: string; override;
     function AllColumns: TArray<TEMatriculation>; override;
     function PrimaryKey: TArray<TEMatriculation>; override;
     function Ref: IEnum<TEMatriculation>; override;
@@ -28,24 +28,22 @@ uses
 
 function TEnumMatriculation.AllColumns: TArray<TEMatriculation>;
 var
-  oEField: TEMatriculation;
+  Field: TEMatriculation;
 begin
   SetLength(Result, 0);
 
-  for oEField := Low(TEMatriculation) to High(TEMatriculation) do
+  for Field := low(TEMatriculation) to high(TEMatriculation) do
   begin
     SetLength(Result, Succ(Length(Result)));
-    Result[Pred(Length(Result))] := oEField;
+    Result[Pred(Length(Result))] := Field;
   end;
 end;
 
-
-
-function TEnumMatriculation.Column(const AEnumeratedField: TEMatriculation): String;
+function TEnumMatriculation.Column(const EnumeratedField: TEMatriculation): string;
 begin
   Result := EmptyStr;
 
-  case AEnumeratedField of
+  case EnumeratedField of
     temSequential:
       Result := 'NR_SEQUENTIAL';
 
@@ -62,44 +60,32 @@ begin
   end;
 end;
 
-
-
 function TEnumMatriculation.PrimaryKey: TArray<TEMatriculation>;
 begin
   Result := [temSequential];
 end;
-
-
 
 function TEnumMatriculation.Ref: IEnum<TEMatriculation>;
 begin
   Result := Self;
 end;
 
-
-
-function TEnumMatriculation.Sequence: String;
+function TEnumMatriculation.Sequence: string;
 begin
   Result := 'GEN_MATRICULATION';
 end;
 
-
-
-function TEnumMatriculation.Table: String;
+function TEnumMatriculation.Table: string;
 begin
   Result := 'TB_MATRICULATION';
 end;
 
-
-
-function TEnumMatriculation.TableAlias(const AAlias: String): String;
+function TEnumMatriculation.TableAlias(const Alias: string): string;
 begin
-  Result := AAlias;
+  Result := Alias;
 
-  if (Result.IsEmpty) then
+  if Result.IsEmpty then
     Result := 'MATRICULATION';
 end;
-
-
 
 end.
