@@ -69,9 +69,9 @@ implementation
 
 uses
   NowaImpl,
-  Nowa.Model,
-  Nowa.ModelImpl,
-  Nowa.Enumerators,
+  NowaModel,
+  NowaModelImpl,
+  NowaEnumerators,
   Enumerator.Person,
   PersonImpl,
   System.SysUtils,

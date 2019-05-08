@@ -1,4 +1,4 @@
-unit Nowa.Enumerator;
+unit NowaEnumerator;
 
 interface
 

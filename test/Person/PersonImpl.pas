@@ -4,11 +4,13 @@ interface
 
 uses
   Person,
-  Nowa.ModelImpl,
-  Nowa.Enumerator,
+  NowaModelImpl,
+  NowaEnumerator,
   Enumerator.Person,
   Enumerator.Matriculation,
-  Nowa.Model;
+  NowaModel,
+  SysUtils,
+  MatriculationImpl;
 
 type
   TPerson = class(TModel<TEPerson>, IPerson<TEPerson>)
@@ -32,10 +34,6 @@ type
   end;
 
 implementation
-
-uses
-  SysUtils,
-  MatriculationImpl;
 
 { TPerson }
 

@@ -91,14 +91,14 @@
         </DelphiCompile>
         <DCCReference Include="..\ModelTest.pas"/>
         <DCCReference Include="..\NowaTest.pas"/>
-        <DCCReference Include="..\..\Nowa.Model.pas"/>
-        <DCCReference Include="..\..\Nowa.ModelImpl.pas"/>
-        <DCCReference Include="..\..\Nowa.Enumerator.pas"/>
+        <DCCReference Include="..\..\NowaModel.pas"/>
+        <DCCReference Include="..\..\NowaModelImpl.pas"/>
+        <DCCReference Include="..\..\NowaEnumerator.pas"/>
         <DCCReference Include="..\..\Nowa.pas"/>
         <DCCReference Include="..\..\NowaImpl.pas"/>
-        <DCCReference Include="..\..\Nowa.Enumerators.pas"/>
-        <DCCReference Include="..\DAOExample\NowaDAO.pas"/>
-        <DCCReference Include="..\DAOExample\NowaDAOImpl.pas"/>
+        <DCCReference Include="..\..\NowaEnumerators.pas"/>
+        <DCCReference Include="..\..\NowaDAO.pas"/>
+        <DCCReference Include="..\..\NowaDAOImpl.pas"/>
         <DCCReference Include="..\Matriculation\Enumerator.Matriculation.pas"/>
         <DCCReference Include="..\Matriculation\MatriculationImpl.pas"/>
         <DCCReference Include="..\Person\Person.pas"/>

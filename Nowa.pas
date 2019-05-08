@@ -3,8 +3,8 @@ unit Nowa;
 interface
 
 uses
-  Nowa.Model,
-  Nowa.Enumerators;
+  NowaModel,
+  NowaEnumerators;
 
 type
   ISQL = interface

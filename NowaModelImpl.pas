@@ -1,11 +1,13 @@
-unit Nowa.ModelImpl;
+unit NowaModelImpl;
 
 interface
 
 uses
-  Nowa.Model,
-  Nowa.Enumerator,
-  System.Generics.Collections;
+  NowaModel,
+  NowaEnumerator,
+  System.Generics.Collections,
+  System.Generics.Defaults,
+  System.SysUtils;
 
 type
   TModel<T> = class(TInterfacedObject, IModel<T>)
@@ -60,10 +62,6 @@ type
   end;
 
 implementation
-
-uses
-  System.Generics.Defaults,
-  System.SysUtils;
 
 { TModel<T> }
 

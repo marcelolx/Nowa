@@ -3,7 +3,7 @@ unit NowaDAO;
 interface
 
 uses
-  Nowa.Model,
+  NowaModel,
   FireDAC.Comp.Client;
 
 type

@@ -4,8 +4,10 @@ interface
 
 uses
   Nowa,
-  Nowa.Model,
-  Nowa.Enumerators;
+  NowaModel,
+  NowaEnumerators,
+  System.SysUtils,
+  System.Variants;
 
 type
   TSQL = class(TInterfacedObject, ISQL)
@@ -158,10 +160,6 @@ type
   end;
 
 implementation
-
-uses
-  System.SysUtils,
-  System.Variants;
 
 { TSQLWhere }
 

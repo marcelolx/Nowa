@@ -4,8 +4,12 @@ interface
 
 uses
   TestFramework,
-  Nowa.Model,
-  Enumerator.Person;
+  NowaModel,
+  Enumerator.Person,
+  PersonImpl,
+  System.SysUtils,
+  Person,
+  NowaModelImpl;
 
 type
   TModelTest = class(TTestCase)
@@ -29,12 +33,6 @@ type
   end;
 
 implementation
-
-uses
-  PersonImpl,
-  System.SysUtils,
-  Person,
-  Nowa.ModelImpl;
 
 { TModelTest }
 

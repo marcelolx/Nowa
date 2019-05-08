@@ -1,4 +1,4 @@
-unit Nowa.Model;
+unit NowaModel;
 
 interface
 

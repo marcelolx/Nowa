@@ -3,7 +3,7 @@ unit Person;
 interface
 
 uses
-  Nowa.Model,
+  NowaModel,
   Enumerator.Person,
   Enumerator.Matriculation;
 

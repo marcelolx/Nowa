@@ -3,10 +3,11 @@ unit MatriculationImpl;
 interface
 
 uses
-  Nowa.Model,
-  Nowa.ModelImpl,
-  Nowa.Enumerator,
-  Enumerator.Matriculation;
+  NowaModel,
+  NowaModelImpl,
+  NowaEnumerator,
+  Enumerator.Matriculation,
+  SysUtils;
 
 type
   TMatriculation = class(TModel<TEMatriculation>, IModel<TEMatriculation>)
@@ -24,9 +25,6 @@ type
   end;
 
 implementation
-
-uses
-  SysUtils;
 
 { TMatriculation }
 
