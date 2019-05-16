@@ -3,7 +3,7 @@ unit Nowa;
 interface
 
 uses
-  NowaModel,
+  NowaEntity,
   NowaEnumerators;
 
 type
@@ -76,13 +76,13 @@ type
 
   ISQLCommand<T> = interface(ISQL)
   ['{56F3B298-6CBA-4DB6-824A-5C3F329C63CF}']
-    function Insert(const Model: IModel<T>): ISQLCommand<T>;
-    function Update(const Model: IModel<T>): ISQLCommand<T>;
-    function Delete(const Model: IModel<T>): ISQLCommand<T>;
-    function Find(const Model: IModel<T>; const ModelKey: T; const KeyValue: Int64): ISQLCommand<T>;
-    function WhereKey(const Model: IModel<T>; const ModelKey: TArray<T>): ISQLCommand<T>;
+    function Insert(const Model: IEntity<T>): ISQLCommand<T>;
+    function Update(const Model: IEntity<T>): ISQLCommand<T>;
+    function Delete(const Model: IEntity<T>): ISQLCommand<T>;
+    function Find(const Model: IEntity<T>; const ModelKey: T; const KeyValue: Int64): ISQLCommand<T>;
+    function WhereKey(const Model: IEntity<T>; const ModelKey: TArray<T>): ISQLCommand<T>;
     function NewKeyValue(const SequenceName: String): ISQLCommand<T>;
-    function Exists(const Model: IModel<T>; const ModelKey: TArray<T>): ISQLCommand<T>;
+    function Exists(const Model: IEntity<T>; const ModelKey: TArray<T>): ISQLCommand<T>;
   end;
 
 implementation

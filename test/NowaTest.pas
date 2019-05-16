@@ -69,8 +69,8 @@ implementation
 
 uses
   NowaImpl,
-  NowaModel,
-  NowaModelImpl,
+  NowaEntity,
+  NowaEntityImpl,
   NowaEnumerators,
   Enumerator.Person,
   PersonImpl,
@@ -102,11 +102,11 @@ const
   QueryExpected = 'select P.SEQUENTIAL as P_SEQUENTIAL, P.NAME as P_NAME, P.BIRTHDATE as P_BIRTHDATE, P.EMAIL as P_EMAIL, P.PASSWORD as P_PASSWORD from PERSON as P';
   QueryExpected2 = 'select P.SEQUENTIAL as P_SEQUENTIAL from PERSON as P';
 var
-  Person: IModel<TEPerson>;
+  Person: IEntity<TEPerson>;
   Query: String;
 begin
   Person := TPerson.Create;
-  Person.PrepareModel('', []);
+  Person.PrepareEntity('', []);
 
   Query := TSQLSelect.Create.Ref
     .Fields([Person.Fields])
@@ -115,7 +115,7 @@ begin
 
   CheckEquals(QueryExpected, Query);
 
-  Person.PrepareModel('', [tepSequential]);
+  Person.PrepareEntity('', [tepSequential]);
 
   Query := TSQLSelect.Create.Ref
     .Fields([Person.Fields])
@@ -131,10 +131,10 @@ procedure TNowaTest.TestSQLCommandDelete;
 const
   Delete = 'delete from person';
 var
-  Person: IModel<TEPerson>;
+  Person: IEntity<TEPerson>;
 begin
   Person := TPerson.Create;
-  Person.PrepareModel('', []);
+  Person.PrepareEntity('', []);
 
   CheckEquals(Delete,
     TSQLCommand<TEPerson>.Create.Ref
@@ -149,10 +149,10 @@ procedure TNowaTest.TestSQLCommandDeleteWhere;
 const
   Delete = 'delete from person where sequential = :P_SEQUENTIAL';
 var
-  Person: IModel<TEPerson>;
+  Person: IEntity<TEPerson>;
 begin
   Person := TPerson.Create;
-  Person.PrepareModel('', []);
+  Person.PrepareEntity('', []);
 
   CheckEquals(Delete,
     TSQLCommand<TEPerson>.Create.Ref
@@ -166,10 +166,10 @@ end;
 
 procedure TNowaTest.TestSQLCommandExists;
 var
-  Person: IModel<TEPerson>;
+  Person: IEntity<TEPerson>;
 begin
   Person := TPerson.Create;
-  Person.PrepareModel('', []);
+  Person.PrepareEntity('', []);
 
   CheckEquals('not implemented',
     TSQLCommand<TEPerson>.Create.Ref
@@ -185,10 +185,10 @@ const
   Find = 'select P.SEQUENTIAL as P_SEQUENTIAL, P.NAME as P_NAME, P.BIRTHDATE as P_BIRTHDATE,' +
     ' P.EMAIL as P_EMAIL, P.PASSWORD as P_PASSWORD from PERSON as P where P.SEQUENTIAL = 1';
 var
-  Person: IModel<TEPerson>;
+  Person: IEntity<TEPerson>;
 begin
   Person := TPerson.Create;
-  Person.PrepareModel('', []);
+  Person.PrepareEntity('', []);
 
   CheckEquals(Find,
     TSQLCommand<TEPerson>.Create.Ref
@@ -203,10 +203,10 @@ procedure TNowaTest.TestSQLCommandInsert;
 const
   Insert = 'insert into person (sequential, name, birthdate, email, password) values (:P_SEQUENTIAL, :P_NAME, :P_BIRTHDATE, :P_EMAIL, :P_PASSWORD)';
 var
-  Person: IModel<TEPerson>;
+  Person: IEntity<TEPerson>;
 begin
   Person := TPerson.Create;
-  Person.PrepareModel('', []);
+  Person.PrepareEntity('', []);
 
   CheckEquals(Insert,
     TSQLCommand<TEPerson>.Create.Ref
@@ -221,10 +221,10 @@ procedure TNowaTest.TestSQLCommandNewKeyValue;
 const
   Sequence = 'select nextval(''gen_person'') as sequence';
 var
-  Person: IModel<TEPerson>;
+  Person: IEntity<TEPerson>;
 begin
   Person := TPerson.Create;
-  Person.PrepareModel('', []);
+  Person.PrepareEntity('', []);
 
   CheckEquals(Sequence,
     TSQLCommand<TEPerson>.Create.Ref
@@ -239,10 +239,10 @@ procedure TNowaTest.TestSQLCommandUpdate;
 const
   Update = 'update person set sequential = :P_SEQUENTIAL, name = :P_NAME, birthdate = :P_BIRTHDATE, email = :P_EMAIL, password = :P_PASSWORD';
 var
-  Person: IModel<TEPerson>;
+  Person: IEntity<TEPerson>;
 begin
   Person := TPerson.Create;
-  Person.PrepareModel('', []);
+  Person.PrepareEntity('', []);
 
   CheckEquals(Update,
     TSQLCommand<TEPerson>.Create.Ref
@@ -258,10 +258,10 @@ const
   Update = 'update person set sequential = :P_SEQUENTIAL, name = :P_NAME, birthdate = :P_BIRTHDATE,' +
     ' email = :P_EMAIL, password = :P_PASSWORD where sequential = :P_SEQUENTIAL';
 var
-  Person: IModel<TEPerson>;
+  Person: IEntity<TEPerson>;
 begin
   Person := TPerson.Create;
-  Person.PrepareModel('', []);
+  Person.PrepareEntity('', []);
 
   CheckEquals(Update,
     TSQLCommand<TEPerson>.Create.Ref
@@ -350,7 +350,7 @@ const
     'select PERSON.SEQUENTIAL as PERSON_SEQUENTIAL, PERSON.NAME as PERSON_NAME, PERSON.BIRTHDATE as PERSON_BIRTHDATE,' +
     'PERSON.EMAIL as PERSON_EMAIL, PERSON.PASSWORD as PERSON_PASSWORD';
 var
-  Person: IModel<TEPerson>;
+  Person: IEntity<TEPerson>;
   Table: ITable;
   Field: IField;
 begin
@@ -361,10 +361,10 @@ begin
   CheckEquals(Query, TSQLSelect.Create.Ref.Fields([[Field]]).Build);
 
   Person := TPerson.Create;
-  Person.PrepareModel('', [tepSequential]);
+  Person.PrepareEntity('', [tepSequential]);
   CheckEquals(Query, TSQLSelect.Create.Ref.Fields([Person.Fields]).Build);
 
-  Person.PrepareModel('', []);
+  Person.PrepareEntity('', []);
   CheckEquals(QueryExpected, TSQLSelect.Create.Ref.Fields([Person.Fields]).Build);
 end;
 
@@ -375,18 +375,18 @@ const
   Query = 'select P.SEQUENTIAL as P_SEQUENTIAL from PERSON as P';
   QueryExpected = 'select P.SEQUENTIAL as P_SEQUENTIAL, P.NAME as P_NAME, P.BIRTHDATE as P_BIRTHDATE, P.EMAIL as P_EMAIL, P.PASSWORD as P_PASSWORD from PERSON as P';
 var
-  Person: IModel<TEPerson>;
+  Person: IEntity<TEPerson>;
 begin
   Person := TPerson.Create;
 
-  Person.PrepareModel('', [tepSequential]);
+  Person.PrepareEntity('', [tepSequential]);
   CheckEquals(Query,
     TSQLSelect.Create.Ref
       .Fields([Person.Fields])
       .From(Person.Table)
       .Build);
 
-  Person.PrepareModel('', []);
+  Person.PrepareEntity('', []);
   CheckEquals(QueryExpected,
     TSQLSelect.Create.Ref
       .Fields([Person.Fields])
@@ -424,14 +424,14 @@ const
                 ' from PERSON as P' +
                ' inner join MATRICULATION as MT on (MT.PERSONSEQUENTIAL = P.SEQUENTIAL)';
 var
-  Person: IModel<TEPerson>;
-  Matriculation: IModel<TEMatriculation>;
+  Person: IEntity<TEPerson>;
+  Matriculation: IEntity<TEMatriculation>;
 begin
   Person := TPerson.Create;
   Matriculation := TMatriculation.Create;
 
-  Person.PrepareModel('', []);
-  Matriculation.PrepareModel('', []);
+  Person.PrepareEntity('', []);
+  Matriculation.PrepareEntity('', []);
 
   CheckEquals(InnerJoin,
     TSQLSelect.Create.Ref
@@ -467,14 +467,14 @@ const
                 ' from PERSON as P' +
                ' left join MATRICULATION as MT on (MT.PERSONSEQUENTIAL = P.SEQUENTIAL)';
 var
-  Person: IModel<TEPerson>;
-  Matriculation: IModel<TEMatriculation>;
+  Person: IEntity<TEPerson>;
+  Matriculation: IEntity<TEMatriculation>;
 begin
   Person := TPerson.Create;
   Matriculation := TMatriculation.Create;
 
-  Person.PrepareModel('', []);
-  Matriculation.PrepareModel('', []);
+  Person.PrepareEntity('', []);
+  Matriculation.PrepareEntity('', []);
 
   CheckEquals(InnerJoin,
     TSQLSelect.Create.Ref
@@ -510,14 +510,14 @@ const
                 ' from PERSON as P' +
                ' left outer join MATRICULATION as MT on (MT.PERSONSEQUENTIAL = P.SEQUENTIAL)';
 var
-  Person: IModel<TEPerson>;
-  Matriculation: IModel<TEMatriculation>;
+  Person: IEntity<TEPerson>;
+  Matriculation: IEntity<TEMatriculation>;
 begin
   Person := TPerson.Create;
   Matriculation := TMatriculation.Create;
 
-  Person.PrepareModel('', []);
-  Matriculation.PrepareModel('', []);
+  Person.PrepareEntity('', []);
+  Matriculation.PrepareEntity('', []);
 
   CheckEquals(InnerJoin,
     TSQLSelect.Create.Ref
@@ -553,14 +553,14 @@ const
                 ' from PERSON as P' +
                ' right join MATRICULATION as MT on (MT.PERSONSEQUENTIAL = P.SEQUENTIAL)';
 var
-  Person: IModel<TEPerson>;
-  Matriculation: IModel<TEMatriculation>;
+  Person: IEntity<TEPerson>;
+  Matriculation: IEntity<TEMatriculation>;
 begin
   Person := TPerson.Create;
   Matriculation := TMatriculation.Create;
 
-  Person.PrepareModel('', []);
-  Matriculation.PrepareModel('', []);
+  Person.PrepareEntity('', []);
+  Matriculation.PrepareEntity('', []);
 
   CheckEquals(InnerJoin,
     TSQLSelect.Create.Ref
@@ -596,14 +596,14 @@ const
                 ' from PERSON as P' +
                ' right outer join MATRICULATION as MT on (MT.PERSONSEQUENTIAL = P.SEQUENTIAL)';
 var
-  Person: IModel<TEPerson>;
-  Matriculation: IModel<TEMatriculation>;
+  Person: IEntity<TEPerson>;
+  Matriculation: IEntity<TEMatriculation>;
 begin
   Person := TPerson.Create;
   Matriculation := TMatriculation.Create;
 
-  Person.PrepareModel('', []);
-  Matriculation.PrepareModel('', []);
+  Person.PrepareEntity('', []);
+  Matriculation.PrepareEntity('', []);
 
   CheckEquals(InnerJoin,
     TSQLSelect.Create.Ref
@@ -643,10 +643,10 @@ const
                 ' from PERSON as P' +
                 ' where P.NAME = ''RANDOM''';
 var
-  Person: IModel<TEPerson>;
+  Person: IEntity<TEPerson>;
 begin
   Person := TPerson.Create;
-  Person.PrepareModel('', []);
+  Person.PrepareEntity('', []);
 
   CheckEquals(InnerJoin,
     TSQLSelect.Create.Ref
@@ -689,10 +689,10 @@ const
                 ' from PERSON as P' +
                 ' where P.NAME = ''RANDOM''';
 var
-  Person: IModel<TEPerson>;
+  Person: IEntity<TEPerson>;
 begin
   Person := TPerson.Create;
-  Person.PrepareModel('', []);
+  Person.PrepareEntity('', []);
 
   CheckEquals(InnerJoin,
     TSQLSelect.Create.Ref
@@ -724,11 +724,11 @@ const
     'select P.SEQUENTIAL as P_SEQUENTIAL, P.NAME as P_NAME, P.BIRTHDATE as P_BIRTHDATE, ' +
     'P.EMAIL as P_EMAIL, P.PASSWORD as P_PASSWORD from PERSON as P where P.SEQUENTIAL = 1';
 var
-  Person: IModel<TEPerson>;
+  Person: IEntity<TEPerson>;
 begin
   Person := TPerson.Create;
 
-  Person.PrepareModel('', [tepSequential]);
+  Person.PrepareEntity('', [tepSequential]);
   CheckEquals(Query,
     TSQLSelect.Create.Ref
       .Fields([Person.Fields])
@@ -741,7 +741,7 @@ begin
       .Build
   );
 
-  Person.PrepareModel('', []);
+  Person.PrepareEntity('', []);
   CheckEquals(QueryExpected,
     TSQLSelect.Create.Ref
       .Fields([Person.Fields])
@@ -764,8 +764,8 @@ const
   Query3 = ' where T1.EXAMPLE <> T2.EXAMPLE';
   Query4 = ' where P.SEQUENTIAL <> MT.PERSONSEQUENTIAL';
 var
-  Person: IModel<TEPerson>;
-  Matriculation: IModel<TEMatriculation>;
+  Person: IEntity<TEPerson>;
+  Matriculation: IEntity<TEMatriculation>;
   Table, Table2: ITable;
 begin
   Table := TTable.Create('T', '');
@@ -799,8 +799,8 @@ begin
 
   Person := TPerson.Create;
   Matriculation := TMatriculation.Create;
-  Person.PrepareModel('', []);
-  Matriculation.PrepareModel('', []);
+  Person.PrepareEntity('', []);
+  Matriculation.PrepareEntity('', []);
   CheckEquals(Query4,
     TSQLWhere.Create.Ref
       .Field(Person.Field(tepSequential))
@@ -819,7 +819,7 @@ const
   Query2 = ' where T.EXAMPLE <> ''ABC''';
   Query3 = ' where P.SEQUENTIAL <> 1';
 var
-  Person: IModel<TEPerson>;
+  Person: IEntity<TEPerson>;
   Table: ITable;
 begin
   Table := TTable.Create('T', '');
@@ -840,7 +840,7 @@ begin
   );
 
   Person := TPerson.Create;
-  Person.PrepareModel('', []);
+  Person.PrepareEntity('', []);
   CheckEquals(Query3,
     TSQLWhere.Create.Ref
       .Field(Person.Field(tepSequential))
@@ -887,8 +887,8 @@ const
   Query6 = ' where P.SEQUENTIAL = 1';
   Query7 = ' where P.SEQUENTIAL = MT.PERSONSEQUENTIAL';
 var
-  Person: IModel<TEPerson>;
-  Matriculation: IModel<TEMatriculation>;
+  Person: IEntity<TEPerson>;
+  Matriculation: IEntity<TEMatriculation>;
   Table, Table2: ITable;
 begin
   Table := TTable.Create('T', '');
@@ -933,7 +933,7 @@ begin
   );
 
   Person := TPerson.Create;
-  Person.PrepareModel('', []);
+  Person.PrepareEntity('', []);
   CheckEquals(Query6,
     TSQLWhere.Create.Ref
     .Field(Person.Field(tepSequential))
@@ -942,8 +942,8 @@ begin
   );
 
   Matriculation := TMatriculation.Create;
-  Person.PrepareModel('', []);
-  Matriculation.PrepareModel('', []);
+  Person.PrepareEntity('', []);
+  Matriculation.PrepareEntity('', []);
   CheckEquals(Query7,
     TSQLWhere.Create.Ref
       .Field(Person.Field(tepSequential))
@@ -960,7 +960,7 @@ const
   Query = ' where T.EXAMPLE';
   QueryPerson = ' where P.NAME';
 var
-  Person: IModel<TEPerson>;
+  Person: IEntity<TEPerson>;
   Table: ITable;
 begin
   Table := TTable.Create('T', '');
@@ -973,7 +973,7 @@ begin
   );
 
   Person := TPerson.Create;
-  Person.PrepareModel('', []);
+  Person.PrepareEntity('', []);
   CheckEquals(QueryPerson,
     TSQLWhere.Create.Ref
     .Field(Person.Field(tepName))
@@ -989,8 +989,8 @@ const
   Query2 = ' where T1.EXAMPLE > T2.EXAMPLE';
   Query3 = ' where P.SEQUENTIAL > MT.PERSONSEQUENTIAL';
 var
-  Person: IModel<TEPerson>;
-  Matriculation: IModel<TEMatriculation>;
+  Person: IEntity<TEPerson>;
+  Matriculation: IEntity<TEMatriculation>;
   Table, Table2: ITable;
 begin
   Table := TTable.Create('T', '');
@@ -1017,8 +1017,8 @@ begin
 
   Person := TPerson.Create;
   Matriculation := TMatriculation.Create;
-  Person.PrepareModel('', []);
-  Matriculation.PrepareModel('', []);
+  Person.PrepareEntity('', []);
+  Matriculation.PrepareEntity('', []);
   CheckEquals(Query3,
     TSQLWhere.Create.Ref
       .Field(Person.Field(tepSequential))
@@ -1036,8 +1036,8 @@ const
   Query2 = ' where T1.EXAMPLE >= T2.EXAMPLE';
   Query3 = ' where P.SEQUENTIAL >= MT.PERSONSEQUENTIAL';
 var
-  Person: IModel<TEPerson>;
-  Matriculation: IModel<TEMatriculation>;
+  Person: IEntity<TEPerson>;
+  Matriculation: IEntity<TEMatriculation>;
   Table, Table2: ITable;
 begin
   Table := TTable.Create('T', '');
@@ -1064,8 +1064,8 @@ begin
 
   Person := TPerson.Create;
   Matriculation := TMatriculation.Create;
-  Person.PrepareModel('', []);
-  Matriculation.PrepareModel('', []);
+  Person.PrepareEntity('', []);
+  Matriculation.PrepareEntity('', []);
   CheckEquals(Query3,
     TSQLWhere.Create.Ref
       .Field(Person.Field(tepSequential))
@@ -1083,7 +1083,7 @@ const
   Query2 = ' where T.EXAMPLE >= ''ABC''';
   Query3 = ' where P.SEQUENTIAL >= 1';
 var
-  Person: IModel<TEPerson>;
+  Person: IEntity<TEPerson>;
   Table: ITable;
 begin
   Table := TTable.Create('T', '');
@@ -1104,7 +1104,7 @@ begin
   );
 
   Person := TPerson.Create;
-  Person.PrepareModel('', []);
+  Person.PrepareEntity('', []);
   CheckEquals(Query3,
     TSQLWhere.Create.Ref
       .Field(Person.Field(tepSequential))
@@ -1121,7 +1121,7 @@ const
   Query2 = ' where T.EXAMPLE > ''ABC''';
   Query3 = ' where P.SEQUENTIAL > 1';
 var
-  Person: IModel<TEPerson>;
+  Person: IEntity<TEPerson>;
   Table: ITable;
 begin
   Table := TTable.Create('T', '');
@@ -1142,7 +1142,7 @@ begin
   );
 
   Person := TPerson.Create;
-  Person.PrepareModel('', []);
+  Person.PrepareEntity('', []);
   CheckEquals(Query3,
     TSQLWhere.Create.Ref
       .Field(Person.Field(tepSequential))
@@ -1155,10 +1155,10 @@ end;
 
 procedure TNowaTest.TestSQLWhereInList;
 var
-  Person: IModel<TEPerson>;
+  Person: IEntity<TEPerson>;
 begin
   Person := TPerson.Create;
-  Person.PrepareModel('', []);
+  Person.PrepareEntity('', []);
 
   CheckEquals(' where P.SEQUENTIAL in (1,2,3,4)',
     TSQLWhere.Create.Ref
@@ -1172,10 +1172,10 @@ end;
 
 procedure TNowaTest.TestSQLWhereIsNotNull;
 var
-  Person: IModel<TEPerson>;
+  Person: IEntity<TEPerson>;
 begin
   Person := TPerson.Create;
-  Person.PrepareModel('', []);
+  Person.PrepareEntity('', []);
 
   CheckEquals('not implemented',
     TSQLWhere.Create.Ref
@@ -1189,10 +1189,10 @@ end;
 
 procedure TNowaTest.TestSQLWhereIsNull;
 var
-  Person: IModel<TEPerson>;
+  Person: IEntity<TEPerson>;
 begin
   Person := TPerson.Create;
-  Person.PrepareModel('', []);
+  Person.PrepareEntity('', []);
 
   CheckEquals('not implemented',
     TSQLWhere.Create.Ref
@@ -1210,8 +1210,8 @@ const
   Query2 = ' where T1.EXAMPLE < T2.EXAMPLE';
   Query3 = ' where P.SEQUENTIAL < MT.PERSONSEQUENTIAL';
 var
-  Person: IModel<TEPerson>;
-  Matriculation: IModel<TEMatriculation>;
+  Person: IEntity<TEPerson>;
+  Matriculation: IEntity<TEMatriculation>;
   Table, Table2: ITable;
 begin
   Table := TTable.Create('T', '');
@@ -1238,8 +1238,8 @@ begin
 
   Person := TPerson.Create;
   Matriculation := TMatriculation.Create;
-  Person.PrepareModel('', []);
-  Matriculation.PrepareModel('', []);
+  Person.PrepareEntity('', []);
+  Matriculation.PrepareEntity('', []);
   CheckEquals(Query3,
     TSQLWhere.Create.Ref
       .Field(Person.Field(tepSequential))
@@ -1257,8 +1257,8 @@ const
   Query2 = ' where T1.EXAMPLE <= T2.EXAMPLE';
   Query3 = ' where P.SEQUENTIAL <= MT.PERSONSEQUENTIAL';
 var
-  Person: IModel<TEPerson>;
-  Matriculation: IModel<TEMatriculation>;
+  Person: IEntity<TEPerson>;
+  Matriculation: IEntity<TEMatriculation>;
   Table, Table2: ITable;
 begin
   Table := TTable.Create('T', '');
@@ -1285,8 +1285,8 @@ begin
 
   Person := TPerson.Create;
   Matriculation := TMatriculation.Create;
-  Person.PrepareModel('', []);
-  Matriculation.PrepareModel('', []);
+  Person.PrepareEntity('', []);
+  Matriculation.PrepareEntity('', []);
   CheckEquals(Query3,
     TSQLWhere.Create.Ref
       .Field(Person.Field(tepSequential))
@@ -1303,7 +1303,7 @@ const
   Query2 = ' where T.EXAMPLE <= ''ABC''';
   Query3 = ' where P.SEQUENTIAL <= 1';
 var
-  Person: IModel<TEPerson>;
+  Person: IEntity<TEPerson>;
   Table: ITable;
 begin
   Table := TTable.Create('T', '');
@@ -1324,7 +1324,7 @@ begin
   );
 
   Person := TPerson.Create;
-  Person.PrepareModel('', []);
+  Person.PrepareEntity('', []);
   CheckEquals(Query3,
     TSQLWhere.Create.Ref
       .Field(Person.Field(tepSequential))
@@ -1341,7 +1341,7 @@ const
   Query2 = ' where T.EXAMPLE < ''ABC''';
   Query3 = ' where P.SEQUENTIAL < 1';
 var
-  Person: IModel<TEPerson>;
+  Person: IEntity<TEPerson>;
   Table: ITable;
 begin
   Table := TTable.Create('T', '');
@@ -1362,7 +1362,7 @@ begin
   );
 
   Person := TPerson.Create;
-  Person.PrepareModel('', []);
+  Person.PrepareEntity('', []);
   CheckEquals(Query3,
     TSQLWhere.Create.Ref
       .Field(Person.Field(tepSequential))
@@ -1375,10 +1375,10 @@ end;
 
 procedure TNowaTest.TestSQLWhereLike;
 var
-  Person: IModel<TEPerson>;
+  Person: IEntity<TEPerson>;
 begin
   Person := TPerson.Create;
-  Person.PrepareModel('', []);
+  Person.PrepareEntity('', []);
 
   CheckEquals('not implemented',
     TSQLWhere.Create.Ref
@@ -1413,10 +1413,10 @@ end;
 
 procedure TNowaTest.TestSQLWhereNot;
 var
-  Person: IModel<TEPerson>;
+  Person: IEntity<TEPerson>;
 begin
   Person := TPerson.Create;
-  Person.PrepareModel('', []);
+  Person.PrepareEntity('', []);
 
   CheckEquals(' where P.SEQUENTIAL not ',
     TSQLWhere.Create.Ref
@@ -1430,10 +1430,10 @@ end;
 
 procedure TNowaTest.TestSQLWhereNotInList;
 var
-  Person: IModel<TEPerson>;
+  Person: IEntity<TEPerson>;
 begin
   Person := TPerson.Create;
-  Person.PrepareModel('', []);
+  Person.PrepareEntity('', []);
 
   CheckEquals(' where P.SEQUENTIAL not  in (1,2,3,4)',
     TSQLWhere.Create.Ref
@@ -1447,10 +1447,10 @@ end;
 
 procedure TNowaTest.TestSQLWhereNotLike;
 var
-  Person: IModel<TEPerson>;
+  Person: IEntity<TEPerson>;
 begin
   Person := TPerson.Create;
-  Person.PrepareModel('', []);
+  Person.PrepareEntity('', []);
 
   CheckEquals('not implemented',
     TSQLWhere.Create.Ref

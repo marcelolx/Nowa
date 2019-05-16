@@ -4,16 +4,17 @@ interface
 
 uses
   Person,
-  NowaModelImpl,
+  NowaEntityImpl,
   NowaEnumerator,
   Enumerator.Person,
   Enumerator.Matriculation,
-  NowaModel,
+  NowaEntity,
   SysUtils,
-  MatriculationImpl;
+  MatriculationImpl,
+  NowaException;
 
 type
-  TPerson = class(TModel<TEPerson>, IPerson<TEPerson>)
+  TPerson = class(TEntity<TEPerson>, IPerson<TEPerson>)
   private
     Sequential: Int64;
     Name: string;
@@ -21,7 +22,7 @@ type
     Email: string;
     Password: string;
 
-    Matriculation: IModel<TEMatriculation>;
+    Matriculation: IEntity<TEMatriculation>;
   public
     constructor Create; reintroduce;
     function Ref: IPerson<TEPerson>;
@@ -60,7 +61,7 @@ begin
     tepPassword:
       Result := Password;
   else
-    raise Exception.Create('TEPerson field doesn''t have relationship with model atributte.');
+    raise EntityFieldException.Create('TEPerson');
   end;
 end;
 
@@ -78,7 +79,7 @@ begin
     tepPassword:
       Password := Value;
   else
-    raise Exception.Create('TEPerson field doesn''t have relationship with model atributte.');
+    raise EntityFieldException.Create('TEPerson');
   end;
 end;
 

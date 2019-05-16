@@ -1,4 +1,4 @@
-unit NowaModel;
+unit NowaEntity;
 
 interface
 
@@ -18,9 +18,9 @@ type
     function Table: ITable;
   end;
 
-  IModel<T> = interface
+  IEntity<T> = interface
   ['{C466292A-8F89-4B1F-B3BF-EE5588621D00}']
-    procedure PrepareModel(const TableAlias: String; const Fields: TArray<T>);
+    procedure PrepareEntity(const TableAlias: String; const Fields: TArray<T>);
     procedure SetValue(const Field: T; const Value: Variant);
 
     function Table: ITable;

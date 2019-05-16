@@ -1,27 +1,27 @@
-unit NowaModelImpl;
+unit NowaEntityImpl;
 
 interface
 
 uses
-  NowaModel,
+  NowaEntity,
   NowaEnumerator,
   System.Generics.Collections,
   System.Generics.Defaults,
   System.SysUtils;
 
 type
-  TModel<T> = class(TInterfacedObject, IModel<T>)
+  TEntity<T> = class(TInterfacedObject, IEntity<T>)
   strict private
-    FModelEnumerator: IEnum<T>;
+    FEntityEnumerator: IEnum<T>;
     FTable: ITable;
     FInternalFields: TArray<T>;
     FFields: TDictionary<T, IField>;
     FPrimaryKey: TArray<T>;
   public
-    constructor Create(const ModelEnumerator: IEnum<T>); reintroduce;
+    constructor Create(const EntityEnumerator: IEnum<T>); reintroduce;
     destructor Destroy; override;
 
-    procedure PrepareModel(const TableAlias: string = ''; const Fields: TArray<T> = []);
+    procedure PrepareEntity(const TableAlias: string = ''; const Fields: TArray<T> = []);
     procedure SetValue(const Field: T; const Value: Variant); virtual; abstract;
 
     function GetValue(const Field: T): Variant; virtual; abstract;
@@ -63,54 +63,54 @@ type
 
 implementation
 
-{ TModel<T> }
+{ TEntity<T> }
 
-constructor TModel<T>.Create(const ModelEnumerator: IEnum<T>);
+constructor TEntity<T>.Create(const EntityEnumerator: IEnum<T>);
 var
   Field: T;
 begin
-  FModelEnumerator := ModelEnumerator;
+  FEntityEnumerator := EntityEnumerator;
   FFields := TDictionary<T, IField>.Create;
-  FTable := TTable.Create(FModelEnumerator.Table, FModelEnumerator.Sequence);
-  FInternalFields := FModelEnumerator.AllColumns;
-  FPrimaryKey := FModelEnumerator.PrimaryKey;
+  FTable := TTable.Create(FEntityEnumerator.Table, FEntityEnumerator.Sequence);
+  FInternalFields := FEntityEnumerator.AllColumns;
+  FPrimaryKey := FEntityEnumerator.PrimaryKey;
 
   for Field in FInternalFields do
-    FFields.Add(Field, TField.Create(FModelEnumerator.Column(Field), FTable).Ref);
+    FFields.Add(Field, TField.Create(FEntityEnumerator.Column(Field), FTable).Ref);
 end;
 
-procedure TModel<T>.PrepareModel(const TableAlias: string; const Fields: TArray<T>);
+procedure TEntity<T>.PrepareEntity(const TableAlias: string; const Fields: TArray<T>);
 begin
-  FTable.Prepare(FModelEnumerator.TableAlias(TableAlias));
+  FTable.Prepare(FEntityEnumerator.TableAlias(TableAlias));
 
   if Length(Fields) > 0 then
     FInternalFields := Fields
   else
-    FInternalFields := FModelEnumerator.AllColumns;
+    FInternalFields := FEntityEnumerator.AllColumns;
 end;
 
-function TModel<T>.PrimaryKey: TArray<T>;
+function TEntity<T>.PrimaryKey: TArray<T>;
 begin
   Result := FPrimaryKey;
 end;
 
-function TModel<T>.Table: ITable;
+function TEntity<T>.Table: ITable;
 begin
   Result := FTable;
 end;
 
-destructor TModel<T>.Destroy;
+destructor TEntity<T>.Destroy;
 begin
   FFields.Free;
   inherited;
 end;
 
-function TModel<T>.Field(const Field: T): IField;
+function TEntity<T>.Field(const Field: T): IField;
 begin
   FFields.TryGetValue(Field, Result);
 end;
 
-function TModel<T>.Field(const Field: IField): T;
+function TEntity<T>.Field(const Field: IField): T;
 var
   Key: T;
 begin
@@ -126,7 +126,7 @@ begin
   end;
 end;
 
-function TModel<T>.Fields: TArray<IField>;
+function TEntity<T>.Fields: TArray<IField>;
 var
   Field: T;
 begin
@@ -139,7 +139,7 @@ begin
   end;
 end;
 
-function TModel<T>.IsNew: Boolean;
+function TEntity<T>.IsNew: Boolean;
 begin
   Result := False;
 

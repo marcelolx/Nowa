@@ -6,10 +6,10 @@ program NowaTests;
 
 uses
   DUnitTestRunner,
-  ModelTest in '..\ModelTest.pas',
+  EntityTest in '..\EntityTest.pas',
   NowaTest in '..\NowaTest.pas',
-  NowaModel in '..\..\NowaModel.pas',
-  NowaModelImpl in '..\..\NowaModelImpl.pas',
+  NowaEntity in '..\..\NowaEntity.pas',
+  NowaEntityImpl in '..\..\NowaEntityImpl.pas',
   NowaEnumerator in '..\..\NowaEnumerator.pas',
   Nowa in '..\..\Nowa.pas',
   NowaImpl in '..\..\NowaImpl.pas',
@@ -20,7 +20,9 @@ uses
   MatriculationImpl in '..\Matriculation\MatriculationImpl.pas',
   Person in '..\Person\Person.pas',
   PersonImpl in '..\Person\PersonImpl.pas',
-  Enumerator.Person in '..\Person\Enumerator.Person.pas';
+  Enumerator.Person in '..\Person\Enumerator.Person.pas',
+  NowaResourceStrings in '..\..\NowaResourceStrings.pas',
+  NowaException in '..\..\NowaException.pas';
 
 {$R *.RES}
 

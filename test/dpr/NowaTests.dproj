@@ -89,10 +89,10 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="..\ModelTest.pas"/>
+        <DCCReference Include="..\EntityTest.pas"/>
         <DCCReference Include="..\NowaTest.pas"/>
-        <DCCReference Include="..\..\NowaModel.pas"/>
-        <DCCReference Include="..\..\NowaModelImpl.pas"/>
+        <DCCReference Include="..\..\NowaEntity.pas"/>
+        <DCCReference Include="..\..\NowaEntityImpl.pas"/>
         <DCCReference Include="..\..\NowaEnumerator.pas"/>
         <DCCReference Include="..\..\Nowa.pas"/>
         <DCCReference Include="..\..\NowaImpl.pas"/>
@@ -104,6 +104,8 @@
         <DCCReference Include="..\Person\Person.pas"/>
         <DCCReference Include="..\Person\PersonImpl.pas"/>
         <DCCReference Include="..\Person\Enumerator.Person.pas"/>
+        <DCCReference Include="..\..\NowaResourceStrings.pas"/>
+        <DCCReference Include="..\..\NowaException.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

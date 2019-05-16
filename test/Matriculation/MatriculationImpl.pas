@@ -3,14 +3,15 @@ unit MatriculationImpl;
 interface
 
 uses
-  NowaModel,
-  NowaModelImpl,
+  NowaEntity,
+  NowaEntityImpl,
   NowaEnumerator,
+  NowaException,
   Enumerator.Matriculation,
   SysUtils;
 
 type
-  TMatriculation = class(TModel<TEMatriculation>, IModel<TEMatriculation>)
+  TMatriculation = class(TEntity<TEMatriculation>, IEntity<TEMatriculation>)
   private
     Sequential: Integer;
     PersonSequential: Integer;
@@ -47,7 +48,7 @@ begin
     temUser:
       Result := User;
   else
-    raise Exception.Create('TEMatriculation field doesn''t have relationship with model atributte.');
+    raise EntityFieldException.Create('TEMatriculation');
   end;
 end;
 
@@ -63,7 +64,7 @@ begin
     temUser:
       User := Value;
   else
-    raise Exception.Create('TEMatriculation field doesn''t have relationship with model atributte.');
+    raise EntityFieldException.Create('TEMatriculation');
   end;
 end;
 

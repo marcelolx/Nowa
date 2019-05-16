@@ -4,7 +4,7 @@ interface
 
 uses
   Nowa,
-  NowaModel,
+  NowaEntity,
   NowaEnumerators,
   System.SysUtils,
   System.Variants;
@@ -145,13 +145,13 @@ type
   strict private
     FCommand: string;
   public
-    function Insert(const Model: IModel<T>): ISQLCommand<T>;
-    function Update(const Model: IModel<T>): ISQLCommand<T>;
-    function Delete(const Model: IModel<T>): ISQLCommand<T>;
-    function WhereKey(const Model: IModel<T>; const ModelKey: TArray<T>): ISQLCommand<T>;
+    function Insert(const Model: IEntity<T>): ISQLCommand<T>;
+    function Update(const Model: IEntity<T>): ISQLCommand<T>;
+    function Delete(const Model: IEntity<T>): ISQLCommand<T>;
+    function WhereKey(const Model: IEntity<T>; const ModelKey: TArray<T>): ISQLCommand<T>;
     function NewKeyValue(const SequenceName: string): ISQLCommand<T>;
-    function Find(const Model: IModel<T>; const ModelKey: T; const KeyValue: Int64): ISQLCommand<T>;
-    function Exists(const Model: IModel<T>; const ModelKey: TArray<T>): ISQLCommand<T>;
+    function Find(const Model: IEntity<T>; const ModelKey: T; const KeyValue: Int64): ISQLCommand<T>;
+    function Exists(const Model: IEntity<T>; const ModelKey: TArray<T>): ISQLCommand<T>;
 
     function Build: string; override;
 
@@ -442,19 +442,19 @@ begin
   FCommand := EmptyStr;
 end;
 
-function TSQLCommand<T>.Delete(const Model: IModel<T>): ISQLCommand<T>;
+function TSQLCommand<T>.Delete(const Model: IEntity<T>): ISQLCommand<T>;
 begin
   Result := Self;
   FCommand := DeleteSQL.Trim + FromSQL + LowerCase(Model.Table.Name);
 end;
 
-function TSQLCommand<T>.Exists(const Model: IModel<T>; const ModelKey: TArray<T>): ISQLCommand<T>;
+function TSQLCommand<T>.Exists(const Model: IEntity<T>; const ModelKey: TArray<T>): ISQLCommand<T>;
 begin
   Result := Self;
   // TODO: Do Implement
 end;
 
-function TSQLCommand<T>.Find(const Model: IModel<T>; const ModelKey: T; const KeyValue: Int64): ISQLCommand<T>;
+function TSQLCommand<T>.Find(const Model: IEntity<T>; const ModelKey: T; const KeyValue: Int64): ISQLCommand<T>;
 begin
   Result := Self;
 
@@ -468,7 +468,7 @@ begin
     ).Build;
 end;
 
-function TSQLCommand<T>.Insert(const Model: IModel<T>): ISQLCommand<T>;
+function TSQLCommand<T>.Insert(const Model: IEntity<T>): ISQLCommand<T>;
 var
   Field: IField;
   Fields, ParamFields: string;
@@ -505,7 +505,7 @@ begin
   Result := Self;
 end;
 
-function TSQLCommand<T>.Update(const Model: IModel<T>): ISQLCommand<T>;
+function TSQLCommand<T>.Update(const Model: IEntity<T>): ISQLCommand<T>;
 var
   Field: IField;
 begin
@@ -523,7 +523,7 @@ begin
   FCommand := UpdateSQL.TrimLeft + LowerCase(Model.Table.Name) + SetSQL + FCommand;
 end;
 
-function TSQLCommand<T>.WhereKey(const Model: IModel<T>; const ModelKey: TArray<T>): ISQLCommand<T>;
+function TSQLCommand<T>.WhereKey(const Model: IEntity<T>; const ModelKey: TArray<T>): ISQLCommand<T>;
 var
   FieldKey: T;
   Condition: string;

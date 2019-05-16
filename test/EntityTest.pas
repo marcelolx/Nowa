@@ -1,59 +1,59 @@
-unit ModelTest;
+unit EntityTest;
 
 interface
 
 uses
   TestFramework,
-  NowaModel,
+  NowaEntity,
   Enumerator.Person,
   PersonImpl,
   System.SysUtils,
   Person,
-  NowaModelImpl;
+  NowaEntityImpl;
 
 type
-  TModelTest = class(TTestCase)
+  TEntityTest = class(TTestCase)
   strict private
   const
     &As = ' as ';
   strict private
-    function GetEnumFieldAlias(const Model: IModel<TEPerson>; const Enumerated: TEPerson): string;
+    function GetEnumFieldAlias(const Entity: IEntity<TEPerson>; const Enumerated: TEPerson): string;
   public
     procedure SetUp; override;
     procedure TearDown; override;
   published
-    procedure TestCreateModel;
-    procedure TestPrepareModel;
-    procedure TestPrepareModelSetTableAlias;
-    procedure TestPrepareModelWithoutDefineFields;
+    procedure TestCreateEntity;
+    procedure TestPrepareEntity;
+    procedure TestPrepareEntitySetTableAlias;
+    procedure TestPrepareEntityWithoutDefineFields;
     procedure TestSetGetValue;
-    procedure TestPrepareModelAndGetPreparedFields;
+    procedure TestPrepareEntityAndGetPreparedFields;
 
     procedure TestBasicField;
   end;
 
 implementation
 
-{ TModelTest }
+{ TEntityTest }
 
-function TModelTest.GetEnumFieldAlias(const Model: IModel<TEPerson>; const Enumerated: TEPerson): string;
+function TEntityTest.GetEnumFieldAlias(const Entity: IEntity<TEPerson>; const Enumerated: TEPerson): string;
 begin
-  Result := Model.Table.Alias + '_' + TEnumPerson.Create.Ref.Column(Enumerated);
+  Result := Entity.Table.Alias + '_' + TEnumPerson.Create.Ref.Column(Enumerated);
 end;
 
-procedure TModelTest.SetUp;
-begin
-  inherited;
-
-end;
-
-procedure TModelTest.TearDown;
+procedure TEntityTest.SetUp;
 begin
   inherited;
 
 end;
 
-procedure TModelTest.TestBasicField;
+procedure TEntityTest.TearDown;
+begin
+  inherited;
+
+end;
+
+procedure TEntityTest.TestBasicField;
 var
   Field: IField;
   Table: ITable;
@@ -69,21 +69,21 @@ begin
   CheckEquals('PERSON', Field.Table.Alias);
 end;
 
-procedure TModelTest.TestCreateModel;
+procedure TEntityTest.TestCreateEntity;
 var
-  Person: IModel<TEPerson>;
+  Person: IEntity<TEPerson>;
 begin
   Person := TPerson.Create;
 
   CheckNotNull(Person);
 end;
 
-procedure TModelTest.TestPrepareModel;
+procedure TEntityTest.TestPrepareEntity;
 var
-  Person: IModel<TEPerson>;
+  Person: IEntity<TEPerson>;
 begin
   Person := TPerson.Create;
-  Person.PrepareModel('', [tepSequential]);
+  Person.PrepareEntity('', [tepSequential]);
 
   CheckEquals(1, Length(Person.Fields), 'More or less fields on array that should');
   CheckEquals('PERSON', Person.Table.Name, 'Wrong table name');
@@ -91,7 +91,7 @@ begin
   CheckEquals(TEnumPerson.Create.Ref.Column(tepSequential) + &As + GetEnumFieldAlias(Person, tepSequential),
     Person.Field(tepSequential).Name + &As + Person.Field(tepSequential).Alias);
 
-  Person.PrepareModel('', [tepSequential, tepName, tepBirthDate, tepEmail, tepPassword]);
+  Person.PrepareEntity('', [tepSequential, tepName, tepBirthDate, tepEmail, tepPassword]);
 
   CheckEquals(5, Length(Person.Fields), 'More or less fields on array that should');
   CheckEquals('PERSON', Person.Table.Name, 'Wrong table name');
@@ -119,12 +119,12 @@ begin
     Person.Field(tepPassword).Name + &As + Person.Field(tepPassword).Alias);
 end;
 
-procedure TModelTest.TestPrepareModelAndGetPreparedFields;
+procedure TEntityTest.TestPrepareEntityAndGetPreparedFields;
 var
-  Person: IModel<TEPerson>;
+  Person: IEntity<TEPerson>;
 begin
   Person := TPerson.Create;
-  Person.PrepareModel('', [tepSequential, tepName, tepEmail]);
+  Person.PrepareEntity('', [tepSequential, tepName, tepEmail]);
 
   CheckEquals(Person.Field(tepSequential).Name, Person.Fields[0].Name);
   CheckEquals(Person.Field(tepSequential).Alias, Person.Fields[0].Alias);
@@ -143,12 +143,12 @@ begin
   CheckEquals(Person.Field(tepEmail).Table.Sequence, Person.Fields[2].Table.Sequence);
 end;
 
-procedure TModelTest.TestPrepareModelSetTableAlias;
+procedure TEntityTest.TestPrepareEntitySetTableAlias;
 var
-  Person: IModel<TEPerson>;
+  Person: IEntity<TEPerson>;
 begin
   Person := TPerson.Create;
-  Person.PrepareModel('DEFINE_ALIAS_TABLE', [tepSequential]);
+  Person.PrepareEntity('DEFINE_ALIAS_TABLE', [tepSequential]);
 
   CheckEquals(1, Length(Person.Fields), 'More or less fields on array that should');
   CheckEquals('PERSON', Person.Table.Name, 'Wrong table name');
@@ -157,12 +157,12 @@ begin
     Person.Field(tepSequential).Name + &As + Person.Field(tepSequential).Alias);
 end;
 
-procedure TModelTest.TestPrepareModelWithoutDefineFields;
+procedure TEntityTest.TestPrepareEntityWithoutDefineFields;
 var
-  Person: IModel<TEPerson>;
+  Person: IEntity<TEPerson>;
 begin
   Person := TPerson.Create;
-  Person.PrepareModel('', []);
+  Person.PrepareEntity('', []);
 
   CheckEquals(5, Length(Person.Fields), 'More or less fields on array that should');
   CheckEquals('PERSON', Person.Table.Name, 'Wrong table name');
@@ -190,7 +190,7 @@ begin
     Person.Field(tepPassword).Name + &As + Person.Field(tepPassword).Alias);
 end;
 
-procedure TModelTest.TestSetGetValue;
+procedure TEntityTest.TestSetGetValue;
 var
   Person: IPerson<TEPerson>;
 begin
@@ -210,6 +210,6 @@ end;
 
 initialization
 
-RegisterTest(TModelTest.Suite);
+RegisterTest(TEntityTest.Suite);
 
 end.
