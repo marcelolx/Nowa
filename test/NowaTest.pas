@@ -412,17 +412,11 @@ end;
 
 procedure TNowaTest.TestSQLSelectInnerJoin;
 const
-  InnerJoin = 'select P.SEQUENTIAL as P_SEQUENTIAL,' +
-                     ' P.NAME as P_NAME,' +
-                     ' P.BIRTHDATE as P_BIRTHDATE,' +
-                     ' P.EMAIL as P_EMAIL,' +
-                     ' P.PASSWORD as P_PASSWORD,' +
-                     ' MT.SEQUENTIAL as MT_SEQUENTIAL,' +
-                     ' MT.PERSONSEQUENTIAL as MT_PERSONSEQUENTIAL,' +
-                     ' MT.DATA as MT_DATA,' +
-                     ' MT.USER as MT_USER' +
-                ' from PERSON as P' +
-               ' inner join MATRICULATION as MT on (MT.PERSONSEQUENTIAL = P.SEQUENTIAL)';
+  InnerJoin = 'select P.SEQUENTIAL as P_SEQUENTIAL, P.NAME as P_NAME,' +
+    ' P.BIRTHDATE as P_BIRTHDATE, P.EMAIL as P_EMAIL, P.PASSWORD as P_PASSWORD,' +
+    ' MT.SEQUENTIAL as MT_SEQUENTIAL, MT.PERSONSEQUENTIAL as MT_PERSONSEQUENTIAL,' +
+    ' MT.DATA as MT_DATA, MT.USER as MT_USER from PERSON as P' +
+    ' inner join MATRICULATION as MT on (MT.PERSONSEQUENTIAL = P.SEQUENTIAL)';
 var
   Person: IEntity<TEPerson>;
   Matriculation: IEntity<TEMatriculation>;
@@ -498,17 +492,10 @@ end;
 
 procedure TNowaTest.TestSQLSelectLeftOuterJoin;
 const
-  InnerJoin = 'select P.SEQUENTIAL as P_SEQUENTIAL,' +
-                     ' P.NAME as P_NAME,' +
-                     ' P.BIRTHDATE as P_BIRTHDATE,' +
-                     ' P.EMAIL as P_EMAIL,' +
-                     ' P.PASSWORD as P_PASSWORD,' +
-                     ' MT.SEQUENTIAL as MT_SEQUENTIAL,' +
-                     ' MT.PERSONSEQUENTIAL as MT_PERSONSEQUENTIAL,' +
-                     ' MT.DATA as MT_DATA,' +
-                     ' MT.USER as MT_USER' +
-                ' from PERSON as P' +
-               ' left outer join MATRICULATION as MT on (MT.PERSONSEQUENTIAL = P.SEQUENTIAL)';
+  InnerJoin = 'select P.SEQUENTIAL as P_SEQUENTIAL, P.NAME as P_NAME, P.BIRTHDATE as P_BIRTHDATE,' +
+    ' P.EMAIL as P_EMAIL, P.PASSWORD as P_PASSWORD, MT.SEQUENTIAL as MT_SEQUENTIAL,' +
+    ' MT.PERSONSEQUENTIAL as MT_PERSONSEQUENTIAL, MT.DATA as MT_DATA, MT.USER as MT_USER' +
+    ' from PERSON as P left outer join MATRICULATION as MT on (MT.PERSONSEQUENTIAL = P.SEQUENTIAL)';
 var
   Person: IEntity<TEPerson>;
   Matriculation: IEntity<TEMatriculation>;
@@ -541,17 +528,10 @@ end;
 
 procedure TNowaTest.TestSQLSelectRightJoin;
 const
-  InnerJoin = 'select P.SEQUENTIAL as P_SEQUENTIAL,' +
-                     ' P.NAME as P_NAME,' +
-                     ' P.BIRTHDATE as P_BIRTHDATE,' +
-                     ' P.EMAIL as P_EMAIL,' +
-                     ' P.PASSWORD as P_PASSWORD,' +
-                     ' MT.SEQUENTIAL as MT_SEQUENTIAL,' +
-                     ' MT.PERSONSEQUENTIAL as MT_PERSONSEQUENTIAL,' +
-                     ' MT.DATA as MT_DATA,' +
-                     ' MT.USER as MT_USER' +
-                ' from PERSON as P' +
-               ' right join MATRICULATION as MT on (MT.PERSONSEQUENTIAL = P.SEQUENTIAL)';
+  InnerJoin = 'select P.SEQUENTIAL as P_SEQUENTIAL, P.NAME as P_NAME, P.BIRTHDATE as P_BIRTHDATE,' +
+    ' P.EMAIL as P_EMAIL, P.PASSWORD as P_PASSWORD, MT.SEQUENTIAL as MT_SEQUENTIAL,' +
+    ' MT.PERSONSEQUENTIAL as MT_PERSONSEQUENTIAL, MT.DATA as MT_DATA, MT.USER as MT_USER' +
+    ' from PERSON as P right join MATRICULATION as MT on (MT.PERSONSEQUENTIAL = P.SEQUENTIAL)';
 var
   Person: IEntity<TEPerson>;
   Matriculation: IEntity<TEMatriculation>;
@@ -584,17 +564,10 @@ end;
 
 procedure TNowaTest.TestSQLSelectRightOuterJoin;
 const
-  InnerJoin = 'select P.SEQUENTIAL as P_SEQUENTIAL,' +
-                     ' P.NAME as P_NAME,' +
-                     ' P.BIRTHDATE as P_BIRTHDATE,' +
-                     ' P.EMAIL as P_EMAIL,' +
-                     ' P.PASSWORD as P_PASSWORD,' +
-                     ' MT.SEQUENTIAL as MT_SEQUENTIAL,' +
-                     ' MT.PERSONSEQUENTIAL as MT_PERSONSEQUENTIAL,' +
-                     ' MT.DATA as MT_DATA,' +
-                     ' MT.USER as MT_USER' +
-                ' from PERSON as P' +
-               ' right outer join MATRICULATION as MT on (MT.PERSONSEQUENTIAL = P.SEQUENTIAL)';
+  InnerJoin = 'select P.SEQUENTIAL as P_SEQUENTIAL, P.NAME as P_NAME, P.BIRTHDATE as P_BIRTHDATE,' +
+    ' P.EMAIL as P_EMAIL, P.PASSWORD as P_PASSWORD, MT.SEQUENTIAL as MT_SEQUENTIAL,' +
+    ' MT.PERSONSEQUENTIAL as MT_PERSONSEQUENTIAL, MT.DATA as MT_DATA, MT.USER as MT_USER' +
+    ' from PERSON as P right outer join MATRICULATION as MT on (MT.PERSONSEQUENTIAL = P.SEQUENTIAL)';
 var
   Person: IEntity<TEPerson>;
   Matriculation: IEntity<TEMatriculation>;
@@ -627,21 +600,10 @@ end;
 
 procedure TNowaTest.TestSQLSelectUnion;
 const
-  InnerJoin = 'select P.SEQUENTIAL as P_SEQUENTIAL,' +
-                     ' P.NAME as P_NAME,' +
-                     ' P.BIRTHDATE as P_BIRTHDATE,' +
-                     ' P.EMAIL as P_EMAIL,' +
-                     ' P.PASSWORD as P_PASSWORD' +
-                ' from PERSON as P' +
-                ' where P.NAME = ''MARCELO''' +
-                ' union' +
-               ' select P.SEQUENTIAL as P_SEQUENTIAL,' +
-                     ' P.NAME as P_NAME,' +
-                     ' P.BIRTHDATE as P_BIRTHDATE,' +
-                     ' P.EMAIL as P_EMAIL,' +
-                     ' P.PASSWORD as P_PASSWORD' +
-                ' from PERSON as P' +
-                ' where P.NAME = ''RANDOM''';
+  InnerJoin = 'select P.SEQUENTIAL as P_SEQUENTIAL, P.NAME as P_NAME, P.BIRTHDATE as P_BIRTHDATE, P.EMAIL as P_EMAIL,' +
+    ' P.PASSWORD as P_PASSWORD from PERSON as P where P.NAME = ''MARCELO''' +
+    ' union select P.SEQUENTIAL as P_SEQUENTIAL, P.NAME as P_NAME, P.BIRTHDATE as P_BIRTHDATE, P.EMAIL as P_EMAIL,' +
+    ' P.PASSWORD as P_PASSWORD from PERSON as P where P.NAME = ''RANDOM''';
 var
   Person: IEntity<TEPerson>;
 begin
@@ -673,21 +635,10 @@ end;
 
 procedure TNowaTest.TestSQLSelectUnionAll;
 const
-  InnerJoin = 'select P.SEQUENTIAL as P_SEQUENTIAL,' +
-                     ' P.NAME as P_NAME,' +
-                     ' P.BIRTHDATE as P_BIRTHDATE,' +
-                     ' P.EMAIL as P_EMAIL,' +
-                     ' P.PASSWORD as P_PASSWORD' +
-                ' from PERSON as P' +
-                ' where P.NAME = ''MARCELO''' +
-                ' union all' +
-               ' select P.SEQUENTIAL as P_SEQUENTIAL,' +
-                     ' P.NAME as P_NAME,' +
-                     ' P.BIRTHDATE as P_BIRTHDATE,' +
-                     ' P.EMAIL as P_EMAIL,' +
-                     ' P.PASSWORD as P_PASSWORD' +
-                ' from PERSON as P' +
-                ' where P.NAME = ''RANDOM''';
+  InnerJoin = 'select P.SEQUENTIAL as P_SEQUENTIAL, P.NAME as P_NAME, P.BIRTHDATE as P_BIRTHDATE, P.EMAIL as P_EMAIL,' +
+    ' P.PASSWORD as P_PASSWORD from PERSON as P where P.NAME = ''MARCELO'' union all' +
+    ' select P.SEQUENTIAL as P_SEQUENTIAL, P.NAME as P_NAME, P.BIRTHDATE as P_BIRTHDATE, P.EMAIL as P_EMAIL,' +
+    ' P.PASSWORD as P_PASSWORD from PERSON as P where P.NAME = ''RANDOM''';
 var
   Person: IEntity<TEPerson>;
 begin
