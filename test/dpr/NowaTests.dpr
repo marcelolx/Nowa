@@ -22,7 +22,8 @@ uses
   PersonImpl in '..\Person\PersonImpl.pas',
   Enumerator.Person in '..\Person\Enumerator.Person.pas',
   NowaResourceStrings in '..\..\NowaResourceStrings.pas',
-  NowaException in '..\..\NowaException.pas';
+  NowaException in '..\..\NowaException.pas',
+  NowaDatabaseAdapter in '..\..\NowaDatabaseAdapter.pas';
 
 {$R *.RES}
 

@@ -106,6 +106,7 @@
         <DCCReference Include="..\Person\Enumerator.Person.pas"/>
         <DCCReference Include="..\..\NowaResourceStrings.pas"/>
         <DCCReference Include="..\..\NowaException.pas"/>
+        <DCCReference Include="..\..\NowaDatabaseAdapter.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
