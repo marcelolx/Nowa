@@ -922,7 +922,7 @@ begin
 
   CheckEquals(Query,
     TSQLWhere.Create.Ref
-    .Field(TField.Create('EXAMPLE', Table))
+    .Field(TField.Create('EXAMPLE', Table).Ref)
     .Build
   );
 
