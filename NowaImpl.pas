@@ -6,6 +6,7 @@ uses
   Nowa,
   NowaEntity,
   NowaEnumerators,
+  NowaSQLAdapter,
   System.SysUtils,
   System.Variants;
 
@@ -44,7 +45,7 @@ type
   end;
 
   TSQLWhere = class(TSQL, ISQLWhere)
-  strict private
+  private
     FWhere: string; // TODO: Do Implement
   public
     function Field(const Field: IField): ISQLWhere;
@@ -74,21 +75,21 @@ type
     constructor Create; reintroduce;
   end;
 
-  TSQLBy<T> = class(TSQL, ISQLBy<T>)
-  strict private
+  TSQLBy = class(TSQL, ISQLBy)
+  private
     FByCommand: string;
   public
-    function Column(const Column: T): ISQLBy<T>;
-    function Columns(const Column: TArray<T>): ISQLBy<T>;
+    function Column(const Column: IField): ISQLBy;
+    function Columns(const Column: TArray<IField>): ISQLBy;
 
     function Build: string; override;
 
-    function Ref: ISQLBy<T>;
+    function Ref: ISQLBy;
     constructor Create; reintroduce;
   end;
 
   TSQLJoin = class(TSQL, ISQLJoin)
-  strict private
+  private
     FJoinCommand: string;
   public
     function Table(const Table: ITable): ISQLJoin;
@@ -103,7 +104,7 @@ type
   end;
 
   TSQLCondition = class(TSQL, ISQLCondition)
-  strict private
+  private
     FConditionCommand: string;
   public
     function LeftTerm(const Field: IField): ISQLCondition;
@@ -116,7 +117,7 @@ type
   end;
 
   TSQLSelect = class(TSQL, ISQLSelect)
-  strict private
+  private
     FSelect: string;
 
     function GetTableFieldAlias(const Field: IField): string;
@@ -125,8 +126,8 @@ type
     function From(const Table: ITable): ISQLSelect;
     function Where(const WhereCondition: ISQLWhere): ISQLSelect;
     function Having(const HavingQuery: ISQLSelect): ISQLSelect;
-    function GroupBy(const GroupBy: ISQLBy<TObject>): ISQLSelect;
-    function OrderBy(const OrderBy: ISQLBy<TObject>): ISQLSelect;
+    function GroupBy(const GroupBy: ISQLBy): ISQLSelect;
+    function OrderBy(const OrderBy: ISQLBy): ISQLSelect;
     function Union: ISQLSelect;
     function UnionAll: ISQLSelect;
     function InnerJoin(const Join: ISQLJoin): ISQLSelect;
@@ -142,8 +143,9 @@ type
   end;
 
   TSQLCommand<T> = class(TSQL, ISQLCommand<T>)
-  strict private
+  private
     FCommand: string;
+    FSQLAdapter: INowaSQLAdapter;
   public
     function Insert(const Model: IEntity<T>): ISQLCommand<T>;
     function Update(const Model: IEntity<T>): ISQLCommand<T>;
@@ -156,7 +158,7 @@ type
     function Build: string; override;
 
     function Ref: TSQLCommand<T>;
-    constructor Create; reintroduce;
+    constructor Create(const SQLAdapter: INowaSQLAdapter); reintroduce;
   end;
 
 implementation
@@ -359,7 +361,7 @@ begin
   Result := Field.Table.Alias + PointSQL + Field.Name + AsSQL + Field.Alias;
 end;
 
-function TSQLSelect.GroupBy(const GroupBy: ISQLBy<TObject>): ISQLSelect;
+function TSQLSelect.GroupBy(const GroupBy: ISQLBy): ISQLSelect;
 begin
   Result := Self;
   { TODO -oMarcelo -cGeneral : Implementar }
@@ -389,7 +391,7 @@ begin
   FSelect := FSelect + LeftOuterJoinSQL + Join.Build;
 end;
 
-function TSQLSelect.OrderBy(const OrderBy: ISQLBy<TObject>): ISQLSelect;
+function TSQLSelect.OrderBy(const OrderBy: ISQLBy): ISQLSelect;
 begin
   Result := Self;
   { TODO -oMarcelo -cGeneral : Implementar }
@@ -437,9 +439,10 @@ begin
   Result := FCommand;
 end;
 
-constructor TSQLCommand<T>.Create;
+constructor TSQLCommand<T>.Create(const SQLAdapter: INowaSQLAdapter);
 begin
   FCommand := EmptyStr;
+  FSQLAdapter := SQLAdapter;
 end;
 
 function TSQLCommand<T>.Delete(const Model: IEntity<T>): ISQLCommand<T>;
@@ -544,31 +547,31 @@ end;
 
 { TSQLGroupBy<T> }
 
-function TSQLBy<T>.Build: string;
+function TSQLBy.Build: string;
 begin
   Result := FByCommand;
 end;
 
-function TSQLBy<T>.Column(const Column: T): ISQLBy<T>;
+function TSQLBy.Column(const Column: IField): ISQLBy;
 begin
   Result := Self;
 
   { TODO -oMarcelo -cImplement : Implement }
 end;
 
-function TSQLBy<T>.Columns(const Column: TArray<T>): ISQLBy<T>;
+function TSQLBy.Columns(const Column: TArray<IField>): ISQLBy;
 begin
   Result := Self;
 
   { TODO -oMarcelo -cImplement : Implement }
 end;
 
-constructor TSQLBy<T>.Create;
+constructor TSQLBy.Create;
 begin
   FByCommand := EmptyStr;
 end;
 
-function TSQLBy<T>.Ref: ISQLBy<T>;
+function TSQLBy.Ref: ISQLBy;
 begin
   Result := Self;
 end;

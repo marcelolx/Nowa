@@ -107,6 +107,11 @@
         <DCCReference Include="..\..\NowaResourceStrings.pas"/>
         <DCCReference Include="..\..\NowaException.pas"/>
         <DCCReference Include="..\..\NowaDatabaseAdapter.pas"/>
+        <DCCReference Include="..\..\NowaMediator.pas"/>
+        <DCCReference Include="..\..\NowaMediatorImpl.pas"/>
+        <DCCReference Include="..\..\NowaSQLAdapter.pas"/>
+        <DCCReference Include="..\NowaMediatorTest.pas"/>
+        <DCCReference Include="..\..\NowaSQLAdapterImpl.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

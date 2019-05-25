@@ -23,7 +23,12 @@ uses
   Enumerator.Person in '..\Person\Enumerator.Person.pas',
   NowaResourceStrings in '..\..\NowaResourceStrings.pas',
   NowaException in '..\..\NowaException.pas',
-  NowaDatabaseAdapter in '..\..\NowaDatabaseAdapter.pas';
+  NowaDatabaseAdapter in '..\..\NowaDatabaseAdapter.pas',
+  NowaMediator in '..\..\NowaMediator.pas',
+  NowaMediatorImpl in '..\..\NowaMediatorImpl.pas',
+  NowaSQLAdapter in '..\..\NowaSQLAdapter.pas',
+  NowaMediatorTest in '..\NowaMediatorTest.pas',
+  NowaSQLAdapterImpl in '..\..\NowaSQLAdapterImpl.pas';
 
 {$R *.RES}
 

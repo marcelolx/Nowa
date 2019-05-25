@@ -36,10 +36,10 @@ type
     function Between(const StartValue, EndValue: Variant): ISQLWhere;
   end;
 
-  ISQLBy<T> = interface(ISQL)
+  ISQLBy = interface(ISQL)
   ['{08FBAA7E-DEFB-45A7-BF5D-B3A5681BF561}']
-    function Column(const Column: T): ISQLBy<T>;
-    function Columns(const Column: TArray<T>): ISQLBy<T>;
+    function Column(const Column: IField): ISQLBy;
+    function Columns(const Column: TArray<IField>): ISQLBy;
   end;
 
   ISQLCondition = interface(ISQL)
@@ -63,8 +63,8 @@ type
     function From(const Table: ITable): ISQLSelect;
     function Where(const WhereCondition: ISQLWhere): ISQLSelect;
     function Having(const HavingQuery: ISQLSelect): ISQLSelect;
-    function GroupBy(const GroupBy: ISQLBy<TObject>): ISQLSelect;
-    function OrderBy(const OrderBy: ISQLBy<TObject>): ISQLSelect;
+    function GroupBy(const GroupBy: ISQLBy): ISQLSelect;
+    function OrderBy(const OrderBy: ISQLBy): ISQLSelect;
     function Union: ISQLSelect;
     function UnionAll: ISQLSelect;
     function InnerJoin(const Join: ISQLJoin): ISQLSelect;

@@ -55,6 +55,8 @@ type
     procedure TestSQLJoinOn;
     procedure TestSQLJoinAnd;
     procedure TestSQLJoinOr;
+
+    //TODO: When one of this commands need a specific sql from adapter, create new suite test for this adapter
     procedure TestSQLCommandInsert;
     procedure TestSQLCommandUpdate;
     procedure TestSQLCommandUpdateWhereKey;
@@ -72,6 +74,7 @@ uses
   NowaEntity,
   NowaEntityImpl,
   NowaEnumerators,
+  NowaSQLAdapterImpl,
   Enumerator.Person,
   PersonImpl,
   System.SysUtils,
@@ -137,7 +140,7 @@ begin
   Person.PrepareEntity('', []);
 
   CheckEquals(Delete,
-    TSQLCommand<TEPerson>.Create.Ref
+    TSQLCommand<TEPerson>.Create(TNowaSQLAdapter.Create.Ref).Ref
       .Delete(Person)
       .Build
   );
@@ -155,7 +158,7 @@ begin
   Person.PrepareEntity('', []);
 
   CheckEquals(Delete,
-    TSQLCommand<TEPerson>.Create.Ref
+    TSQLCommand<TEPerson>.Create(TNowaSQLAdapter.Create.Ref).Ref
       .Delete(Person)
       .WhereKey(Person, [tepSequential])
       .Build
@@ -172,7 +175,7 @@ begin
   Person.PrepareEntity('', []);
 
   CheckEquals('not implemented',
-    TSQLCommand<TEPerson>.Create.Ref
+    TSQLCommand<TEPerson>.Create(TNowaSQLAdapter.Create.Ref).Ref
       .Exists(Person, [tepSequential])
       .Build
   );
@@ -191,7 +194,7 @@ begin
   Person.PrepareEntity('', []);
 
   CheckEquals(Find,
-    TSQLCommand<TEPerson>.Create.Ref
+    TSQLCommand<TEPerson>.Create(TNowaSQLAdapter.Create.Ref).Ref
       .Find(Person, tepSequential , 1)
       .Build
   );
@@ -209,7 +212,7 @@ begin
   Person.PrepareEntity('', []);
 
   CheckEquals(Insert,
-    TSQLCommand<TEPerson>.Create.Ref
+    TSQLCommand<TEPerson>.Create(TNowaSQLAdapter.Create.Ref).Ref
       .Insert(Person)
       .Build
   );
@@ -227,7 +230,7 @@ begin
   Person.PrepareEntity('', []);
 
   CheckEquals(Sequence,
-    TSQLCommand<TEPerson>.Create.Ref
+    TSQLCommand<TEPerson>.Create(TNowaSQLAdapter.Create.Ref).Ref
       .NewKeyValue(Person.Table.Sequence)
       .Build
   );
@@ -245,7 +248,7 @@ begin
   Person.PrepareEntity('', []);
 
   CheckEquals(Update,
-    TSQLCommand<TEPerson>.Create.Ref
+    TSQLCommand<TEPerson>.Create(TNowaSQLAdapter.Create.Ref).Ref
       .Update(Person)
       .Build
   );
@@ -264,7 +267,7 @@ begin
   Person.PrepareEntity('', []);
 
   CheckEquals(Update,
-    TSQLCommand<TEPerson>.Create.Ref
+    TSQLCommand<TEPerson>.Create(TNowaSQLAdapter.Create.Ref).Ref
       .Update(Person)
       .WhereKey(Person, [tepSequential])
       .Build

@@ -3,8 +3,7 @@ unit NowaDAO;
 interface
 
 uses
-  NowaEntity,
-  FireDAC.Comp.Client;
+  NowaEntity;
 
 type
   INowaDAO<T> = interface
@@ -12,7 +11,7 @@ type
     procedure Insert(const Entity: IEntity<T>);
     procedure Update(const Entity: IEntity<T>);
     procedure Save(const Entity: IEntity<T>);
-    procedure FillModel(const Entity: IEntity<T>; const Query: TFDQuery);
+    procedure FillModel(const Entity: IEntity<T>);
   end;
 
 implementation
