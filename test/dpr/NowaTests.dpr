@@ -28,7 +28,8 @@ uses
   NowaMediatorImpl in '..\..\NowaMediatorImpl.pas',
   NowaSQLAdapter in '..\..\NowaSQLAdapter.pas',
   NowaMediatorTest in '..\NowaMediatorTest.pas',
-  NowaSQLAdapterImpl in '..\..\NowaSQLAdapterImpl.pas';
+  NowaSQLAdapterImpl in '..\..\NowaSQLAdapterImpl.pas',
+  NowaDatabaseAdapterFireDAC in '..\..\NowaDatabaseAdapterFireDAC.pas';
 
 {$R *.RES}
 

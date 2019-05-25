@@ -112,6 +112,7 @@
         <DCCReference Include="..\..\NowaSQLAdapter.pas"/>
         <DCCReference Include="..\NowaMediatorTest.pas"/>
         <DCCReference Include="..\..\NowaSQLAdapterImpl.pas"/>
+        <DCCReference Include="..\..\NowaDatabaseAdapterFireDAC.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
