@@ -21,7 +21,7 @@ type
     constructor Create(const EntityEnumerator: IEnum<T>); reintroduce;
     destructor Destroy; override;
 
-    procedure PrepareEntity(const TableAlias: string = ''; const Fields: TArray<T> = []);
+    procedure PrepareEntity(const ATableAlias: string = ''; const Fields: TArray<T> = []);
     procedure SetValue(const Field: T; const Value: Variant); virtual; abstract;
 
     function GetValue(const Field: T): Variant; virtual; abstract;
@@ -79,9 +79,9 @@ begin
     FFields.Add(Field, TField.Create(FEntityEnumerator.Column(Field), FTable).Ref);
 end;
 
-procedure TEntity<T>.PrepareEntity(const TableAlias: string; const Fields: TArray<T>);
+procedure TEntity<T>.PrepareEntity(const ATableAlias: string; const Fields: TArray<T>);
 begin
-  FTable.Prepare(FEntityEnumerator.TableAlias(TableAlias));
+  FTable.Prepare(FEntityEnumerator.TableAlias(ATableAlias));
 
   if Length(Fields) > 0 then
     FInternalFields := Fields
