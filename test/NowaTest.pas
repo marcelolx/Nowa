@@ -350,15 +350,15 @@ procedure TNowaTest.TestSQLSelectFields;
 const
   Query = 'select P.SEQUENTIAL as P_SEQUENTIAL';
   QueryExpected =
-    'select PERSON.SEQUENTIAL as PERSON_SEQUENTIAL, PERSON.NAME as PERSON_NAME, PERSON.BIRTHDATE as PERSON_BIRTHDATE,' +
-    'PERSON.EMAIL as PERSON_EMAIL, PERSON.PASSWORD as PERSON_PASSWORD';
+    'select P.SEQUENTIAL as P_SEQUENTIAL, P.NAME as P_NAME, P.BIRTHDATE as P_BIRTHDATE, ' +
+    'P.EMAIL as P_EMAIL, P.PASSWORD as P_PASSWORD';
 var
   Person: IEntity<TEPerson>;
   Table: ITable;
   Field: IField;
 begin
   Table := TTable.Create('PERSON', 'GEN_PERSON');
-  Table.Prepare('PERSON');
+  Table.Prepare('P');
   Field := TField.Create('SEQUENTIAL', Table);
 
   CheckEquals(Query, TSQLSelect.Create.Ref.Fields([[Field]]).Build);
