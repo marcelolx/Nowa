@@ -38,8 +38,8 @@ type
     SetSQL = ' set ';
     InsertSQL = ' insert ';
     DeleteSQL = ' delete ';
-    UnionAllSelectSQL = ' union all select ';
-    UnionSelectSQL = ' union select ';
+    UnionAllSelectSQL = ' union all select';
+    UnionSelectSQL = ' union select';
   public
     function Build: string; virtual; abstract;
   end;
@@ -200,9 +200,16 @@ begin
 end;
 
 function TSQLWhere.Equal(const Value: Variant): ISQLWhere;
+var
+  EqualValue: String;
 begin
   Result := Self;
-  FWhere := FWhere + EqualSQL + VarToStr(Value); // TODO: When string, whe need QuotedStr!!
+
+  EqualValue := VarToStr(Value);
+  if VarIsStr(Value) then
+    EqualValue := QuotedStr(EqualValue);
+
+  FWhere := FWhere + EqualSQL + EqualValue;
 end;
 
 function TSQLWhere.Equal: ISQLWhere;

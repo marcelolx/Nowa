@@ -856,7 +856,7 @@ begin
 
   CheckEquals(Query2,
     TSQLWhere.Create.Ref
-    .Equal(QuotedStr('ABC'))
+    .Equal('ABC')
     .Build
   );
 
@@ -870,7 +870,7 @@ begin
   CheckEquals(Query4,
     TSQLWhere.Create.Ref
     .Field(TField.Create('EXAMPLEVAL', Table).Ref)
-    .Equal(QuotedStr('ABC'))
+    .Equal('ABC')
     .Build
   );
 
