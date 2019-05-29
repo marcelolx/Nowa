@@ -54,6 +54,7 @@
         <UWP_DelphiLogo44>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_44.png</UWP_DelphiLogo44>
         <UWP_DelphiLogo150>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_150.png</UWP_DelphiLogo150>
         <SanitizedProjectName>NowaSample1</SanitizedProjectName>
+        <DCC_UnitSearchPath>..\..\;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <DCC_UsePackage>DBXSqliteDriver;OmniThreadLibraryRuntime;dxCoreRS25;DBXInterBaseDriver;cxSchedulerTreeBrowserRS25;dxRichEditControlCoreRS25;vclactnband;dxPSPrVwRibbonRS25;vclFireDAC;cxExportRS25;dxSpreadSheetCoreDialogsRS25;dxRibbonCustomizationFormRS25;dxHttpIndyRequestRS25;tethering;svnui;dxPScxCommonRS25;FireDACADSDriver;pgdac250;cxPivotGridOLAPRS25;frxe25;dxPSdxFCLnkRS25;cxSchedulerGridRS25;vcltouch;vcldb;bindcompfmx;svn;inetdb;dxGaugeControlRS25;cxLibraryRS25;dxOfficeCoreRS25;fmx;fmxdae;frxDB25;dxPScxPivotGridLnkRS25;dxTabbedMDIRS25;dxBarDBNavRS25;dxFlowChartAdvancedCustomizeFormRS25;dbexpress;IndyCore;dxFlowChartRS25;vclx;dsnap;dxBarRS25;dxSpreadSheetConditionalFormattingDialogsRS25;dxTileControlRS25;dxdborRS25;dxMapControlRS25;dxPDFViewerRS25;pgdacfmx250;dxDockingRS25;VCLRESTComponents;dxPScxExtCommonRS25;cxPageControlRS25;cxPivotGridRS25;dxPSLnksRS25;dxWizardControlRS25;dxRichEditControlRS25;dxPSdxSpreadSheetLnkRS25;dxNavBarRS25;dxSpreadSheetReportDesignerRS25;vclie;fs25;bindengine;DBXMySQLDriver;cxSchedulerRibbonStyleEventEditorRS25;FireDACMySQLDriver;dxFireDACServerModeRS25;FireDACCommonODBC;cxTreeListRS25;dxPSdxPDFViewerLnkRS25;IndyIPCommon;bindcompdbx;dxPSdxLCLnkRS25;vcl;IndyIPServer;dxPScxVGridLnkRS25;dxBarExtItemsRS25;dac250;IndySystem;dxComnRS25;dxSkinsCoreRS25;dxPSdxDBTVLnkRS25;dsnapcon;madExcept_;dxLayoutControlRS25;dxPSRichEditControlLnkRS25;FireDACMSAccDriver;fmxFireDAC;vclimg;madBasic_;fsADO25;dxPScxTLLnkRS25;dxServerModeRS25;dxdbtrRS25;dxSpreadSheetCoreRS25;dxSpreadSheetRS25;QueryDataSet_Tokyo;FireDACPgDriver;frxADO25;cxEditorsRS25;dxPScxSchedulerLnkRS25;cxGridRS25;dxSpreadSheetCoreConditionalFormattingDialogsRS25;Editors_Tokyo;DbxCommonDriver;dxAuthorizationAgentsRS25;dxorgcRS25;xmlrtl;frx25;fmxobj;vclwinx;dxPsPrVwAdvRS25;rtl;madDisAsm_;DbxClientDriver;dacvcl250;cxDataRS25;dxPSCoreRS25;CustomIPTransport;vcldsnap;pgdacvcl250;dxmdsRS25;dxPSdxOCLnkRS25;dxPScxGridLnkRS25;fsDB25;cxTreeListdxBarPopupMenuRS25;bindcomp;appanalytics;cxSchedulerWebServiceStorageRS25;crcontrols250;cxPivotGridChartRS25;IndyIPClient;cxSchedulerRS25;frxDBX25;bindcompvcl;dxBarExtDBItemsRS25;dxDBXServerModeRS25;dxGDIPlusRS25;dxThemeRS25;dxPSdxGaugeControlLnkRS25;dbxcds;VclSmp;adortl;DbxDevartPostgreSQLDriver250;dacfmx250;dxPSdxDBOCLnkRS25;dxRibbonRS25;dsnapxml;dxSpellCheckerRS25;dbrtl;IndyProtocols;inetdbxpress;cxVerticalGridRS25;dxtrmdRS25;dxADOServerModeRS25;dxPSdxMapControlLnkRS25;fmxase;$(DCC_UsePackage)</DCC_UsePackage>
@@ -76,6 +77,8 @@
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
         <AppEnableHighDPI>true</AppEnableHighDPI>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Locale>1033</VerInfo_Locale>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -94,6 +97,10 @@
         <DCCReference Include="SampleMain.pas">
             <Form>NowaSampleMain</Form>
         </DCCReference>
+        <DCCReference Include="PersonEnumerator.pas"/>
+        <DCCReference Include="PersonImpl.pas"/>
+        <DCCReference Include="PersonDAOImpl.pas"/>
+        <DCCReference Include="PersonDAO.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -114,6 +121,17 @@
                 <Source>
                     <Source Name="MainSource">NowaSample1.dpr</Source>
                 </Source>
+                <Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclpgdac250.bpl">Devart PostgreSQL Data Access Components</Excluded_Packages>
+                    <Excluded_Packages Name="D:\delphi_env\FastReport 6 VCL Professional\LibD25\dclfrxIntIOIndy25.bpl">FastReport 6.0 Internet transports</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k250.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp250.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="D:\delphi_env\FastReport 6 VCL Professional\LibD25\dclfrxIntIO25.bpl">FastReport 6.0 Internet transports</Excluded_Packages>
+                    <Excluded_Packages Name="D:\delphi_env\FastReport 6 VCL Professional\LibD25\dclfrxTee25.bpl">FastReport 6.0 Tee Components</Excluded_Packages>
+                    <Excluded_Packages Name="D:\delphi_env\FastReport 6 VCL Professional\LibD25\dclfsTee25.bpl">FastScript 1.9 Tee Components</Excluded_Packages>
+                    <Excluded_Packages Name="D:\delphi_env\FastReport 6 VCL Professional\LibD25\dclfrxIBX25.bpl">FastReport 6.0 IBX Components</Excluded_Packages>
+                    <Excluded_Packages Name="D:\delphi_env\FastReport 6 VCL Professional\LibD25\dclfsIBX25.bpl">FastScript 1.9 IBX Components</Excluded_Packages>
+                </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
                 <DeployFile LocalName="Win32\Debug\NowaSample1.exe" Configuration="Debug" Class="ProjectOutput">
