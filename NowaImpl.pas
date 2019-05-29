@@ -507,7 +507,7 @@ end;
 function TSQLCommand<T>.NewKeyValue(const SequenceName: string): ISQLCommand<T>;
 begin
   Result := Self;
-  FCommand := SelectSQL.TrimLeft + 'nextval(' + QuotedStr(LowerCase(SequenceName)) + ') as sequence';
+  FCommand := FSQLAdapter.NewKeyValue(SequenceName) + ' as sequence;';
 end;
 
 function TSQLCommand<T>.Ref: TSQLCommand<T>;

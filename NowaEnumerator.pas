@@ -22,7 +22,7 @@ type
     function Table: String; virtual; abstract;
     function TableAlias(const Alias: String = ''): String; virtual; abstract;
     function Sequence: String; virtual; abstract;
-    function AllColumns: TArray<T>; virtual; abstract;
+    function AllColumns: TArray<T>; virtual; abstract; //TODO: Need find a way to implement this method here :mindblown:
     function PrimaryKey: TArray<T>; virtual; abstract;
     function Ref: IEnum<T>; virtual; abstract;
   end;

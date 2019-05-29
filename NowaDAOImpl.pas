@@ -24,7 +24,7 @@ type
     function Command: INowaCommandAdapter;
     function Query: INowaQueryAdapter;
 
-    procedure GenerateModelCompoundKey(const Entity: IEntity<T>); virtual; abstract;
+    procedure GenerateModelCompoundKey(const Entity: IEntity<T>); virtual;
   public
     constructor Create(const DataAccess: INowaDataAccess; const Mediator: INowaMediator<T>); reintroduce;
     function Ref: INowaDAO<T>;
@@ -51,6 +51,11 @@ var
 begin
   for Field in Entity.Fields do
     Entity.SetValue(Entity.Field(Field), Query.FieldByName(Field.Alias).Value);
+end;
+
+procedure TNowaDAO<T>.GenerateModelCompoundKey(const Entity: IEntity<T>);
+begin
+  raise Exception.Create('This method need do implemented');
 end;
 
 function TNowaDAO<T>.GenerateModelKey(const SequenceName: string): Int64;

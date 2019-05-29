@@ -6,7 +6,8 @@ uses
   NowaDatabaseAdapter,
   FireDAC.Comp.Client,
   Data.DB,
-  FireDAC.Stan.Param;
+  FireDAC.Stan.Param,
+  FireDAC.DApt;
 
 type
   TNowaParamAdapter = class(TInterfacedObject, INowaParamAdapter)
@@ -65,6 +66,7 @@ type
   public
     function Query: INowaQueryAdapter;
     function Command: INowaCommandAdapter;
+    function Ref: INowaDataAccess;
 
     constructor Create(const Connection: TFDConnection); reintroduce;
   end;
@@ -184,6 +186,11 @@ begin
     FQueryAdapter := TNowaQueryAdapter.Create(FConnection);
 
   Result := FQueryAdapter;
+end;
+
+function TNowaDataAccess.Ref: INowaDataAccess;
+begin
+  Result := Self;
 end;
 
 { TNowaFieldAdapter }

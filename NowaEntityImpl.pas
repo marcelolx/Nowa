@@ -23,7 +23,6 @@ type
 
     procedure PrepareEntity(const ATableAlias: string = ''; const Fields: TArray<T> = []);
     procedure SetValue(const Field: T; const Value: Variant); virtual; abstract;
-
     function GetValue(const Field: T): Variant; virtual; abstract;
     function Field(const Field: T): IField; overload;
     function Field(const Field: IField): T; overload;

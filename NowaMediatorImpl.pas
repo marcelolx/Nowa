@@ -20,6 +20,7 @@ type
     function SQLSelect: ISQLSelect;
     function SQLCommand: ISQLCommand<T>;
 
+    function Ref: INowaMediator<T>;
     constructor Create(const SQLAdapter: INowaSQLAdapter);
   end;
 
@@ -30,6 +31,11 @@ implementation
 constructor TNowaMediator<T>.Create(const SQLAdapter: INowaSQLAdapter);
 begin
   FSQLAdapter := SQLAdapter;
+end;
+
+function TNowaMediator<T>.Ref: INowaMediator<T>;
+begin
+  Result := Self;
 end;
 
 function TNowaMediator<T>.SQLBy: ISQLBy;
