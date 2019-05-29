@@ -25,7 +25,7 @@ implementation
 
 uses
   NowaMediatorImpl,
-  NowaSQLAdapterImpl;
+  NowaSQLAdapterSQLiteImpl;
 
 { TNowaMediatorTest }
 
@@ -62,7 +62,7 @@ end;
 procedure TNowaMediatorTest.SetUp;
 begin
   inherited;
-  FNowaMediator := TNowaMediator<TObject>.Create(TNowaSQLAdapter.Create.Ref);
+  FNowaMediator := TNowaMediator<TObject>.Create(TNowaSQLAdapterSQLite.Create.Ref);
 end;
 
 initialization
